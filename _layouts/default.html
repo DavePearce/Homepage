@@ -1,15 +1,5 @@
-{% assign isBlog = false %}
-{% for post in site.posts %}
-   {% if page.url == post.url %}
-      {% assign isBlog = true %}
-   {% endif %}
-{% endfor %}
-{% assign isBlogList = false %}
-{% if page.url == "/blog/index.html" or page.url == "/blog/archive.html" %}
-   {% assign isBlogList = true %}
-{% endif %}
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#" >
+<html>
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
    {% if page.description %}<meta name="description" content="{{ page.description }}">{% endif %}
@@ -17,154 +7,28 @@
 
    <link rel="shortcut icon" href="/favicon.ico" />
    <link rel="shortcut icon" href="/favicon.png" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/wright/css/reset.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/wright/css/layout.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/wright/css/typography.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/css/1_template.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/css/style-theme1.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/templates/js_enterprise/css/custom.css" type="text/css" />
-   <link rel="stylesheet" href="/assets/default/common/css/custom.css" type="text/css" />
-   {% if isBlog or isBlogList %}
-      <link href="/blog/feed.xml" rel="alternate" type="application/rss+xml" title="RSS" />
-   {% endif %}
-   <style type="text/css">
-      body{color:#75728A}
-      h1, h2, h3, h4, h5, h6, .componentheading, .contentheading{color:#39316B}
-      a:link, a:active, a:visited{color:#2E75D1}
-      a:hover{color:#41D5F2}
-      .blogPosts {
-         width: auto;
-      }
-      .blogPosts dt {
-         float: none;
-         clear: none;
-         width: auto;
-         padding: 0;
-         margin : 0;
-         line-height: 2;
-         font-weight: bold;
-      }
-      .blogPosts dd {
-         width: 100%;
-         width: auto;
-         padding:  0 0 1em 2em;
-         float: none;
-         margin : 0;
-      }
-      .blogPosts p {
-         margin: 0 0 10px;
-      }
-      .blogPosts .meta {
-         margin-bottom: 0;
-      }
-   </style>
-   <script src="/assets/default/media/system/js/mootools-core.js" type="text/javascript"></script>
-   <script src="/assets/default/media/system/js/core.js" type="text/javascript"></script>
-   <script src="/assets/default/media/system/js/mootools-more.js" type="text/javascript"></script>
-   <script src="/assets/default/components/com_gcalendar/libraries/jquery/jquery.min.js" type="text/javascript"></script>
-   <script src="/assets/default/media/system/js/caption.js" type="text/javascript"></script>
-   <script type="text/javascript">
-      jQuery.noConflict();
-      window.addEvent('load', function() {
-            new JCaption('img.caption');
-            });
-   </script>
-   <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+   <link rel="stylesheet" href="/assets/default/css/style.css" type="text/css" />
 </head>
-<body class="is_unknown v_unknown b_arial h_arial">
 
-<div id="wrapper">
-   <div id="wrapper-inner">
-      <div id="header">
-         <div id="header-inner">
-            <div class="container_12">
-               <div id="banner">
-		 <div class="grid">
-		     <a href="http://www.sleconf.org">
-                     <img
-                     src="/assets/default/images/SLE-banner-960.png"
-		     alt="SLE Banner Image" />
-		   </a>
-                  </div>
-               </div>
-               <div id="menu" class="grid_11">
-                  <div class="moduletable">
-                     <ul class="menu">
-                          {% include menu %}
-                     </ul>	
-                  </div>
-               </div>
-               <div class="clearfix"></div>
-               <div class="clear"></div>
-            </div>
-         </div>
-      </div>
+<body>
 
-      <div id="container">
-         <div id="container-inner">
-            <div class="container_12">
-               <section class="grid_9 push_3" id="main">
-                  <div class="item-page">
-                     <h2>{{ page.title }}</h2>
-                     {{ content }}
-                  </div>
-               </section>
-               <aside class="grid_3 pull_9" id="sidebar1">
-                  <div class="grid">
-                     <div class="moduletable">
-                        {% if isBlog or isBlogList %}
-                           <h3>Blog posts</h3>
-                           <ul class="category-module">
-                              {% if page.url == "/blog/index.html" %}
-                                 <li class="active"><h4><a href="/blog/">Index</a></h4>
-                              {% else %}
-                                 <li><h4><a href="/blog/">Index</a></h4>
-                              {% endif %}
-                              {% for post in site.posts offset:0 limit:10 %}
-                                 {% if page.url == post.url %}
-                                    <li class="active"><h4><a href="{{post.url}}">{{post.title}}</a></h4>
-                                 {% else %}
-                                    <li><h4><a href="{{post.url}}">{{post.title}}</a></h4>
-                                 {% endif %}
-                              {% endfor %}
-                              {% if page.url == "/blog/archive.html" %}
-                                 <li class="active"><h4><a href="/blog/archive.html">Archive</a></h4>
-                              {% else %}
-                                 <li><h4><a href="/blog/archive.html">Archive</a></h4>
-                              {% endif %}
-                              <li><h4><a href="/blog/feed.xml" target="_blank"><i class="icon-rss"></i> rss feed</a></h4>
-                           </ul>
-                        {% endif %}
-                     </div>
-                                          <div class="twitter">
-                             <a class="twitter-timeline" href="https://twitter.com/sleconf" data-widget-id="425931285496733696" height="300">Tweets by @sleconf</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                     </div>
-                  </div>
-               </aside>
-               <div class="clear"></div>
-            </div>
-         </div>
-      </div>
-      <div id="footer">
-         <div id="footer-inner">
-            <div class="container_12">
+  <div id="header">
+    <a href="http://www.sleconf.org">
+      <img
+        src="/assets/default/images/SLE-banner-960.png"
+	alt="SLE Banner Image" />
+    </a>
+  </div>
 
-               <div id="link" class="grid_6">
-                  <div class="grid">
-                     <ul class="menu">
-                        <li>
-                          <a class="muted" rel="nofollow" href="http://prose.io/#sleconf/sleconf-www/edit/gh-pages/{{page.path}}" target="_blank">edit</a>
-                        </li>
-                     </ul>
-                  </div>
-               </div>
-               <div class="clear"></div>
-            </div>
-         </div>
-      </div>
-   </div>
-</div>
+  <div id="container">
+    <h2>{{ page.title }}</h2>
+    {{ content }}    
+  </div>
+  
+  <div id="footer">
+    This is the footer.
+  </div>
+  
 </body>
 </html>
 
