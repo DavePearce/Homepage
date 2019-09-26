@@ -1,0 +1,25 @@
+/*=======================================================================
+     TEMPLATE SPECIFIC PATCHES
+=======================================================================*/
+
+/* Adjustment for the banner and menus*/
+#menu {
+  float: left ;
+}
+
+#wrapper {
+  padding:5px;
+}
+
+
+/*------- patch for adding a banner -----*/
+#banner {
+  margin-left:auto ;
+  margin-right:auto ;
+  width:960px ;
+}
+
+#header {
+    background: url("../header.png") repeat-x scroll 0 0 #222222;
+}
+

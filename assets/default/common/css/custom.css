@@ -1,0 +1,139 @@
+/*========================================================================
+      GENERAL JOOMLA PATCHES
+========================================================================*/
+
+/*======== Remove the Component heading ===============================
+This header very often display useless information such
+as "Articles" when there is an article and this is not
+obvious to avoid. Not that the .componentheading class
+cannot be used because not all components use it...
+So we remove all h1 in the container.
+*/
+#container h1 {
+  display: none ;
+}
+
+
+
+
+/*======== Simplify the edit form ====================================
+*/
+
+/*-------- Patch to remove all fields in the edit form that we found not
+relevant for a end user. This list can be adjusted on demand.
+Note that it is also used because of the Explorer behavior that
+do no that into account the formulae in fieldset hidding. In any
+case this allows finer grain control (if the fieldset hidding is
+removed). 
+*/ 
+#jform_catid-lbl, #jform_catid,
+#jform_created_by_alias-lbl, #jform_created_by_alias,
+#jform_state-lbl, #jform_state,
+#jform_featured-lbl, #jform_featured,
+#jform_publish_up-lbl, #jform_publish_up, #jform_publish_up_img,
+#jform_publish_down-lbl, #jform_publish_down, #jform_publish_down_img,
+#jform_access-lbl, #jform_access,
+#jform_language-lbl, #jform_language,
+#jform_metadesc-lbl, #jform_metadesc,
+#jform_metakey-lbl, #jform_metakey {
+  display: none ;
+}
+
+/*------- patch to simplify the editing in the frontend
+Only the fieldset for the editor is left. So the
+end user do not have to care about publishing options
+Metadata, and Languages. 
+The syntax  nth-of-type(1n+2)  works in CSS3 but not
+
+with Internet Explorer...
+Anyway, if the fields are hidden as shown above, this
+will just let a bit of space on internet explorer, which
+is not too bad.
+For the trick below  see this blog post.
+http://forum.joomla.org/viewtopic.php?p=2536904
+*/
+
+form#adminForm fieldset:nth-of-type(1n+2)  {
+  display: none ;
+}
+
+
+/* remove the now useless "editor" legend (it may be usefull if
+other fieldset are present */
+form#adminForm legend {
+  display:none ;
+}
+
+
+.form-validate { 
+  padding: 0 ;
+}
+
+/* Arrange the title part*/
+.formelm {
+  padding: 8px 200px 0 0;
+  float: left;
+}
+#jform_title-lbl {
+  margin: 8px 5px 0px 0px ;
+  width: 20px;
+}
+
+.formelm-buttons {
+  margin: 0px
+
+}
+
+div.mceEditor {
+    clear: left;
+}
+
+/*----- make a uniform shape for the extended buttons */ 
+#editor-xtd-buttons a {
+    background: -moz-linear-gradient(center top , #FFFFFF 0%, #EEEEEE 100%) repeat scroll 0 0 transparent;
+    border: 1px solid #D6D6D6;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 1px 1px 0 #FFFFFF inset, -1px -1px 0 #FFFFFF inset;
+    float: left;
+    font: bold 9px/14px Helvetica,Arial,sans-serif;
+    margin: 2px 8px 0 0;
+    padding: 0 10px;
+    text-decoration: none;
+}
+
+
+
+
+
+
+
+/*========================================================================
+      COMPONENT SPECIFIC PATCHES
+========================================================================*/
+
+/*-------- patch for the jce editor in front end -----
+because of a padding of 5 in various templates the
+editor button in the toolbar come with too much space. 
+*/
+#adminForm table td {
+    padding: 1px;
+}
+
+
+
+/*------- patch for the module slide show */
+.lof-inner {
+    color: #888888;
+}
+.lof-description {
+    color: #EEEEEE;
+}
+
+
+
+/*--------------------- PATCH FOR TEMPLATE ---------------------------------------- js_enterprise -------------------*/
+/* adding space to put the community menu TOFIX */
+
+#wrapper {
+  padding: 40px 20px ;
+}
