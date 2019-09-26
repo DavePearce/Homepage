@@ -20,12 +20,6 @@ body {
     box-shadow: 2px 2px 5px 0 #000;    
 }
 
-#menu ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
 #header {
     margin-bottom: 2em;
     padding: 1em;
@@ -35,4 +29,27 @@ body {
     padding: 1em;
     font-family: 'Pontano Sans', Verdana, Helvetica, sans-serif;
     font-size: 11pt;    
+}
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background: #dddddd;  
+}
+
+#menu li {
+    display: inline;
+}
+
+#menu li a {
+    display: block;
+    color: #000000;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#menu li a:hover {
+    background-color: #111;
 }
