@@ -40,7 +40,7 @@ body {
 }
 
 #menu li {
-    display: inline;
+    float: left;
 }
 
 #menu li a {
