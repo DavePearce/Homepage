@@ -13,12 +13,13 @@ html, body {
 }
 
 #container {
-    margin: 0em auto;
+    margin: 1em auto;
     padding: 0px;
     width: 80%;
     border: none;
     background: #ffffff;
-    box-shadow: 2px 2px 5px 0 #000;    
+    box-shadow: 2px 2px 5px 0 #000;
+    border-radius: 10px;
 }
 
 #content {

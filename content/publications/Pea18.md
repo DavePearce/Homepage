@@ -1,0 +1,1 @@
+On Declarative Rewriting for Sound and Complete Union, Intersection and Negation Types. David J. Pearce. In Journal of Visual Languages & Computing, 50:84--101, 2018. © Elsevier. A preprint version is also available [ PDF / DOI ].
