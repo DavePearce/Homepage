@@ -1,0 +1,11 @@
+<p><b>{{ .Title }}</b>.  {{ .Params.Authors }}.  In <i>{{ .Params.Booktitle }}, </i>
+  {{ if .Params.Volume }}
+    {{.Params.Volume}}
+    {{ if .Params.Number }}({{.Params.Number}}){{ end }},
+  {{ end }}
+  {{ if .Params.Pages }}pages {{ .Params.Pages }}{{ end }}
+  {{ if .Params.Copyright }}©{{.Params.Copyright}},{{end}}
+  {{ .Date }}.
+  {{ if .Params.DOI }}[ <a href="{{.Params.DOI}}">DOI</a> ]{{end}}
+  {{ if .Params.preprint }} A preprint is available [ <a href="{{.Params.preprint}}">PDF</a> ].{{end}}
+</p>
