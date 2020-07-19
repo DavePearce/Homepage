@@ -6,7 +6,7 @@ authors: "David J. Pearce, Paul H.J. Kelly and Chris Hankin"
 booktitle: "Workshop on Program Analysis for Software Tools and Engineering (PASTE)"
 pages: "37--42"
 copyright: "ACM Press"
-DOI: "http://dx.doi.org/10.1145/996821.996835"
+DOI: "10.1145/996821.996835"
 preprint: "PKH04_PASTE_preprint.pdf"
 ---
 

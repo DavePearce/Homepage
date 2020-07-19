@@ -6,7 +6,7 @@ authors: "David J. Pearce and James Noble"
 booktitle: "Proceedings of the conference on Pattern Languages of Programs (PLoP)"
 pages: "Article 26"
 copyright: "ACM Press"
-DOI: "http://doi.acm.org/10.1145/1753196.1753227"
+DOI: "10.1145/1753196.1753227"
 preprint: "PN08_PLOP_preprint.pdf"
 ---
 

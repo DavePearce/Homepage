@@ -9,6 +9,6 @@ volume: "37"
 number: "7"
 pages: "747--777"
 copyright: "Wiley"
-DOI: "https://doi.org/10.1002/spe.788"
+DOI: "10.1002/spe.788"
 preprint: "PWBK07_SPE_preprint.pdf"
 ---

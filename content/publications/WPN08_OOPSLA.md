@@ -6,7 +6,7 @@ authors: "Darren Willis, David J. Pearce and James Noble"
 booktitle: "Conference on Object-Oriented Programming Systems, Languages & Applications (OOPSLA)"
 pages: "1--17"
 copyright: "ACM Press"
-DOI: "http://dx.doi.org/10.1145/1449955.1449766"
+DOI: "10.1145/1449955.1449766"
 preprint: "WPN08_OOPSLA_preprint.pdf"
 ---
 

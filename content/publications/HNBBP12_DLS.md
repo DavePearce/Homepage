@@ -6,7 +6,7 @@ authors: "Michael Homer, James Noble, Kim Bruce, Andrew Black and David J. Pearc
 booktitle: "Dynamic Languages Symposium (DLS)"
 pages: "17--28"
 copyright: "ACM Press"
-DOI: "http://dx.doi.org/10.1145/2384577.2384581"
+DOI: "10.1145/2384577.2384581"
 preprint: "HNBBP12_DLS_preprint.pdf"
 ---
 

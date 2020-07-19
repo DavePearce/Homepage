@@ -9,7 +9,7 @@ volume: "279"
 number: "1"
 pages: "47--59"
 copyright: "Elsevier"
-DOI: "http://dx.doi.org/10.1016/j.entcs.2011.11.005"
+DOI: "10.1016/j.entcs.2011.11.005"
 preprint: "PN11_BYTECODE_preprint.pdf"
 website: "http://software.imdea.org/~pierreganty/bytecode2011/"
 ---

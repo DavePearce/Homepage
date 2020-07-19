@@ -8,6 +8,7 @@ booktitle: "Proceedings of the Conference on Generative Programming: Concepts & 
 pages: "117--130"
 year: "2018"
 copyright: "ACM Press"
-DOI: "https://doi.org/10.1145/3170492.3136042"
+DOI: "10.1145/3170492.3136042"
 preprint: "Pea18_GPCE_preprint.pdf"
+slides: "Pea18_GPCE_slides.pdf"
 ---

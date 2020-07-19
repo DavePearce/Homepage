@@ -9,6 +9,6 @@ volume: "113"
 number: "2"
 pages: "191--220"
 copyright: "Elsevier"
-DOI: "https://doi.org/10.1016/j.scico.2015.09.006"
+DOI: "10.1016/j.scico.2015.09.006"
 preprint: "PG15_SCP_preprint.pdf"
 ---

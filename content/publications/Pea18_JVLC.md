@@ -9,6 +9,6 @@ volume: "50"
 pages: "84--101"
 year: "2018"
 copyright: "Elsevier"
-DOI: "https://doi.org/10.1016/j.jvlc.2018.10.004"
+DOI: "10.1016/j.jvlc.2018.10.004"
 preprint: "Pea18_JVLC_preprint.pdf"
 ---

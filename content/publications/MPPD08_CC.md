@@ -6,7 +6,7 @@ authors: "Chris Male, David J. Pearce, Alex Potanin and Constantine Dymnikov"
 booktitle: "Conference on Compiler Construction (CC)"
 pages: "229--244"
 copyright: "ACM Press"
-DOI: "http://dx.doi.org/10.1007/978-3-540-78791-4_16"
+DOI: "10.1007/978-3-540-78791-4_16"
 preprint: "MPPD08_CC_preprint.pdf"
 ---
 

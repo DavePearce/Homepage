@@ -6,7 +6,7 @@ authors: "Timothy Jones and David J. Pearce"
 booktitle: "Workshop on Formal Techniques for Java-like Languages (FTFJP)"
 pages: "Article 1"
 copyright: "ACM Press"
-DOI: "http://dx.doi.org/10.1145/2955811.2955812"
+DOI: "10.1145/2955811.2955812"
 preprint: "JP16_FTFJP_preprint.pdf"
 ---
 

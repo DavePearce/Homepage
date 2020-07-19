@@ -6,7 +6,8 @@ authors: "David J. Pearce"
 booktitle: "IEEE/IFIP Workshop on Software Technologies for Future Embedded and Ubiquitous Systems (SEUS)"
 pages: "26--33"
 copyright: "IEEE"
-DOI: "http://dx.doi.org/10.1109/ISORCW.2015.54"
+DOI: "10.1109/ISORCW.2015.54"
 preprint: "Pea15_SEUS_preprint.pdf"
+slides: "Pea15_SEUS_slides.pdf"
 ---
 

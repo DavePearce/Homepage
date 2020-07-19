@@ -6,7 +6,7 @@ authors: "David J. Pearce and Paul H.J. Kelly"
 booktitle: "Workshop on Efficient and experimental Algorithms (WEA)"
 pages: "383--398"
 copyright: "Springer"
-DOI: "http://dx.doi.org/10.1007/978-3-540-24838-5_29"
+DOI: "10.1007/978-3-540-24838-5_29"
 preprint: "PK04_WEA_preprint.pdf"
 ---
 

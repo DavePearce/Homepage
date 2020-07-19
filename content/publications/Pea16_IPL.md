@@ -9,7 +9,7 @@ volume: "116"
 number: "1"
 pages: "47--52"
 copyright: "Elsevier"
-DOI: "http://www.sciencedirect.com/science/article/pii/S0020019015001532"
+DOI: "10.1016/j.ipl.2015.08.010"
 preprint: "Pea16_IPL_preprint.pdf"
 ---
 A straightforward implementation of the algorithm is available [here](http://github.com/DavePearce/StronglyConnectedComponents).

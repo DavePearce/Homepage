@@ -8,6 +8,6 @@ volume: "12"
 number: "4"
 pages: "209--335"
 copyright: "Kluwer Academic Publishers"
-DOI: "https://doi.org/10.1023/B:SQJO.0000039791.93071.a2"
+DOI: "10.1023/B:SQJO.0000039791.93071.a2"
 ---
 
