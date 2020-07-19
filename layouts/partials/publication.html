@@ -1,9 +1,15 @@
-<p><b>{{ .Title }}</b>.  {{ .Params.Authors }}.  In <i>{{ .Params.Booktitle }}, </i>
+<p><b>{{ .Title }}</b>.  {{ .Params.Authors }}.
+  {{ if .Params.thesis }}
+  {{ .Params.thesis }} Thesis,
+  <i>{{ .Params.school }},</i>  
+  {{ else }}
+  In <i>{{ .Params.Booktitle }}, </i>
   {{ if .Params.Volume }}
     {{.Params.Volume}}
     {{ if .Params.Number }}({{.Params.Number}}),{{ end }}
   {{ end }}
   {{ if .Params.Pages }}pages {{ .Params.Pages }},{{ end }}
+  {{ end }}
   {{ .Date.Format "2006" }}.  
   {{ if .Params.Copyright }}©{{.Params.Copyright}}{{end}}
   {{ $first := true }}
