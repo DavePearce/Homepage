@@ -7,5 +7,6 @@ booktitle: "Conference on the Theory and Application of Diagrams (DIAGRAMS)"
 pages: "739--742"
 copyright: "Springer"
 DOI: "10.1007/978-3-319-91376-6_71"
+website: "http://www.diagrams-conference.org/2018/home/programme/accepted-submissions/"
 ---
 

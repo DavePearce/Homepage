@@ -6,4 +6,5 @@ authors: "David J. Pearce and James Noble"
 booktitle: "Proceedings of the European Conference on Pattern Languages of Programs (EuroPLOP)"
 pages: "531--546"
 preprint: "PN06_EuroPLOP_preprint.pdf"
+website: "http://hillside.net/europlop/europlop2006/"
 ---

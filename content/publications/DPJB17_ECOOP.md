@@ -9,5 +9,6 @@ copyright: "Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik"
 DOI: "10.4230/LIPIcs.ECOOP.2017.9"
 preprint: "DPJB17_ECOOP_preprint.pdf"
 slides: "DPJB17_ECOOP_slides.pdf"
+website: "http://conf.researchr.org/home/ecoop-2017"
 ---
 
