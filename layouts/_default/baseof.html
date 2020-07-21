@@ -12,9 +12,19 @@
       </div>
     <nav>
       <ul id="menubar">
-	<li><a href="{{.Site.BaseURL}}/index.html">Home</a></li>	
-	<li><a href="{{.Site.BaseURL}}/publications/index.html">Publications</a></li>
-	<li><a href="{{.Site.BaseURL}}/projects/index.html">Projects</a></li>
+	{{ if .Page.IsHome }}
+	<li><a class="selected" href="{{.Site.BaseURL}}">Home</a></li>	
+	{{ else }}
+	<li><a href="{{.Site.BaseURL}}">Home</a></li>
+	{{ end }}
+	{{ $p := .Title }}
+	{{ range .Site.Sections }}
+	{{ if eq .Title $p }}
+	<li><a class="selected" href="{{.Permalink}}">{{.Title}}</a></li>
+	{{ else }}
+	<li><a href="{{.Permalink}}">{{.Title}}</a></li>
+	{{ end }}
+	{{ end }}
       </ul>
     </nav>
     </header>    

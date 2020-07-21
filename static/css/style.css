@@ -61,6 +61,11 @@ nav a:hover {
     color: #d5c397;
 }
 
+nav a.selected {
+    background: #000000;
+    color: #d5c397;
+}
+
 #menubar {
     background: #dddd;
 }
