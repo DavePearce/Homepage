@@ -11,4 +11,4 @@ copyright: "ACM Press"
 DOI: "10.1145/1187436.1210590"
 preprint: "PK07_JEA_preprint.pdf"
 ---
-This is an extended version of the WEA'04 paper and gives a better exposition and more accurate data.
+**Abstract.** We consider the problem of maintaining the topological order of a directed acyclic graph (DAG) in the presence of edge insertions and deletions. We present a new algorithm and, although this has inferior time complexity compared with the best previously known result, we find that its simplicity leads to better performance in practice. In addition, we provide an empirical comparison against the three main alternatives over a large number of random DAGs. The results show our algorithm is the best for sparse digraphs and only a constant factor slower than the best on dense digraphs.

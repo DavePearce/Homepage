@@ -6,8 +6,20 @@
     <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">    
   </head>
   <body>
+    <header>
+      <div id="name">
+	A/Prof. David J. Pearce
+      </div>
+    <nav>
+      <ul id="menubar">
+	<li><a href="{{.Site.BaseURL}}/index.html">Home</a></li>	
+	<li><a href="{{.Site.BaseURL}}/publications/index.html">Publications</a></li>
+	<li><a href="{{.Site.BaseURL}}/projects/index.html">Projects</a></li>
+      </ul>
+    </nav>
+    </header>    
     <div id="container">
-      <div id="content">
+      <div id="content">	
 	{{ block "main" . }}
 	{{ end }}
       </div>

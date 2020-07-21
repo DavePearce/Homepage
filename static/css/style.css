@@ -1,24 +1,76 @@
 html, body {
     margin: 0;
     padding: 0px;
-    background: #d5c397;
+    background: #FFFFFF;
     height: 100%;
+    font-family: verdana; 
 }
 
-#header {
-    width: 100%;
-    background: #dddddd;
-    margin-bottom: 2em;
-    padding: 1em;
+header {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    background: #d5c397;
+}
+
+#name {
+    justify-content: flex-start;
+    flex-grow: 2;
+    font-family: monaco;
+    font-size: 3em;
+    padding: 1em 0.25em 0em 0.25em;
+    border-style: solid;
+    border-width: 0 0 0.125em 0;    
+    margin: 0;
+}
+
+nav {
+    justify-content: flex-end;
+    margin: 0em 0em 0em auto;
+    background: inherit;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+    font-size: 1.5em;    
+    border-color: transparent;
+    border-style: solid;
+    border-width: 0 0 0.25em 0;
+    border-color: #000000;    
+    margin: 3em 0em 0em 0em;
+    padding: 0em;
+}
+
+nav a {
+    color: #5b4b25;
+    display: block;
+    text-decoration: none;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+nav a:hover {
+    background: #000000;
+    color: #d5c397;
+}
+
+#menubar {
+    background: #dddd;
 }
 
 #container {
-    margin: 1em auto;
+    margin: 0em auto;
     padding: 0px;
     width: 80%;
     border: none;
     background: #ffffff;
-    box-shadow: 2px 2px 5px 0 #000;
     border-radius: 10px;
 }
 
