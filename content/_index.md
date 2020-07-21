@@ -1,6 +1,8 @@
 ---
 draft: false
 ---
+![](/images/DavidPearce2.jpg#floatright)
+
 Having moved from Imperial College London to Victoria University
  (Wellington, NZ) in 2004, I'm now enjoying life in New Zealand! At
  Imperial College, I was a PhD student in the department of
