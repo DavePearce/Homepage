@@ -1,0 +1,107 @@
+html, body {
+    margin: 0;
+    padding: 0px;
+    background: #FFFFFF;
+    height: 100%;
+    font-family: Neucha,sans-serif; 
+}
+
+header {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    background: #d5c397;
+}
+
+a {
+    text-decoration: none;
+    color: #a28744;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #6c5a2d;
+}
+
+img[src$='#floatleft']
+{
+    float: left;
+    width: 160px;
+    padding: 0em 1em 0em 0em;
+}
+
+img[src$='#floatright']
+{
+    float: right;
+    width: 160px;
+    padding: 0em 0em 0em 1em;
+}
+
+#name {
+    justify-content: flex-start;
+    flex-grow: 2;
+    font-size: 3em;
+    padding: 1rem 1rem 0em 1rem;
+    border-style: solid;
+    border-width: 0 0 0.1rem 0;    
+    margin: 0;
+}
+
+nav {
+    justify-content: flex-end;
+    margin: 0em 0em 0em auto;
+    background: inherit;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav li {
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+    font-size: 1.5em;    
+    border-color: transparent;
+    border-style: solid;
+    border-width: 0 0 0.1rem 0;
+    border-color: #000000;    
+    margin: 2.5rem 0em 0em 0em;
+    padding: 0em;
+}
+
+nav a {
+    color: #5b4b25;
+    display: block;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+nav a:hover {
+    background: #000000;
+    color: #d5c397;
+}
+
+nav a.selected {
+    background: #000000;
+    color: #d5c397;
+}
+
+#menubar {
+    background: #dddd;
+}
+
+#container {
+    margin: 0em auto;
+    padding: 0px;
+    width: 80%;
+    border: none;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+#content {
+    padding: 1em;
+    font-size: 1.25em;
+}

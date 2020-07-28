@@ -1,0 +1,44 @@
+{{ define "main" }}
+<article>
+</article>
+<h2>Journals</h2>
+<ul>
+  {{ range where .Pages.ByDate.Reverse ".Params.type" "journal" }}
+  <li>
+    {{ partial "publication.html" . }}
+  </li>
+  {{ end }}
+</ul>
+<h2>Conferences</h2>
+<ul>
+  {{ range where .Pages.ByDate.Reverse ".Params.type" "conference" }}
+  <li>
+    {{ partial "publication.html" . }}
+  </li>
+  {{ end }}
+</ul>
+<h2>Workshops</h2>
+<ul>
+  {{ range where .Pages.ByDate.Reverse ".Params.type" "workshop" }}
+  <li>
+    {{ partial "publication.html" . }}
+  </li>
+  {{ end }}
+</ul>
+<h2>Book Chapters</h2>
+<ul>
+  {{ range where .Pages.ByDate.Reverse ".Params.type" "chapter" }}
+  <li>
+    {{ partial "publication.html" . }}
+  </li>
+  {{ end }}
+</ul>
+<h2>Theses</h2>
+<ul>
+  {{ range  where .Pages.ByDate.Reverse ".Params.type" "thesis" }}
+  <li>
+    {{ partial "publication.html" . }}
+  </li>
+  {{ end }}
+</ul>
+{{ end }}

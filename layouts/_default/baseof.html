@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">    
+    <title>{{.Title}}</title>
+    <link href='https://fonts.googleapis.com/css?family=Neucha' rel='stylesheet'>    
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">    
+  </head>
+  <body>
+    <header>
+      <div id="name">
+	A/Prof. David J. Pearce
+      </div>
+    <nav>
+      <ul id="menubar">
+	{{ if .Page.IsHome }}
+	<li><a class="selected" href="{{.Site.BaseURL}}">Home</a></li>	
+	{{ else }}
+	<li><a href="{{.Site.BaseURL}}">Home</a></li>
+	{{ end }}
+	{{ $p := .Title }}
+	{{ range .Site.Sections }}
+	{{ if eq .Title $p }}
+	<li><a class="selected" href="{{.Permalink}}">{{.Title}}</a></li>
+	{{ else }}
+	<li><a href="{{.Permalink}}">{{.Title}}</a></li>
+	{{ end }}
+	{{ end }}
+      </ul>
+    </nav>
+    </header>    
+    <div id="container">
+      <div id="content">	
+	{{ block "main" . }}
+	{{ end }}
+      </div>
+    </div>
+  </body>
+</html>
