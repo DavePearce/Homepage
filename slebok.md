@@ -1,3 +1,0 @@
-## SLEBok
-
-Stuff about SLEBok
