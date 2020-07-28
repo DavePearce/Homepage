@@ -9,6 +9,4 @@ preprint: "PN06_EuroPLOP_preprint.pdf"
 website: "http://hillside.net/europlop/europlop2006/"
 ---
 
-**Abstract:**
-
-Relationships between objects are almost as important to designs as the objects themselves. Most programming languages do not support relationships well, so programmers must implement relationships in terms of more primitive constructs. This paper presents a selection of proto-patterns which describe how aspects can be used to model relationships within programs. By using these patterns, programs and designs can be made smaller, more flexible, and easier to understand and maintain.
+**Abstract:**  Relationships between objects are almost as important to designs as the objects themselves. Most programming languages do not support relationships well, so programmers must implement relationships in terms of more primitive constructs. This paper presents a selection of proto-patterns which describe how aspects can be used to model relationships within programs. By using these patterns, programs and designs can be made smaller, more flexible, and easier to understand and maintain.
