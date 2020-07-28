@@ -8,4 +8,4 @@ copyright: "Springer"
 DOI: "10.1007/978-3-319-11245-9"
 ---
 
-Proceedings of the 7th International Conference on Software Language Engineering (SLE)
+Proceedings of the 7th International Conference on Software Language Engineering (SLE).  See the conference homepage [here](https://www.sleconf.org/2014/).
