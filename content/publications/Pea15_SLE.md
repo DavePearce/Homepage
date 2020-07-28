@@ -11,3 +11,4 @@ preprint: "Pea15_SLE_preprint.pdf"
 website: "http://www.sleconf.org/2015/"
 ---
 
+**Abstract:** The Whiley Rewrite Language (WyRL) is a standalone tool providing a domain-specific declarative rewrite language and code generator. The tool is currently used to generate a critical component of the Whiley verifying compiler, namely the automated theorem prover. The tool automatically generates Java source code from a given rule set. The runtime library provides support for different heuristics to control aspects of the generated system, such as the order in which rewrite rules are applied. Novel aspects of WyRL include support for true union types and the ability to work with cyclic terms.
