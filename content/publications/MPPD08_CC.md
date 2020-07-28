@@ -11,3 +11,4 @@ preprint: "MPPD08_CC_preprint.pdf"
 website: "http://www.sable.mcgill.ca/~hendren/CC2008/"
 ---
 
+**Abstract:** Java’s annotation mechanism allows us to extend its type system with non-null types. However, checking such types cannot be done using the existing bytecode verification algorithm. We extend this algorithm to verify non-null types using a novel technique that identifies aliasing relationships between local variables and stack locations in the JVM. We formalise this for a subset of Java Bytecode and report on experiences using our implementation.
