@@ -3,10 +3,11 @@ html, body {
     padding: 0px;
     background: #FFFFFF;
     height: 100%;
-    font-family: Neucha,sans-serif; 
+    font-family: Helvetica; 
 }
 
 header {
+    font-family: Lucida Sans Typewriter, Lucida Console, monospace;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
@@ -37,19 +38,26 @@ img[src$='#floatright']
     padding: 0em 0em 0em 1em;
 }
 
+.banner {
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;    
+    width: 100%;
+    border-style: solid;
+    border-width: 0 0 1px 0;    
+}
+
 #name {
     justify-content: flex-start;
     flex-grow: 2;
-    font-size: 3em;
-    padding: 1rem 1rem 0em 1rem;
+    font-size: 1em;
+    padding: 0.5em 0.5em 0.5em 0.5em;
     border-style: solid;
     border-width: 0 0 0.1rem 0;    
-    margin: 0;
 }
 
 nav {
     justify-content: flex-end;
-    margin: 0em 0em 0em auto;
+    margin: 0em;
     background: inherit;
 }
 
@@ -63,12 +71,12 @@ nav li {
     display: inline-block;
     float: left;
     cursor: pointer;
-    font-size: 1.5em;    
+    font-size: 1em;    
     border-color: transparent;
     border-style: solid;
     border-width: 0 0 0.1rem 0;
     border-color: #000000;    
-    margin: 2.5rem 0em 0em 0em;
+    margin: 0rem 0em 0em 0em;
     padding: 0em;
 }
 
