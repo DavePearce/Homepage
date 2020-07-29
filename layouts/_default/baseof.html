@@ -9,7 +9,7 @@
   <body>
     <header>
       <div id="name">
-	A/Prof. David J. Pearce
+	<b>Dr. David J. Pearce</b>, <i>Associate Professor of Computer Science</i>
       </div>
     <nav>
       <ul id="menubar">
@@ -28,7 +28,10 @@
 	{{ end }}
       </ul>
     </nav>
-    </header>    
+    </header>
+    {{ if .Page.Params.banner }}
+    <img class="banner" src="{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+    {{ end }}
     <div id="container">
       <div id="content">	
 	{{ block "main" . }}

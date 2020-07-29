@@ -1,7 +1,8 @@
 ---
 draft: false
+banner: "images/DavidPearce3.JPG"
+banner_alt: "Image of David J. Pearce"
 ---
-![](images/DavidPearce2.jpg#floatright)
 
 I'm an Associate Professor in the [School of Engineering and Computer Science](https://www.wgtn.ac.nz/ecs) at [Victoria University of Wellington](https://www.wgtn.ac.nz).  I graduated from the [Department of Computing](https://www.imperial.ac.uk/computing) at Imperial College London, and moved to New Zealand in 2004.  My research interests are in *programming languages*, *compilers*, *static analysis tools* and *software verification*.  I currently serve as an editor for the [Science of Computer Programmning](https://www.journals.elsevier.com/science-of-computer-programming).
 
