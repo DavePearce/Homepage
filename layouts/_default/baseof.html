@@ -32,7 +32,7 @@
     {{ if .Page.Params.banner }}
     <img class="banner" src="{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
     {{ end }}
-    <div class="container">
+    <div id="container">
       <div id="content">	
 	{{ block "main" . }}
 	{{ end }}
