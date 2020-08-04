@@ -1,2 +1,9 @@
 {{ define "main" }}
+<ul>
+  {{ range where .Pages.ByDate.Reverse }}
+  <li>
+    <a href="{{ .Permalink }}">{{ .Title }}</a>    
+  </li>
+  {{ end }}
+</ul>
 {{ end }}
