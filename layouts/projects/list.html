@@ -1,8 +1,14 @@
 {{ define "main" }}
 <ul>
-  {{ range where .Pages.ByDate.Reverse }}
+  {{ range .Pages.ByDate.Reverse }}
   <li>
-    <a href="{{ .Permalink }}">{{ .Title }}</a>    
+    <div class="project">
+      {{ if .Params.icon }}
+      <img src="{{ .Params.icon }}"/>
+      {{ end }}           
+      <a href="{{ .Permalink }}">{{ .Title }}</a>.
+      {{ if .Params.subtitle }}{{ .Params.subtitle }}{{ end }}
+    </div>
   </li>
   {{ end }}
 </ul>

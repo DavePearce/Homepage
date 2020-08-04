@@ -1,6 +1,7 @@
 ---
 date: 2008-01-01
 type: "conference"
+tag: "tutte"
 title: "Visualizing the computation tree of the Tutte Polynomial"
 authors: "Bennett Thompson, David J. Pearce, Craig Anslow and Gary Haggard"
 booktitle: "ACM symposium on Software visuallization (SoftViz)"

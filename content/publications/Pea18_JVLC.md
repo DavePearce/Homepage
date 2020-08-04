@@ -2,6 +2,7 @@
 draft: false
 date: 2018-01-01
 type: "journal"
+tag: "whiley"
 title: "On Declarative Rewriting for Sound and Complete Union, Intersection and Negation Types"
 authors: "David J. Pearce"
 booktitle: "Journal of Visual Languages & Computing"

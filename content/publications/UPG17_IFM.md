@@ -1,6 +1,7 @@
 ---
 date: 2017-01-01
 type: "conference"
+tag: "whiley"
 title: "Making Whiley Boogie!"
 authors: "Mark Utting, David J. Pearce and Lindsay Groves"
 booktitle: "Conference on Integrated Formal Methods (IFM)"

@@ -1,9 +1,13 @@
 ---
 draft: false
+date: 2006-01-01
 tag: "tutte"
+title: "Computing Tutte Polynomials"
+subtitle: "Tutte polynomials play an import role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics.  This project involved developing a high efficient algorithm (implemented in C++) for computing Tutte polynomials which was later incorporated into Mathematic and Sage."
+icon: "../icons/tutte.png"
 ---
 
-[Tutte polynomials](http://en.wikipedia.org/wiki/Tutte_polynomial) play an important role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics. For example, the polynomials can be evaluated to find the number of [spanning trees](http://en.wikipedia.org/wiki/Spanning_tree) in a graph, the number of forests in a graph, the number of connected spanning subgraphs, the number of spanning subgraphs, and the number of acyclic orientations. In addition, Tutte polynomials specialise to [chromatic polynomials](http://en.wikipedia.org/wiki/Chromatic_polynomial), flow polynomials, [Jones polynomials](http://en.wikipedia.org/wiki/Jones_polynomial) for alternating links, and partition functions of the [q-state Potts model](http://en.wikipedia.org/wiki/Potts_model) from statistical physics.
+**Overview.** [Tutte polynomials](http://en.wikipedia.org/wiki/Tutte_polynomial) play an important role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics. For example, the polynomials can be evaluated to find the number of [spanning trees](http://en.wikipedia.org/wiki/Spanning_tree) in a graph, the number of forests in a graph, the number of connected spanning subgraphs, the number of spanning subgraphs, and the number of acyclic orientations. In addition, Tutte polynomials specialise to [chromatic polynomials](http://en.wikipedia.org/wiki/Chromatic_polynomial), flow polynomials, [Jones polynomials](http://en.wikipedia.org/wiki/Jones_polynomial) for alternating links, and partition functions of the [q-state Potts model](http://en.wikipedia.org/wiki/Potts_model) from statistical physics.
 
 While Tutte polynomials have many applications, there are few practical algorithms available for computing them for graphs of sufficient size. Prof. Gary Haggard has paved the way by developing the most efficient algorithm currently available for this, based on his earlier work on computing Chromatic Polynomials. The algorithm relies on various optimisations and heuristics to obtain good performance.
 

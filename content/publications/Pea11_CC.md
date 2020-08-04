@@ -1,6 +1,7 @@
 ---
 date: 2011-01-01
 type: "conference"
+tag: "jkit"
 title: "JPure: a Modular Purity System for Java"
 authors: "David J. Pearce"
 booktitle: "Conference on Compiler Construction (CC)"

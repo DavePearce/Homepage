@@ -2,6 +2,7 @@
 draft: false
 date: 2015-01-01
 type: "journal"
+tag: "whiley"
 title: "Designing a Verifying Compiler: Lessons Learned from Developing Whiley"
 authors: "David J. Pearce and Lindsay Groves"
 booktitle: "Science of Computer Programming"
