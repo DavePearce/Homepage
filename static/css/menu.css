@@ -11,11 +11,9 @@
 }
 
 #menu img {
-    width: 20px;
-    height: 15px;    
+    padding: 0.5em;
+    height: 10px;
     margin: 5px 5px;
-    vertical-align: middle;
-    text-align: center;
 }
 
 #menu-content {
@@ -44,7 +42,7 @@
 
 #menu-content {
     /* help with visibility */
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
     /* ensure in front of everything */
     z-index: 1;
     /* hidden initially */
