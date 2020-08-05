@@ -19,20 +19,12 @@
 }
 
 #menu-content {
-    /* hidden initially */
-    display: none;
-    /* position relative to parent */
-    position: absolute;
     /* ensure fully below parent */
     top: 100%;
     right: 0%;
     background-color: inherit;
     margin: 0em;
     padding: 0em;
-    /* help with visibility */
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-    /* ensure in front of everything */
-    z-index: 1;
 }
 
 #menu:hover #menu-content {
@@ -46,11 +38,32 @@
     padding: 0.5em 0.5em;
     /* remove link underline */
     text-decoration: none;
-    /* ensure fills out space */
-    display: block;
 }
 
 #menu a:hover {
     background: #000000;
     color: #d5c397;
 }
+
+
+@media only screen and (max-width: 768px) {
+    #menu-content {
+      /* help with visibility */
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+      /* ensure in front of everything */
+      z-index: 1;
+      /* hidden initially */
+      display: none;
+      /* position relative to parent */
+      position: absolute;
+      /* ensure fills out space */
+      display: block;
+    }    
+}
+
+@media only screen and (min-width: 768px) {
+    #menu img {
+	display: none;
+    }
+}
+
