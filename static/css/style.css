@@ -1,19 +1,3 @@
-html, body {
-    margin: 0;
-    padding: 0px;
-    background: #FFFFFF;
-    height: 100%;
-    font-family: Helvetica; 
-}
-
-header {
-    font-family: Lucida Sans Typewriter, Lucida Console, monospace;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    background: #d5c397;
-}
-
 a {
     text-decoration: none;
     color: #a28744;
@@ -22,94 +6,6 @@ a {
 a:visited {
     text-decoration: none;
     color: #6c5a2d;
-}
-
-img[src$='#floatleft']
-{
-    float: left;
-    width: 160px;
-    padding: 0em 1em 0em 0em;
-}
-
-img[src$='#floatright']
-{
-    float: right;
-    width: 160px;
-    padding: 0em 0em 0em 1em;
-}
-
-.banner {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;    
-    width: 100%;
-    border-style: solid;
-    border-width: 0 0 1px 0;    
-}
-
-#name {
-    justify-content: flex-start;
-    flex-grow: 2;
-    font-size: 1em;
-    padding: 0.5em 0.5em 0.5em 0.5em;
-    border-style: solid;
-    border-width: 0 0 0.1rem 0;    
-}
-
-nav {
-    justify-content: flex-end;
-    margin: 0em;
-    background: inherit;
-}
-
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-nav li {
-    display: inline-block;
-    float: left;
-    cursor: pointer;
-    font-size: 1em;    
-    border-color: transparent;
-    border-style: solid;
-    border-width: 0 0 0.1rem 0;
-    border-color: #000000;    
-    margin: 0rem 0em 0em 0em;
-    padding: 0em;
-}
-
-nav a {
-    color: #5b4b25;
-    display: block;
-    padding: 0.5em 0.5em 0.5em 0.5em;
-}
-
-nav a:hover {
-    background: #000000;
-    color: #d5c397;
-}
-
-nav a.selected {
-    background: #000000;
-    color: #d5c397;
-}
-
-#menubar {
-    background: #dddd;
-}
-
-#container {
-    margin: 0em auto;
-    padding: 0px;
-    border: none;
-    background: #ffffff;
-    border-radius: 10px;
-}
-
-#content {
-    padding: 1em;
 }
 
 .project {
@@ -129,60 +25,11 @@ nav a.selected {
     margin: 1em;
 }
 
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-   #container {
-       background: 100%;
-   }
-/**   
-   nav {
-       background: #aaa;
-       overflow: hidden;
-       border: 1px solid black;
-       width: 10%;
-   }
-
-   nav li {
-       display: none;
-   }
-
-   nav a {
-       float: left;
-       display: block;
-   }
-   
-   nav a:hover {
-       display: block;
-   }
-*/
-}
-
-/* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-   #container {
-       width: 100%;
-  }
-}
-
-/* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
-    #container {
-	width: 95%;
+@media only screen and (max-width: 768px) {
+    .publication {
+	font-size: 12px;
     }
+    h2 {
+	margin: 0em;
+    }   
 }
-
-/* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-    #container {    
-	width: 80%;
-	font-size: 1.25em;	
-    }
-}
-
-/* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {
-    #container {    
-	width: 80%;
-    }
-}
-

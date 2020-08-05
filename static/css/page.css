@@ -1,0 +1,65 @@
+html, body {
+    margin: 0;
+    padding: 0px;
+    background: #FFFFFF;
+    height: 100%;
+    font-family: Helvetica; 
+}
+.container {
+    margin: 0em auto;
+    padding: 0px;
+    border: none;
+    background: #ffffff;
+    border-radius: 10px;
+}
+.content {
+    padding: 1em;
+}
+.topbar {
+    /* Set flex to allow first column to grow */
+    display: flex;
+    /* Prohibit wrapping items */
+    flex-wrap: nowrap;
+    /* Set flex in horizontal direction */
+    flex-direction: row;
+    width: 100%;
+    background: #d5c397;    
+    border-color: black;
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    margin: 0em;
+    padding: 0em;
+}
+.name {
+    /* Allow name to grow */
+    flex-grow: 1;
+    /* Put padding around text */
+    padding: 0.2em;
+    /* prevent name from wrapping */
+    white-space: nowrap;     
+}
+nav {    
+    margin: 0em;
+    /* prevent nav from growing */
+    flex-grow: 0;
+    /* same background as for parent */
+    background: inherit;
+}
+.banner {
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;    
+    width: 100%;
+    border-style: solid;
+    border-width: 0 0 1px 0;    
+}
+
+@media only screen and (max-width: 768px) {
+    .container { width: 100%; }
+    /* hide subtitle */
+    .name i { display: none; }
+}
+
+@media only screen and (min-width: 768px) {
+    .container { width: 80%; }
+}
+

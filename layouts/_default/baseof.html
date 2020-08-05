@@ -3,37 +3,53 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">    
     <title>{{.Title}}</title>
-    <link href='https://fonts.googleapis.com/css?family=Neucha' rel='stylesheet'>    
-    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">    
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/page.css">
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/menu.css">
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">
   </head>
   <body>
-    <header>
-      <div id="name">
-	<b>Dr. David J. Pearce</b>, <i>Associate Professor of Computer Science</i>
+    <script>
+      function toggleMenu() {
+        /* find menu content */
+        var content = document.getElementById("menu-content");
+        /* toggle visibility */
+        if(content.style.display === 'none') {
+          content.style.display = 'block';
+        } else {
+          content.style.display = 'none';
+        }
+      }
+    </script>    
+    <header class="topbar">
+      <div class="name">
+	<b>Dr. David J. Pearce</b><i>, Associate Professor of Computer Science</i>
       </div>
-    <nav>
-      <ul id="menubar">
-	{{ if .Page.IsHome }}
-	<li><a class="selected" href="{{.Site.BaseURL}}">Home</a></li>	
-	{{ else }}
-	<li><a href="{{.Site.BaseURL}}">Home</a></li>
-	{{ end }}
-	{{ $p := .Title }}
-	{{ range .Site.Sections }}
-	{{ if eq .Title $p }}
-	<li><a class="selected" href="{{.Permalink}}">{{.Title}}</a></li>
-	{{ else }}
-	<li><a href="{{.Permalink}}">{{.Title}}</a></li>
-	{{ end }}
-	{{ end }}
-      </ul>
-    </nav>
+      <nav>
+	<div id="menu" onclick="toggleMenu();">
+	  <img src="{{.Site.BaseURL}}/images/menu.png"/>
+	  <div id="menu-content">
+	    {{ if .Page.IsHome }}
+	    <a class="selected" href="{{.Site.BaseURL}}">Home</a>
+	    {{ else }}
+	    <a href="{{.Site.BaseURL}}">Home</a>
+	    {{ end }}
+	    {{ $p := .Title }}
+	    {{ range .Site.Sections }}
+	    {{ if eq .Title $p }}
+	    <a class="selected" href="{{.Permalink}}">{{.Title}}</a>
+	    {{ else }}
+	    <a href="{{.Permalink}}">{{.Title}}</a>
+	    {{ end }}
+	    {{ end }}
+	  </div>
+	</div>
+      </nav>
     </header>
     {{ if .Page.Params.banner }}
     <img class="banner" src="{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
     {{ end }}
-    <div id="container">
-      <div id="content">	
+    <div class="container">
+      <div class="content">	
 	{{ block "main" . }}
 	{{ end }}
       </div>
