@@ -27,15 +27,12 @@
     padding: 0em;
 }
 
-#menu:hover #menu-content {
-    /* visible on hover */
-    display: block;
-}
-
 #menu a {
     color: #5b4b25;
+    /* force to fill out */
+    display: block;
     /* styling */
-    padding: 0.5em 0.5em;
+    padding: 0.25em 0.25em;
     /* remove link underline */
     text-decoration: none;
 }
@@ -45,18 +42,26 @@
     color: #d5c397;
 }
 
+#menu-content {
+    /* help with visibility */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    /* ensure in front of everything */
+    z-index: 1;
+    /* hidden initially */
+    display: none;
+    /* position relative to parent */
+    position: absolute;
+    /* ensure fills out space */
+    display: block;
+}    
 
+/*
 @media only screen and (max-width: 768px) {
     #menu-content {
-      /* help with visibility */
       box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-      /* ensure in front of everything */
       z-index: 1;
-      /* hidden initially */
       display: none;
-      /* position relative to parent */
       position: absolute;
-      /* ensure fills out space */
       display: block;
     }    
 }
@@ -66,4 +71,4 @@
 	display: none;
     }
 }
-
+*/

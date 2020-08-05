@@ -19,6 +19,9 @@
           content.style.display = 'none';
         }
       }
+      function clearMenu() {
+        document.getElementById("menu-content").style.display='none';
+      }      
     </script>    
     <header class="topbar">
       <div class="name">
@@ -46,7 +49,7 @@
       </nav>
     </header>
     {{ if .Page.Params.banner }}
-    <img class="banner" src="{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+    <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
     {{ end }}
     <div class="container">
       <div class="content">	
@@ -54,5 +57,8 @@
 	{{ end }}
       </div>
     </div>
+    <script>
+      clearMenu();
+    </script>
   </body>
 </html>

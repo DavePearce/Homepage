@@ -1,15 +1,27 @@
 {{ define "main" }}
-<ul>
+{{ $odd := false }}
+<div class="project-list">
   {{ range .Pages.ByDate.Reverse }}
-  <li>
-    <div class="project">
-      {{ if .Params.icon }}
-      <img src="{{ .Params.icon }}"/>
-      {{ end }}           
-      <a href="{{ .Permalink }}">{{ .Title }}</a>.
-      {{ if .Params.subtitle }}{{ .Params.subtitle }}{{ end }}
-    </div>
-  </li>
-  {{ end }}
-</ul>
+    <a href="{{ .Permalink }}">  
+    {{ if eq $odd false }}
+    <div class="project-even">  
+      {{ $odd = true }}
+      {{ else }}
+      <div class="project-odd">
+	  {{ $odd = false }}
+	  {{ end }}
+	<p class="project-title">	  
+	  {{ if .Params.subtitle }}
+	  {{ .Params.subtitle }}
+	  {{ else }}
+	  {{ .Params.title }}      
+	  {{ end }}
+	</p>
+	<p class="project-description">
+	  {{ if .Params.description }}{{ .Params.description }}{{ end }}
+	</p>
+      </div>
+      {{ end }}
+    </a>
+</div>
 {{ end }}

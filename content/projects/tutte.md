@@ -2,8 +2,8 @@
 draft: false
 date: 2006-01-01
 tag: "tutte"
-title: "Computing Tutte Polynomials"
-subtitle: "Tutte polynomials play an import role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics.  This project involved developing a high efficient algorithm (implemented in C++) for computing Tutte polynomials which was later incorporated into Mathematic and Sage."
+title: "Tutte Polynomials"
+description: "Tutte polynomials play an import role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics.  This project involved developing a high efficient algorithm (implemented in C++) for computing Tutte polynomials which was later incorporated into Mathematic and Sage."
 icon: "../icons/tutte.png"
 ---
 

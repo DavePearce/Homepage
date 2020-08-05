@@ -2,7 +2,7 @@
 draft: false
 date: 2000-01-01
 title: "GILK"
-subtitle: "A dynamic instrumentation tool for the Linux kernel.  This uses binary instrumentation to enable a stock (i.e. without any source code modification) kernel to be instrumented whilst in execution."
+description: "A dynamic instrumentation tool for the Linux kernel.  This uses binary instrumentation to enable a stock (i.e. without any source code modification) kernel to be instrumented whilst in execution."
 tag: "gilk"
 ---
 
