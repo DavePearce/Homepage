@@ -37,11 +37,15 @@ html, body {
     /* prevent name from wrapping */
     white-space: nowrap;     
 }
+.name i {
+    display: block;    
+}
 nav {    
     margin: 0em;
     /* prevent nav from growing */
     flex-grow: 0;
     /* same background as for parent */
+    filter: brightness(0.9);
     background: inherit;
 }
 .banner {
@@ -56,11 +60,12 @@ nav {
     .container { width: 100%; }
     .content { padding: 0.5em;}
     /* hide subtitle */
-    .name i { display: none; }
+    .name i { font-size: 10px; }
 }
 
 @media only screen and (min-width: 768px) {
     .container { width: 80%; }
     .topbar { font-size: 1.5em; }
+    .name i { font-size: 0.5em; }    
 }
 
