@@ -21,8 +21,6 @@
     padding: 0.25em 0.25em;
     /* remove link underline */
     text-decoration: none;
-    /* make sure in front */
-    z-index: 10;
 }
 
 #menu a:hover {
@@ -60,8 +58,6 @@
 	right: 0%;
 	 /* help with visibility */
 	box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-	/* ensure in front of everything */
-	z-index: 1;
 	/* ensure fills out space */
 	display: none;
     }
