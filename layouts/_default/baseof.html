@@ -3,6 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">    
     <title>{{.Title}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ .Site.BaseURL }}css/page.css">
     <link rel="stylesheet" href="{{ .Site.BaseURL }}css/menu.css">
     <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">
@@ -22,12 +23,6 @@
           }
 	}
       }
-      function clearMenu() {
-        if(window.innerWidth <= 768) {				
-          document.getElementById("menu-content").style.display='none';
-          document.getElementById("menu").style.filter='';
-	}
-      }      
     </script>    
     <header class="topbar" onclick="toggleMenu()">
       <div class="topbar-title">Dr. David J. Pearce</div>
@@ -57,13 +52,11 @@
     <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
     {{ end }}
     <div class="container">
-      <div class="content">	
+      <div class="content">
 	{{ block "main" . }}
 	{{ end }}
       </div>
     </div>
-    <script>
-      /*clearMenu();*/
-    </script>
+    {{ template "_internal/google_analytics.html" . }}    
   </body>
 </html>

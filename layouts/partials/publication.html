@@ -1,4 +1,4 @@
-<p class="publication"><a href="{{ .Permalink }}">
+<a href="{{ .Permalink }}"><p class="publication">
 <b>{{ .Title }}</b>.  {{ .Params.Authors }}.
   {{ if .Params.thesis }}
   {{ .Params.thesis }} Thesis,
@@ -13,4 +13,4 @@
   {{ end }}
   {{ .Date.Format "2006" }}.  
   {{ if .Params.Copyright }}©{{.Params.Copyright}}{{end}}
-</a></p>
+</p></a>

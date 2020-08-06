@@ -1,7 +1,7 @@
 html, body {
     margin: 0;
     padding: 0px;
-    background: #FFFFFF;
+    background: #ffffff;
     height: 100%;
     font-family: Helvetica; 
 }
@@ -12,7 +12,9 @@ html, body {
     background: #ffffff;
     border-radius: 10px;
 }
-
+.content {
+    color: #594b26;
+}
 .topbar {
     display: grid;
     grid-gap: 0em;
@@ -53,7 +55,7 @@ html, body {
     border-width: 0 0 1px 0;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 768px) {    
     .container { width: 100%; }
     .content { padding: 0.5em;}
     .topbar { padding: 0em; grid-template-columns: auto 30px; }

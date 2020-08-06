@@ -1,4 +1,5 @@
 baseURL = "https://davepearce.github.io/Homepage/"
 languageCode = "en-nz"
 title = "Dave's Homepage"
+googleAnalytics = "UA-5582165-1"
 

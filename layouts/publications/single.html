@@ -3,27 +3,28 @@
 <h1>{{ .Title }}</h1>
 {{ .Content }}
 
-<b>Links:</b>
+<div class="publication-links">
 {{ $first := true }}
-{{ if .Params.DOI }}
-{{ if (not $first) }} / {{ end }}  
-<a href="https://doi.org/{{.Params.DOI}}">DOI</a>
-{{ $first = false }}
-{{end}}
 {{ if .Params.preprint }}
 {{ if (not $first) }} / {{ end }}  
-<a href="{{.Site.BaseURL}}/publications/{{.Params.preprint}}">PDF</a>
+<a href="{{.Site.BaseURL}}/publications/{{.Params.preprint}}">PDF&nbsp;<i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 {{ $first = false }}
 {{end}}
 {{ if .Params.slides }}
-{{ if (not $first) }} / {{ end }}  
+{{ if (not $first) }} | {{ end }}  
 <a href="{{.Params.slides}}">Slides</a>
 {{ $first = false }}
 {{end}}
-{{ if .Params.website }}
-{{ if (not $first) }} / {{ end }}  
-<a href="{{.Params.website}}">Website</a>
+{{ if .Params.DOI }}
+{{ if (not $first) }} | {{ end }}  
+<a href="https://doi.org/{{.Params.DOI}}">DOI</a>
 {{ $first = false }}
 {{end}}
+{{ if .Params.website }}
+{{ if (not $first) }} | {{ end }}  
+<a href="{{.Params.website}}">Conference Website</a>
+{{ $first = false }}
+{{end}}
+</div>
 
 {{ end }}
