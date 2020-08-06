@@ -1,6 +1,6 @@
 ---
 date: 2009-01-01
-type: "thesis"
+kind: "thesis"
 title: "Mocha: Type Inference for Java"
 authors: "Chris Male"
 thesis: "MSc"

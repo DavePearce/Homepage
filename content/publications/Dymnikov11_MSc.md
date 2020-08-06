@@ -1,6 +1,6 @@
 ---
 date: 2011-01-01
-type: "thesis"
+kind: "thesis"
 title: "OwnKit: Ownership Inference for Java"
 authors: "Constantine Dymnikov"
 thesis: "MSc"

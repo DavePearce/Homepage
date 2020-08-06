@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2011-01-01
-type: "journal"
+kind: "journal"
 tag: "jkit"
 title: "Formalisation and Implementation of an Algorithm for Bytecode Verification of @NonNull Types"
 authors: "Chris Male, David J. Pearce, Alex Potanin and Constantine Dymnikov"

@@ -1,6 +1,6 @@
 ---
 date: 2020-01-01
-type: "chapter"
+kind: "chapter"
 tag: "tutte"
 title: "Computational Resources"
 authors: "Gordon Royle and David J. Pearce"

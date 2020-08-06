@@ -1,6 +1,6 @@
 ---
 date: 2017-01-01
-type: "conference"
+kind: "conference"
 tag: "whiley"
 title: "Making Whiley Boogie!"
 authors: "Mark Utting, David J. Pearce and Lindsay Groves"

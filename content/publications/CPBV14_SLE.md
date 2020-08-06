@@ -1,6 +1,6 @@
 ---
 date: 2014-01-01
-type: "chapter"
+kind: "chapter"
 title: "Software Language Engineering - 7th International Conference"
 authors: "Benoit Combemale, David J. Pearce, Olivier Barais, Jurgen J. Vinju (Eds.)"
 booktitle: "LNCS 8706"

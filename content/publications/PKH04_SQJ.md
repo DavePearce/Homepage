@@ -1,6 +1,6 @@
 ---
 date: 2004-01-01
-type: "journal"
+kind: "journal"
 title: "Online Cycle Detection and Difference Propagation: Applications to Pointer Analysis"
 authors: "David J. Pearce, Paul H.J. Kelly and Chris Hankin"
 booktitle: "Software Quality Journal"

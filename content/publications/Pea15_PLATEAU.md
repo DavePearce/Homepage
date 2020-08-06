@@ -1,6 +1,6 @@
 ---
 date: 2015-01-01
-type: "workshop"
+kind: "workshop"
 tag: "whiley"
 title: "Some Usability Hypotheses for Verification"
 authors: "David J. Pearce"

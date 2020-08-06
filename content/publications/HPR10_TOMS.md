@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2010-01-01
-type: "journal"
+kind: "journal"
 tag: "tutte"
 title: "Computing Tutte Polynomials"
 authors: "Gary Haggard, David J. Pearce and Gordon Royle"

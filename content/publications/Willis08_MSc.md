@@ -1,6 +1,6 @@
 ---
 date: 2008-01-01
-type: "thesis"
+kind: "thesis"
 title: "The Java Query Language"
 authors: "Darren Willis"
 thesis: "MSc"

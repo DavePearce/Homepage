@@ -1,6 +1,6 @@
 ---
 date: 2014-01-01
-type: "thesis"
+kind: "thesis"
 title: "Graceful Language Extensions and Interfaces"
 authors: "Michael Homer"
 thesis: "PhD"

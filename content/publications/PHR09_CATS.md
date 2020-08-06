@@ -1,6 +1,6 @@
 ---
 date: 2009-01-01
-type: "conference"
+kind: "conference"
 tag: "tutte"
 title: "Edge-Selection Heuristics for Computing Tutte Polynomials"
 authors: "David J. Pearce, Gary Haggard and Gordon Royle"

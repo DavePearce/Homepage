@@ -1,6 +1,6 @@
 ---
 date: 2014-01-01
-type: "thesis"
+kind: "thesis"
 title: "An Empirical Evaluation of Force-Directed Graph Layout"
 authors: "Roman Klapaukh"
 thesis: "PhD"

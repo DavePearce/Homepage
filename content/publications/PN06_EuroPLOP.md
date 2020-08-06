@@ -1,6 +1,6 @@
 ---
 date: 2006-01-01
-type: "conference"
+kind: "conference"
 title: "Relationship Aspect Patterns"
 authors: "David J. Pearce and James Noble"
 booktitle: "Proceedings of the European Conference on Pattern Languages of Programs (EuroPLOP)"

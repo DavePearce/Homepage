@@ -1,6 +1,6 @@
 ---
 date: 2013-01-01
-type: "conference"
+kind: "conference"
 title: "Sound and Complete Flow Typing with Unions, Intersections and Negations"
 authors: "David J. Pearce"
 booktitle: "Proceedings of the Conference on Verification, Model Checking, and Abstract Interpretation (VMCAI)"

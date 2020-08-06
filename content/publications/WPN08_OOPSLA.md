@@ -1,6 +1,6 @@
 ---
 date: 2008-01-01
-type: "conference"
+kind: "conference"
 title: "Caching and Incrementalisation for the Java Query Language"
 authors: "Darren Willis, David J. Pearce and James Noble"
 booktitle: "Conference on Object-Oriented Programming Systems, Languages & Applications (OOPSLA)"

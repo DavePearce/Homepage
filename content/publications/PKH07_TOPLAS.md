@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2007-01-01
-type: "journal"
+kind: "journal"
 title: "Efficient Field-Sensitive Pointer Analysis for C"
 authors: "David J. Pearce, Paul H.J. Kelly and Chris Hankin"
 booktitle: "ACM Transactions on Programming Languages and Systems (TOPLAS)"

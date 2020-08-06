@@ -1,6 +1,6 @@
 ---
 date: 2013-01-01
-type: "workshop"
+kind: "workshop"
 title: "A Calculus for Constraint-Based Flow Typing"
 authors: "David J. Pearce"
 booktitle: "Workshop on Behavioural Types (BEAT)"

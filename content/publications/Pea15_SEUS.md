@@ -1,6 +1,6 @@
 ---
 date: 2015-01-01
-type: "workshop"
+kind: "workshop"
 tag: "whiley"
 title: "Integer Range Analysis for Whiley on Embedded Systems"
 authors: "David J. Pearce"

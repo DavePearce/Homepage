@@ -1,6 +1,6 @@
 ---
 date: 2019-01-01
-type: "conference"
+kind: "conference"
 title: "Dependency Versioning in the Wild"
 authors: "Jens Dietrich, David J. Pearce, Jacob Stringer, Amjed Tahir and Kelly Blincoe"
 booktitle: "Conference on Mining Software Repositories (MSR)"

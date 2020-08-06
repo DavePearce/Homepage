@@ -1,6 +1,6 @@
 ---
 date: 2015-01-01
-type: "conference"
+kind: "conference"
 title: "Comparing Graph Layouts for Vertex Selection Tasks"
 authors: "Roman Klapaukh, David J. Pearce and Stuart Marshall"
 booktitle: "Australian Conference on Human Computer Interaction (OzCHI)"

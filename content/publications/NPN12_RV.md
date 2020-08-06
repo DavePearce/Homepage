@@ -1,6 +1,6 @@
 ---
 date: 2012-01-01
-type: "conference"
+kind: "conference"
 title: "Profiling Field Initialization for Java"
 authors: "Stephen F. Nelson, David J. Pearce and James Noble"
 booktitle: "Conference on Runtime Verification (RV)"

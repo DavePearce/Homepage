@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2007-01-01
-type: "journal"
+kind: "journal"
 tag: "dts"
 title: "A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs"
 authors: "David J. Pearce and Paul H.J. Kelly"

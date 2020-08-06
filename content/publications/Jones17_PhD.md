@@ -1,6 +1,6 @@
 ---
 date: 2017-01-01
-type: "thesis"
+kind: "thesis"
 title: "Classless Object Semantics"
 authors: "Timothy Jones"
 thesis: "PhD"

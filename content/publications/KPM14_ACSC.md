@@ -1,6 +1,6 @@
 ---
 date: 2014-01-01
-type: "conference"
+kind: "conference"
 title: "Towards a Vertex and Edge Label Aware Force Directed Layout Algorithm"
 authors: "Roman Klapaukh, David J. Pearce and Stuart Marshall"
 booktitle: "Australasian Computer Science Conference (ACSC)"

@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2007-01-01
-type: "journal"
+kind: "journal"
 tag: "djprof"
 title: "Profiling with AspectJ"
 authors: "David J. Pearce, Matthew Webster, Robert Berry and Paul H.J. Kelly"

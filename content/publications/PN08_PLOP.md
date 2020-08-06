@@ -1,6 +1,6 @@
 ---
 date: 2008-01-01
-type: "conference"
+kind: "conference"
 title: "Patterns for ADT Optimisation"
 authors: "David J. Pearce and James Noble"
 booktitle: "Proceedings of the conference on Pattern Languages of Programs (PLoP)"

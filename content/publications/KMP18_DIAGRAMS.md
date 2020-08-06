@@ -1,6 +1,6 @@
 ---
 date: 2018-01-01
-type: "conference"
+kind: "conference"
 title: "A Symmetry Metric for Graphs and Line Diagrams"
 authors: "Roman Klapaukh, Stuart Marshall and David J. Pearce"
 booktitle: "Conference on the Theory and Application of Diagrams (DIAGRAMS)"

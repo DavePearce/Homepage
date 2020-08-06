@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2016-01-01
-type: "journal"
+kind: "journal"
 title: "A Space Efficient Algorithm for Detecting Strongly Connected Components"
 authors: "David J. Pearce"
 booktitle: "Information Processing Letters"

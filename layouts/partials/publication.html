@@ -13,29 +13,5 @@
   {{ end }}
   {{ .Date.Format "2006" }}.  
   {{ if .Params.Copyright }}©{{.Params.Copyright}}{{end}}
-  {{ $first := true }}
-  {{ if .Params.DOI }}
-  {{ if $first }} [ {{ else }} / {{ end }}  
-  <a href="https://doi.org/{{.Params.DOI}}">DOI</a>
-  {{ $first = false }}
-  {{end}}
-  {{ if .Params.preprint }}
-  {{ if $first }} [ {{ else }} / {{ end }}
-  <a href="{{.Site.BaseURL}}/publications/{{.Params.preprint}}">PDF</a>
-  {{ $first = false }}
-  {{end}}
-  {{ if .Params.slides }}
-  {{ if $first }} [ {{ else }} / {{ end }}  
-  <a href="{{.Params.slides}}">Slides</a>
-  {{ $first = false }}
-  {{end}}
-  {{ if .Params.website }}
-  {{ if $first }} [ {{ else }} / {{ end }}  
-  <a href="{{.Params.website}}">Website</a>
-  {{ $first = false }}
-  {{end}}
-  {{ if not $first }}  
-  ]
-  {{ end }}
 </p>
 </a>

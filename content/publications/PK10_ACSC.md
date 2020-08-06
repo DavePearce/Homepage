@@ -1,6 +1,6 @@
 ---
 date: 2010-01-01
-type: "conference"
+kind: "conference"
 tag: "dts"
 title: "A Batch Algorithm for Maintaining a Topological Order"
 authors: "David J. Pearce and Paul H.J. Kelly"

@@ -1,6 +1,6 @@
 ---
 date: 2000-01-01
-type: "thesis"
+kind: "thesis"
 title: "Instrumenting the Linux Kernel"
 tag: "gilk"
 authors: "David J. Pearce"

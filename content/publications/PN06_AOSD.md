@@ -1,6 +1,6 @@
 ---
 date: 2006-01-01
-type: "conference"
+kind: "conference"
 title: "Relationship Aspects"
 authors: "David J. Pearce and James Noble"
 booktitle: "Conference on Aspect-Oriented Software Development (AOSD)"

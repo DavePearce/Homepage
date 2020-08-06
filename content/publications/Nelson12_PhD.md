@@ -1,6 +1,6 @@
 ---
 date: 2012-01-01
-type: "thesis"
+kind: "thesis"
 title: "Profiling Initialisation Behaviour in Java"
 authors: "Stephen Nelson"
 thesis: "PhD"

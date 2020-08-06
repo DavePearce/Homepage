@@ -1,6 +1,6 @@
 ---
 date: 2003-01-01
-type: "conference"
+kind: "conference"
 title: "Design Space Exploration with A Stream Compiler"
 authors: "Oskar Mencer, David J. Pearce, Lee Howes and Wayne Luk"
 booktitle: "Conference on Field-Programmable Technology (FPT)"

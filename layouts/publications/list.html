@@ -1,45 +1,48 @@
 {{ define "main" }}
 {{ $odd := false }}
 {{ $lc := "" }}
-<h2>Journals</h2>
+<center>
+  <a href="#journals">Journals</a> | <a href="#conferences">Conferences</a> | <a href="#workshops">Workshops</a> | <a href="#bookchapters">Chapters</a> | <a href="#theses">Theses</a>
+</center>
+<a id="journals"><h2>Journal Papers</h2></a>
 <div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.type" "journal" }}
+  {{ range where .Pages.ByDate.Reverse ".Params.kind" "journal" }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
     {{ partial "publication.html" . }}
   </div>
   {{ $odd = not $odd }}{{ end }}
 </div>
-<h2>Conferences</h2>
+<a id="conferences"><h2>Conference Papers</h2></a>
 <div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.type" "conference" }}
+  {{ range where .Pages.ByDate.Reverse ".Params.kind" "conference" }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
     {{ partial "publication.html" . }}
   </div>
   {{ $odd = not $odd }}{{ end }}
 </div>
-<h2>Workshops</h2>
+<a id="workshops"><h2>Workshop Papers</h2></a>
 <div class="list">  
-  {{ range where .Pages.ByDate.Reverse ".Params.type" "workshop" }}
+  {{ range where .Pages.ByDate.Reverse ".Params.kind" "workshop" }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
     {{ partial "publication.html" . }}
   </div>
   {{ $odd = not $odd }}{{ end }}
 </div>
-<h2>Book Chapters</h2>
+<a id="bookchapters"><h2>Book Chapters</h2></a>
 <div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.type" "chapter" }}
+  {{ range where .Pages.ByDate.Reverse ".Params.kind" "chapter" }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
       {{ partial "publication.html" . }}
   </div>
-  {{ end }}
+  {{ $odd = not $odd }}{{ end }}
 </div>
-<h2>Theses</h2>
+<a id="theses"><h2>Theses</h2></a>
 <div class="list">
-  {{ range  where .Pages.ByDate.Reverse ".Params.type" "thesis" }}
+  {{ range  where .Pages.ByDate.Reverse ".Params.kind" "thesis" }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
     {{ partial "publication.html" . }}

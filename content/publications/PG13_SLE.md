@@ -1,6 +1,6 @@
 ---
 date: 2013-01-01
-type: "conference"
+kind: "conference"
 tag: "whiley"
 title: "Whiley: a Platform for Research in Software Verification"
 authors: "David J. Pearce and Lindsay Groves"

@@ -1,6 +1,6 @@
 ---
 date: 2008-01-01
-type: "workshop"
+kind: "workshop"
 title: "Introducing Software Modelling with Alloy at VUW"
 authors: "James Noble, David J. Pearce and Lindsay Groves"
 booktitle: "Workshop on Formal Methods in Computer Science Education (FORMED)"

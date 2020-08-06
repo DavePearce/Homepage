@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2018-01-01
-type: "conference"
+kind: "conference"
 tag: "whiley"
 title: "Rewriting for Sound and Complete Union, Intersection and Negation Types"
 authors: "David J. Pearce"

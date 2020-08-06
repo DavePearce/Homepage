@@ -1,6 +1,6 @@
 ---
 date: 2014-01-01
-type: "thesis"
+kind: "thesis"
 title: "Maintaining Private Views in Java"
 authors: "Paran Haslett"
 thesis: "MSc"

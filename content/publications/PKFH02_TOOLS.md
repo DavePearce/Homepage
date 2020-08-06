@@ -1,6 +1,6 @@
 ---
 date: 2002-01-01
-type: "conference"
+kind: "conference"
 tag: "gilk"
 title: "GILK: A Dynamic Instrumentation Tool for the Linux Kernel"
 authors: "David J. Pearce, Paul H.J. Kelly, Tony Field and Uli Harder"

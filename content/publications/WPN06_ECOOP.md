@@ -1,6 +1,6 @@
 ---
 date: 2006-01-01
-type: "conference"
+kind: "conference"
 title: "Efficient Object Querying for Java"
 authors: "Darren Willis, David J. Pearce and James Noble"
 booktitle: "European Conference on Object Oriented Programming  (ECOOP)"

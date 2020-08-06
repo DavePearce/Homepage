@@ -1,6 +1,6 @@
 ---
 date: 2008-01-01
-type: "conference"
+kind: "conference"
 tag: "jkit"
 title: "Java Bytecode Verification for @NonNull Types"
 authors: "Chris Male, David J. Pearce, Alex Potanin and Constantine Dymnikov"

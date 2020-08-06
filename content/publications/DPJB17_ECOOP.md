@@ -1,6 +1,6 @@
 ---
 date: 2017-01-01
-type: "conference"
+kind: "conference"
 title: "Contracts in the Wild: A Study of Java Programs"
 authors: "Jens Dietrich, David J. Pearce, Kamil Jezek and Premek Brada"
 booktitle: "European Conference on Object Oriented Programming  (ECOOP)"

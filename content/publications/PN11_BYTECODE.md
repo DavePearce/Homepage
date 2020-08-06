@@ -1,7 +1,7 @@
 ---
 draft: false
 date: 2011-01-01
-type: "journal"
+kind: "journal"
 tag: "whiley"
 title: "Implementing a Language with Flow-Sensitive and Structural Typing on the JVM"
 authors: "David J. Pearce and James Noble"

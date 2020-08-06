@@ -1,6 +1,6 @@
 ---
 date: 2019-01-01
-type: "thesis"
+kind: "thesis"
 title: "AtmoVis: Visualization of Air Quality Data"
 authors: "Benjamin Powley"
 thesis: "MSc"

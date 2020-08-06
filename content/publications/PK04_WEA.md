@@ -1,6 +1,6 @@
 ---
 date: 2004-01-01
-type: "workshop"
+kind: "workshop"
 tag: "dts"
 title: "A Dynamic Algorithm for Topologically Sorting Directed Acyclic Graphs"
 authors: "David J. Pearce and Paul H.J. Kelly"
