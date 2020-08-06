@@ -10,27 +10,31 @@
   <body>
     <script>
       function toggleMenu() {
-        var content = document.getElementById("menu-content");
-        var menu = document.getElementById("menu");
-        if(content.style.display === 'block') {
-          content.style.display = 'none';
-          menu.style.filter = '';     
-        } else {
-          content.style.display = 'block';
-          menu.style.filter = "brightness(0.8)";       
-        }
+        if(window.innerWidth <= 768) {
+          var content = document.getElementById("menu-content");
+          var menu = document.getElementById("menu");
+          if(content.style.display === 'block') {
+            content.style.display = 'none';
+            menu.style.filter = '';     
+          } else {
+            content.style.display = 'block';
+            menu.style.filter = "brightness(0.8)";       
+          }
+	}
       }
       function clearMenu() {
-        document.getElementById("menu-content").style.display='none';
-        document.getElementById("menu").style.filter='';
+        if(window.innerWidth <= 768) {				
+          document.getElementById("menu-content").style.display='none';
+          document.getElementById("menu").style.filter='';
+	}
       }      
     </script>    
-    <header class="topbar">
+    <header class="topbar" onclick="toggleMenu()">
       <div class="topbar-title">Dr. David J. Pearce</div>
       <div class="topbar-subtitle">Associate Professor of Computer Science</div>
-      <div class="topbar-menu" onclick="toggleMenu();">
-	<div id="menu" onclick="toggleMenu();">
-	  <div id="menu-icon" onclick="toggleMenu();"></div>	    
+      <div class="topbar-menu">
+	<div id="menu">
+	  <div id="menu-icon"></div>	    
 	  <div id="menu-content">
 	    {{ if .Page.IsHome }}
 	    <a class="selected" href="{{.Site.BaseURL}}">Home</a>
