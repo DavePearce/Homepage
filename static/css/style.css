@@ -12,7 +12,6 @@ a:visited {
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
-    flex-wrap: none;
 }
 
 .project-description {
@@ -20,7 +19,6 @@ a:visited {
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
-    flex-wrap: wrap;
 }
 
 .publication-links {
@@ -29,23 +27,16 @@ a:visited {
 
 .list div {
     margin: 0em;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
 }
 
 .list-even {
     background: #f7f5ed;
     border: 2px solid #f7f5ed;
-    /* IE11 & flexbox issue */    
-    width: 100%;
 }
 
 .list-odd {
     background: #e8e0c9; 
     border: 2px solid #e8e0c9;
-    /* IE11 & flexbox issue */
-    width: 100%;    
 }
 
 .list-odd:hover,.list-even:hover {
