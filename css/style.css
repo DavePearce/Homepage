@@ -33,11 +33,15 @@ a:visited {
 .list-even {
     background: #f7f5ed;
     border: 2px solid #f7f5ed;
+    /* IE11 & flexbox issue */    
+    width: 100%;
 }
 
 .list-odd {
     background: #e8e0c9; 
     border: 2px solid #e8e0c9;
+    /* IE11 & flexbox issue */
+    width: 100%;    
 }
 
 .list-odd:hover,.list-even:hover {
@@ -49,13 +53,15 @@ a:visited {
 @media only screen and (max-width: 768px) {
     .list-odd  { padding: 0em 0.5em; }
     .list-even { padding: 0em 0.5em; }
+    .publication { padding: 0em; }    
     .project { padding: 0.5em; }    
     .project-title { font-size: 1.5em; }
 }
 
 @media only screen and (min-width: 768px) {
     .list-even { padding: 0em 1em; }
-    .list-odd  { padding: 0em 1em; }   
+    .list-odd  { padding: 0em 1em; }
+    .publication { padding: 0em; }
     .project { padding: 1em; }
     .project-title { font-size: 2em; }    
 }
