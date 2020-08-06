@@ -50,13 +50,14 @@
 	/* fill out space */
 	width: 100%;
 	height: 100%;
+	/* keep proportions */
 	object-fit: contain;
 	/* Add image icon */
 	content:url(../images/menu.png);
     }
     #menu-content {
 	/* position relative to parent */
-	position: fixed;
+	position: absolute;
 	 /* ensure fully below parent */
 	top: 100%;
 	right: 0%;
