@@ -13,6 +13,7 @@
     background: inherit;
     margin: 0em;
     padding: 0em;
+    z-index: 1;
 }
 
 #menu a {
