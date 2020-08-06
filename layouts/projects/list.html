@@ -3,24 +3,24 @@
 {{ $lc := "" }}
 <div class="list">
   {{ range .Pages.ByDate.Reverse }}
-  <a href="{{ .Permalink }}">
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
-    <div class="project">
-      <div class="project-title">	  
-	{{ if .Params.subtitle }}
-	{{ .Params.subtitle }}
-	{{ else }}
-	{{ .Params.title }}      
-	{{ end }}
+    <a href="{{ .Permalink }}">      
+      <div class="project">
+	<div class="project-title">	  
+	  {{ if .Params.subtitle }}
+	  {{ .Params.subtitle }}
+	  {{ else }}
+	  {{ .Params.title }}      
+	  {{ end }}
+	</div>
+	<div class="project-description">
+	  {{ if .Params.description }}{{ .Params.description }}{{ end }}
+	</div>
       </div>
-      <div class="project-description">
-	{{ if .Params.description }}{{ .Params.description }}{{ end }}
-      </div>
-    </div>
+    </a>    
   </div>
   {{ $odd = not $odd }}
   {{ end }}
-  </a>
 </div>
 {{ end }}
