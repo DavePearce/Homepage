@@ -1,7 +1,6 @@
 #menu {
     width: 100%;
     height: 100%;
-    padding: 0em 0em;
     /* ensure pointer cursor */
     cursor: pointer;
     /* set position for child */
@@ -10,29 +9,20 @@
     background: inherit;
 }
 
-#menu img {
-    padding: 0.5em;
-    height: 10px;
-    margin: 5px 5px;
-}
-
 #menu-content {
-    /* ensure fully below parent */
-    top: 100%;
-    right: 0%;
-    background-color: inherit;
+    background: inherit;
     margin: 0em;
     padding: 0em;
 }
 
 #menu a {
     color: #5b4b25;
-    /* force to fill out */
-    display: block;
     /* styling */
     padding: 0.25em 0.25em;
     /* remove link underline */
     text-decoration: none;
+    /* make sure in front */
+    z-index: 10;
 }
 
 #menu a:hover {
@@ -40,33 +30,55 @@
     color: #d5c397;
 }
 
-#menu-content {
-    /* help with visibility */
-    box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
-    /* ensure in front of everything */
-    z-index: 1;
-    /* hidden initially */
-    display: none;
-    /* position relative to parent */
-    position: absolute;
-    /* ensure fills out space */
-    display: block;
-}    
+#menu a.selected {
+    background: #000000;
+    color: #d5c397;
+}
 
-/*
 @media only screen and (max-width: 768px) {
+    #menu {
+	width: 100%;
+	height: 100%;
+	margin: 0em 0em;
+	padding: 0em 0em;    
+    }	
+    #menu-icon {
+	padding: 0em;
+	margin: 0em;
+	/* fill out space */
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	/* Add image icon */
+	content:url(../images/menu.png);
+    }
     #menu-content {
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-      z-index: 1;
-      display: none;
-      position: absolute;
-      display: block;
-    }    
+	/* position relative to parent */
+	position: fixed;
+	 /* ensure fully below parent */
+	top: 100%;
+	right: 0%;
+	 /* help with visibility */
+	box-shadow: 16px 16px 16px 0px rgba(0,0,0,0.5);
+	/* ensure in front of everything */
+	z-index: 1;
+	/* ensure fills out space */
+	display: none;
+    }
+    #menu-content a {
+	/* force to fill out */
+	display: block;
+	/* separate menu items */
+	padding: 1em;
+    }	
 }
 
 @media only screen and (min-width: 768px) {
-    #menu img {
-	display: none;
+    #menu-content {
+	display: inline-block;
     }
+    #menu-content a {
+	/* force to fill out */
+	display: inline-block;
+    }	
 }
-*/

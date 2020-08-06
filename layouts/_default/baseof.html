@@ -10,16 +10,14 @@
   <body>
     <script>
       function toggleMenu() {
-        /* find menu content */
         var content = document.getElementById("menu-content");
         var menu = document.getElementById("menu");
-        /* toggle visibility */
-        if(content.style.display === 'none') {
-          content.style.display = 'block';
-          menu.style.filter = "brightness(1.2)";
-        } else {
+        if(content.style.display === 'block') {
           content.style.display = 'none';
-          menu.style.filter = '';
+          menu.style.filter = '';     
+        } else {
+          content.style.display = 'block';
+          menu.style.filter = "brightness(0.8)";       
         }
       }
       function clearMenu() {
@@ -28,12 +26,11 @@
       }      
     </script>    
     <header class="topbar">
-      <div class="name">
-	<b>Dr. David J. Pearce</b><i> Associate Professor of Computer Science</i>
-      </div>
-      <nav>
+      <div class="topbar-title">Dr. David J. Pearce</div>
+      <div class="topbar-subtitle">Associate Professor of Computer Science</div>
+      <div class="topbar-menu" onclick="toggleMenu();">
 	<div id="menu" onclick="toggleMenu();">
-	  <img src="{{.Site.BaseURL}}/images/menu.png"/>
+	  <div id="menu-icon" onclick="toggleMenu();"></div>	    
 	  <div id="menu-content">
 	    {{ if .Page.IsHome }}
 	    <a class="selected" href="{{.Site.BaseURL}}">Home</a>
@@ -50,7 +47,7 @@
 	    {{ end }}
 	  </div>
 	</div>
-      </nav>
+      </div>
     </header>
     {{ if .Page.Params.banner }}
     <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
@@ -62,7 +59,7 @@
       </div>
     </div>
     <script>
-      clearMenu();
+      /*clearMenu();*/
     </script>
   </body>
 </html>
