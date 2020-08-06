@@ -1,14 +1,14 @@
-a {
-    text-decoration: none;
+a:link {
+    text-decoration: underline dotted;
     color: #a28744;
 }
 
 a:visited {
-    text-decoration: none;
     color: #6c5a2d;
 }
 
 .project-title {
+    font-weight: bold;
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
@@ -21,6 +21,10 @@ a:visited {
     padding: 0em;
     border: 0px dashed black;
     flex-wrap: wrap;
+}
+
+.publication-links {
+    text-align: right;
 }
 
 .list div {
@@ -48,9 +52,13 @@ a:visited {
     border: 2px solid #362e17;
 }
 
-.list a { color: #000000; }
+.list a {
+    text-decoration: none;
+    color: #594b26;
+}
 
 @media only screen and (max-width: 768px) {
+    p { margin: 0em 0em 1em 0em; }    
     .list-odd  { padding: 0em 0.5em; }
     .list-even { padding: 0em 0.5em; }
     .publication { padding: 0em; }    
