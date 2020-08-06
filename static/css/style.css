@@ -8,21 +8,21 @@ a:visited {
     color: #6c5a2d;
 }
 
-.project-list div {
+.list div {
     margin: 0em;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
 }
 
-.project-title {
+.list-title {
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
     flex-wrap: none;
 }
 
-.project-description {
+.list-description {
     display: inline;
     margin: 0em;
     padding: 0em;
@@ -30,18 +30,22 @@ a:visited {
     flex-wrap: wrap;
 }
 
-.project-even {
+.list-even {
     background: #f7f5ed;
     border: 2px solid #f7f5ed;
 }
 
-.project-odd {
+.list-odd {
     background: #e8e0c9; 
     border: 2px solid #e8e0c9;
 }
 
-.project-odd:hover,.project-even:hover {
+.list-odd:hover,.list-even:hover {
     border: 2px solid #362e17;
+}
+
+.list a {
+    color: #000000;
 }
 
 @media only screen and (max-width: 768px) {
@@ -51,20 +55,20 @@ a:visited {
     ul {
 	padding: 0em 0em 0em 1em;
     }
-    .project-list div {
+    .list div {
 	margin: 0em;
 	padding: 0.5em;
     }
-    .project-title {
+    .list-title {
 	font-size: 1.5em;
     }
 }
 
 @media only screen and (min-width: 768px) {
-    .project-list div {
-	padding: 1em;
+    .list div {
+	padding: 0em 1em;
     }    
-    .project-title {
+    .list-title {
 	font-size: 2em;
     }    
 }

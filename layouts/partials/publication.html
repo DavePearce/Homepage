@@ -1,4 +1,5 @@
-<p class="publication"><a href="{{ .Permalink }}">{{ .Title }}</a>.  {{ .Params.Authors }}.
+<a href="{{ .Permalink }}">
+<p class="publication"><b>{{ .Title }}</b>.  {{ .Params.Authors }}.
   {{ if .Params.thesis }}
   {{ .Params.thesis }} Thesis,
   <i>{{ .Params.school }},</i>  
@@ -37,3 +38,4 @@
   ]
   {{ end }}
 </p>
+</a>

@@ -7,12 +7,16 @@
 
 {{ if gt (len $publications) 0 }}
 <h2>Publications</h2>
-<ul>
+<div class="list">
+  {{ $odd := false }}
+  {{ $lc := "" }} 
   {{ range $publications }}
-  <li>
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class={{$lc}}>
     {{ partial "publication.html" . }}
-  </li>
+  </div>
+  {{ $odd = not $odd }}
   {{ end }}
-  </ul>
+  </div>
 {{ end }}
 {{ end }}

@@ -13,23 +13,24 @@
     background: inherit;
     margin: 0em;
     padding: 0em;
-    z-index: 1;
 }
 
-#menu a {
+#menu-content a {
     color: #5b4b25;
     /* styling */
     padding: 0.25em 0.25em;
     /* remove link underline */
     text-decoration: none;
+    /* make sure in front */
+    z-index: 1;
 }
 
-#menu a:hover {
+#menu-content a:hover {
     background: #000000;
     color: #d5c397;
 }
 
-#menu a.selected {
+#menu-content a.selected {
     background: #000000;
     color: #d5c397;
 }
