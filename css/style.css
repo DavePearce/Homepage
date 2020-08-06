@@ -8,26 +8,26 @@ a:visited {
     color: #6c5a2d;
 }
 
-.list div {
-    margin: 0em;
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-}
-
-.list-title {
+.project-title {
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
     flex-wrap: none;
 }
 
-.list-description {
+.project-description {
     display: inline;
     margin: 0em;
     padding: 0em;
     border: 0px dashed black;
     flex-wrap: wrap;
+}
+
+.list div {
+    margin: 0em;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
 }
 
 .list-even {
@@ -55,20 +55,22 @@ a:visited {
     ul {
 	padding: 0em 0em 0em 1em;
     }
-    .list div {
+    .list-even,.list-odd {
 	margin: 0em;
 	padding: 0.5em;
     }
-    .list-title {
+    .project-title {
 	font-size: 1.5em;
     }
 }
 
 @media only screen and (min-width: 768px) {
-    .list div {
-	padding: 0em 1em;
+    .list-even,.list-odd {
+	padding: 1em 1em;
     }    
-    .list-title {
+    .project-title {
 	font-size: 2em;
+	padding: 0.25em 0em;
+	margin: 0em 0em;
     }    
 }
