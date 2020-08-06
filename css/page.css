@@ -64,7 +64,7 @@ html, body {
 }
 
 @media only screen and (min-width: 768px) {
-    .container { width: 60%; }
+    .container { width: 75%; }
     .content { padding: 2em;}
     .topbar { grid-template-columns: 1fr auto; }    
     .topbar-title { font-size: 2em; }
