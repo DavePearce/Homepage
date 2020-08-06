@@ -6,18 +6,18 @@
   <a href="{{ .Permalink }}">
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class={{$lc}}>
-    <p>
-    <p class="list-title">	  
-      {{ if .Params.subtitle }}
-      {{ .Params.subtitle }}
-      {{ else }}
-      {{ .Params.title }}      
-      {{ end }}
-    </p>
-    <p class="list-description">
-      {{ if .Params.description }}{{ .Params.description }}{{ end }}
-    </p>
-    </p>
+    <div class="project">
+      <div class="project-title">	  
+	{{ if .Params.subtitle }}
+	{{ .Params.subtitle }}
+	{{ else }}
+	{{ .Params.title }}      
+	{{ end }}
+      </div>
+      <div class="project-description">
+	{{ if .Params.description }}{{ .Params.description }}{{ end }}
+      </div>
+    </div>
   </div>
   {{ $odd = not $odd }}
   {{ end }}
