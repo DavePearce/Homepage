@@ -1,6 +1,27 @@
 {{ define "main" }}
+{{ $tag := .Params.tag }}
+{{ $projects := where (.Site.GetPage "projects").Pages.ByDate.Reverse ".Params.tag" $tag }}
 
 <h1>{{ .Title }}</h1>
+
+<p><b>Author(s).</b> {{ .Params.Authors }}.</p>
+
+<p><b>Venue.</b>
+{{ if .Params.thesis }}
+  {{ .Params.thesis }} Thesis,
+  <i>{{ .Params.school }},</i>  
+  {{ else }}
+  In <i>{{ .Params.Booktitle }}, </i>
+  {{ if .Params.Volume }}
+    {{.Params.Volume}}
+    {{ if .Params.Number }}({{.Params.Number}}),{{ end }}
+  {{ end }}
+  {{ if .Params.Pages }}pages {{ .Params.Pages }},{{ end }}
+  {{ end }}
+  {{ .Date.Format "2006" }}.  
+  {{ if .Params.Copyright }}©{{.Params.Copyright}}{{end}}
+</p>
+
 {{ .Content }}
 
 <div class="publication-links">
@@ -26,5 +47,20 @@
 {{ $first = false }}
 {{end}}
 </div>
+
+{{ if gt (len $projects) 0 }}
+<h2>Related Project(s)</h2>
+<div class="list">
+  {{ $odd := false }}
+  {{ $lc := "" }} 
+  {{ range $projects }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class={{$lc}}>
+    {{ partial "project.html" . }}    
+  </div>
+  {{ $odd = not $odd }}
+  {{ end }}
+  </div>
+{{ end }}
 
 {{ end }}

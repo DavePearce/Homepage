@@ -1,6 +1,7 @@
 ---
 date: 2005-01-01
 kind: "thesis"
+tag: "dts"
 title: "Some directed graph algorithms and their application to pointer analysis."
 authors: "David J. Pearce"
 thesis: "PhD"
