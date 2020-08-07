@@ -1,13 +1,13 @@
 {{ define "main" }}
 {{ $odd := false }}
 {{ $lc := "" }}
-<table class="list">
+<div class="list">
   {{ range .Pages.ByDate.Reverse }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <tr class={{$lc}}>
+  <div class={{$lc}}>
       {{ partial "talk.html" . }}
-  </tr>
+  </div>
   {{ $odd = not $odd }}
   {{ end }}  
-</table>
+</div>
 {{ end }}
