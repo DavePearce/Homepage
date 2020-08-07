@@ -1,9 +1,25 @@
 {{ define "main" }}
 {{ $tag := .Params.tag }}
 {{ $publications := where (.Site.GetPage "publications").Pages.ByDate.Reverse ".Params.tag" $tag }}
+{{ $talks := where (.Site.GetPage "talks").Pages.ByDate.Reverse ".Params.tag" $tag }}
 
 <h1>{{ .Title }}</h1>
 {{ .Content }}
+
+{{ if gt (len $talks) 0 }}
+<h2>Related Talk(s)</h2>
+<div class="list">
+  {{ $odd := false }}
+  {{ $lc := "" }} 
+  {{ range $talks }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class={{$lc}}>
+    {{ partial "talk.html" . }}
+  </div>
+  {{ $odd = not $odd }}
+  {{ end }}
+</div>
+{{ end }}
 
 {{ if gt (len $publications) 0 }}
 <h2>Related Publication(s)</h2>
