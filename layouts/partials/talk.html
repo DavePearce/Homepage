@@ -1,11 +1,11 @@
 <div class="talk">
-  <div class="talk-title">	  
+  <h2 class="talk-title">
     {{ if .Params.subtitle }}
     {{ .Params.subtitle }}
     {{ else }}
     {{ .Params.title }}      
     {{ end }}
-  </div>
+  </h2>
   <div class="talk-description">
     {{ if .Params.description }}{{ .Params.description }}{{ end }}
   </div>

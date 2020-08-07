@@ -1,12 +1,12 @@
 <a href="{{ .Permalink }}">      
   <div class="project">
-    <div class="project-title">	  
+    <h2 class="project-title">
       {{ if .Params.subtitle }}
       {{ .Params.subtitle }}
       {{ else }}
       {{ .Params.title }}      
       {{ end }}
-    </div>
+    </h2>
     <div class="project-description">
       {{ if .Params.description }}{{ .Params.description }}{{ end }}
     </div>
