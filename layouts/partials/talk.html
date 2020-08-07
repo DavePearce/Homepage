@@ -1,0 +1,21 @@
+<td>
+  <div class="talk">
+    <div class="talk-title">	  
+      {{ if .Params.subtitle }}
+      {{ .Params.subtitle }}
+      {{ else }}
+      {{ .Params.title }}      
+      {{ end }}
+    </div>
+    <div class="talk-description">
+      {{ if .Params.description }}{{ .Params.description }}{{ end }}
+    </div>
+  </div>
+</td>
+<td>
+  <div class="talk-shortembedding">
+    {{ if .Params.youtube }}
+    <iframe src="https://www.youtube.com/embed/{{ .Params.youtube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    {{ end }}
+  </div>
+</td>
