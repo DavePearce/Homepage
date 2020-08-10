@@ -40,8 +40,13 @@ html, body {
     padding: 0em 0em 0.25em 0.25em; 
 }
 
-.topbar-menu {
+.topbar-social {
     grid-column: 2;
+    margin: 0em 0em;
+}
+
+.topbar-menu {
+    grid-column: 3;
     width: 100%;
     margin: auto;
     background: inherit;
@@ -58,17 +63,21 @@ html, body {
 @media only screen and (max-width: 768px) {    
     .container { width: 100%; }
     .content { padding: 0.5em;}
-    .topbar { padding: 0em; grid-template-columns: auto 30px; }
+    .topbar { padding: 0em; grid-template-columns: auto 1fr 30px; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
+    .topbar-subtitle::before { content: "A/Prof Computer Science"; }
+    .topbar-social { grid-row: 2; line-height: 1em; font-size: 1em; padding: 0em 0em 0.25em 0em; }    
     .topbar-menu { grid-row: 1 / span 2; height: 100%; width: 100%; }    
 }
 
 @media only screen and (min-width: 768px) {
     .container { width: 75%; }
     .content { padding: 2em;}
-    .topbar { padding: 0em 0.5em; grid-template-columns: 1fr auto; }    
+    .topbar { padding: 0em 0.5em; grid-template-columns: auto 1fr auto; }    
     .topbar-title { font-size: 2em; }
     .topbar-subtitle { font-size: 1.5em; }
+    .topbar-subtitle::before { content: "Associate Professor of Computer Science"; }
+    .topbar-social { grid-row: 2; font-size: 1.5em; padding: 0em 0em 0.25em 1em; }
     .topbar-menu {  grid-row: 2;}
 }
