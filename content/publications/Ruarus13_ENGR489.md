@@ -3,10 +3,10 @@ date: 2013-01-01
 kind: "honsreport"
 tag: "whiley"
 title: "Compiling Whiley Programs for a General Purpose GPU"
-authors: "Melby Raurus"
+authors: "Melby Ruarus"
 thesis: "Final Year Project (ENGR489)"
 school: "Victoria University of Wellington"
-preprint: "Raurus13_ENGR489.pdf"
+preprint: "Ruarus13_ENGR489.pdf"
 
 ---
 
