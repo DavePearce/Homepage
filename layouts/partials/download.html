@@ -1,0 +1,12 @@
+<div class="download">
+  <div class="download-title">
+    {{ .Params.title }} ({{ .PublishDate.Format "Jan 2006" }})
+  </div>  
+  <div class="download-notes">
+    <a href="{{ .Permalink }}"><i class="fa fa-file-text" aria-hidden="true"></i></a>
+  </div>
+  <div class="download-file">
+    <a href="{{.Site.BaseURL}}/downloads/{{.Params.download}}"><i class="fa fa-download" aria-hidden="true"></i></a>
+  </div>    
+</div>
+  

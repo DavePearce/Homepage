@@ -40,6 +40,17 @@ a:visited {
     width: 100%;
 }
 
+.download {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding: 0em 0em;
+}
+
+.download-title {
+    flex-grow: 1;
+}
+
 .list div {
     margin: 0em;
 }
@@ -72,7 +83,8 @@ a:visited {
     .project { padding: 0.5em; }    
     .talk { padding: 0.5em; }    
     .talk-description { padding: 0.5em 0em 0.5em 0em; }    
-    .talk-embedding { max-width: 100%; grid-column: 1; grid-row: 3; }    
+    .talk-embedding { max-width: 100%; grid-column: 1; grid-row: 3; }
+    .download div { padding: 0.25em 0.25em; }    
 }
 
 @media only screen and (min-width: 768px) {
@@ -82,4 +94,5 @@ a:visited {
     .project { padding: 1em; }
     .talk { padding: 1em; grid-template-rows: auto 1fr; }
     .talk-embedding { grid-column: 2; grid-row: 1 / span 2; }
+    .download div { padding: 1em 1em; }
 }

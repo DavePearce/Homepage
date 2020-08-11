@@ -2,4 +2,5 @@ baseURL = "https://whileydave.com/"
 languageCode = "en-nz"
 title = "Dave's Homepage"
 googleAnalytics = "UA-5582165-7"
+paginate=10
 
