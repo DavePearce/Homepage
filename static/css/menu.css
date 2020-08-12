@@ -50,10 +50,11 @@
 	/* fill out space */
 	width: 100%;
 	height: 100%;
-	/* keep proportions */
-	object-fit: contain;
-	/* Add image icon */
-	content:url(../images/menu.png);
+    }
+    #menu-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;	
     }
     #menu-content {
 	/* position relative to parent */
@@ -81,5 +82,8 @@
     #menu-content a {
 	/* force to fill out */
 	display: inline-block;
-    }	
+    }
+    #menu-icon {
+	display: none;
+    }
 }
