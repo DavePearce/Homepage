@@ -42,7 +42,7 @@
     }	
     #menu-icon img {
 	width: 30px;
-	height: 100%;
+	height: 2em;
 	object-fit: contain;
     }
     #menu-content {
