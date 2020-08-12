@@ -1,6 +1,4 @@
 #menu {
-    width: 100%;
-    height: 100%;
     /* ensure pointer cursor */
     cursor: pointer;
     /* set position for child */
@@ -39,22 +37,13 @@
 
 @media only screen and (max-width: 768px) {
     #menu {
-	width: 100%;
-	height: 100%;
-	margin: 0em 0em;
-	padding: 0em 0em;    
-    }	
-    #menu-icon {
-	padding: 0em;
 	margin: 0em;
-	/* fill out space */
-	width: 100%;
-	height: 100%;
-    }
+	padding: 0em;
+    }	
     #menu-icon img {
-	width: 100%;
+	width: 30px;
 	height: 100%;
-	object-fit: contain;	
+	object-fit: contain;
     }
     #menu-content {
 	/* position relative to parent */
