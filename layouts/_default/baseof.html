@@ -16,8 +16,8 @@
     <script>
       "use strict";
       function toggleMenu() {
-        var i = document.getElementById("menu-icon");
-        if(i.style.display !== 'none') {
+        var q = window.matchMedia("(max-width: 768px)");
+        if(q.matches) {
           var c = document.getElementById("menu-content");
           var m = document.getElementById("menu");
           if(c.style.display === 'block') {
@@ -25,7 +25,7 @@
             m.style.filter = '';     
           } else {
             c.style.display = 'block';
-            m.style.filter = "brightness(0.8)";       
+            m.style.filter = "brightness(0.7)";       
           }
 	}
       }

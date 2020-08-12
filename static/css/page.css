@@ -54,7 +54,7 @@ html, body {
     border-width: 0 0 1px 0;
 }
 
-@media only screen and (max-width: 1000px) {    
+@media only screen and (max-width: 992px) {    
     .container { width: 100%; }
     .content { padding: 0.5em;}
     .topbar { padding: 0em; }
@@ -65,7 +65,7 @@ html, body {
     .topbar-social a { padding: 0em 0.25em 0em 0em; }
 }
 
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 992px) {
     .container { width: 75%; }
     .content { padding: 2em;}
     .topbar { padding: 0em 0.5em; }    

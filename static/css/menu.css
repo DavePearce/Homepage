@@ -39,7 +39,10 @@
     #menu {
 	margin: 0em;
 	padding: 0em;
-    }	
+    }
+    #menu-icon {
+	display: block;
+    }
     #menu-icon img {
 	width: 30px;
 	height: 2em;
