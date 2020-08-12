@@ -29,8 +29,10 @@
       }
     </script>    
     <header class="topbar">
-      <div class="topbar-title">Dr. David J. Pearce</div>
-      <div class="topbar-subtitle"></div>
+      <div class="topbar-header">
+	<div class="topbar-title">Dr. David J. Pearce</div>
+	<div class="topbar-subtitle"></div>
+      </div>
       <div class="topbar-social">	
 	<a href="https://github.com/DavePearce"><i class="fa fa-github" aria-hidden="true"></i></a>
 	<a href="https://twitter.com/WhileyDave"><i class="fa fa-twitter" aria-hidden="true"></i></a>
@@ -39,7 +41,7 @@
       </div>
       <div class="topbar-menu" onclick="toggleMenu()">
 	<div id="menu">
-	  <div id="menu-icon"><img src="{{.Site.BaseURL}}/images/menu.png"/></div>	    
+	  <div id="menu-icon"><img src="{{.Site.BaseURL}}/images/menu.png"/></div>
 	  <div id="menu-content">
 	    {{ $p := .Title }}
 	    {{ range .Site.Sections }}

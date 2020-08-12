@@ -16,8 +16,9 @@ html, body {
     color: #594b26;
 }
 .topbar {
-    display: grid;
-    grid-gap: 0em;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;    
     background: #d5c397;
     border-color: black;
     border-style: solid;
@@ -27,28 +28,21 @@ html, body {
 
 .topbar-title {
     white-space: nowrap;
-    grid-column: 1;
-    grid-row: 1;
     font-weight: bold;
-    padding: 0.25em 0em 0em 0.25em; 
+    padding: 0.25em 0em 0em 0.25em;
 }
 
 .topbar-subtitle {
-    grid-column: 1;
-    grid-row: 2;
     font-style: italic;
-    padding: 0em 0em 0.25em 0.25em; 
+    padding: 0em 0em 0.25em 0.25em;
 }
 
 .topbar-social {
-    grid-column: 2;
     margin: 0em 0em;
+    flex-grow: 1;
 }
 
 .topbar-menu {
-    grid-column: 3;
-    width: 100%;
-    margin: auto;
     background: inherit;
 }
 
@@ -60,26 +54,24 @@ html, body {
     border-width: 0 0 1px 0;
 }
 
-@media only screen and (max-width: 768px) {    
+@media only screen and (max-width: 1000px) {    
     .container { width: 100%; }
     .content { padding: 0.5em;}
-    .topbar { padding: 0em; grid-template-columns: auto 1fr 30px; }
+    .topbar { padding: 0em; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
     .topbar-subtitle::before { content: "A/Prof Computer Science"; }
-    .topbar-social { grid-row: 2; line-height: 1em; font-size: 1em; padding: 0em 0em 0.25em 0em; }
-    .topbar-social a { padding: 0em 0.25em 0em 0em; }    
-    .topbar-menu { grid-row: 1 / span 2; height: 100%; width: 100%; }
+    .topbar-social { line-height: 1em; font-size: 1em; padding: 0em 0em 0.25em 0em; }
+    .topbar-social a { padding: 0em 0.25em 0em 0em; }
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 1000px) {
     .container { width: 75%; }
     .content { padding: 2em;}
-    .topbar { padding: 0em 0.5em; grid-template-columns: auto 1fr auto; }    
+    .topbar { padding: 0em 0.5em; }    
     .topbar-title { font-size: 2em; }
     .topbar-subtitle { font-size: 1.5em; }
     .topbar-subtitle::before { content: "Associate Professor of Computer Science"; }
-    .topbar-social { grid-row: 2; font-size: 1.5em; padding: 0em 0em 0.25em 1em; }
+    .topbar-social { font-size: 1.5em; padding: 0em 0em 0.25em 1em; }
     .topbar-social a { padding: 0em 0.25em 0em 0em; }    
-    .topbar-menu {  grid-row: 2;}
 }
