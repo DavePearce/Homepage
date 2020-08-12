@@ -39,9 +39,9 @@
 	<a href="https://www.youtube.com/user/redjamjar/"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>	
 	<a href="https://www.linkedin.com/in/david-pearce-8592647/"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a>
       </div>
-      <div class="topbar-menu" onclick="toggleMenu()">
-	<div id="menu">
-	  <div id="menu-icon"><img src="{{.Site.BaseURL}}/images/menu.png"/></div>
+      <div class="topbar-menu">
+	<div id="menu" onclick="toggleMenu()">
+	  <div id="menu-icon"><img src="{{.Site.BaseURL}}images/menu.png"/></div>
 	  <div id="menu-content">
 	    {{ $p := .Title }}
 	    {{ range .Site.Sections }}
