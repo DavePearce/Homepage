@@ -16,14 +16,14 @@
     <script>
       function toggleMenu() {
         if(window.innerWidth <= 768) {
-          var content = document.getElementById("menu-content");
-          var menu = document.getElementById("menu");
-          if(content.style.display === 'block') {
-            content.style.display = 'none';
-            menu.style.filter = '';     
+          c = document.getElementById("menu-content");
+          m = document.getElementById("menu");
+          if(c.style.display === 'block') {
+            c.style.display = 'none';
+            m.style.filter = '';     
           } else {
-            content.style.display = 'block';
-            menu.style.filter = "brightness(0.8)";       
+            c.style.display = 'block';
+            m.style.filter = "brightness(0.8)";       
           }
 	}
       }
@@ -41,7 +41,7 @@
       </div>
       <div class="topbar-menu">
 	<div id="menu" onclick="toggleMenu()">
-	  <div id="menu-icon"><img src="{{.Site.BaseURL}}images/menu.png"/></div>
+	  <div id="menu-icon"><img src="{{.Site.BaseURL}}images/menu.png" alt="Menu"/></div>
 	  <div id="menu-content">
 	    {{ $p := .Title }}
 	    {{ range .Site.Sections }}
