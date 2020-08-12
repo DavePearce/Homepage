@@ -16,7 +16,8 @@
     <script>
       "use strict";
       function toggleMenu() {
-        if(window.innerWidth <= 768) {
+        var i = document.getElementById("menu-icon");
+        if(i.style.display !== 'none') {
           var c = document.getElementById("menu-content");
           var m = document.getElementById("menu");
           if(c.style.display === 'block') {
