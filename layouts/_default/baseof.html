@@ -14,10 +14,11 @@
   </head>
   <body>
     <script>
+      "use strict";
       function toggleMenu() {
         if(window.innerWidth <= 768) {
-          c = document.getElementById("menu-content");
-          m = document.getElementById("menu");
+          var c = document.getElementById("menu-content");
+          var m = document.getElementById("menu");
           if(c.style.display === 'block') {
             c.style.display = 'none';
             m.style.filter = '';     
