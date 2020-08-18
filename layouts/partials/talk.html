@@ -13,6 +13,9 @@
     {{ if .Params.youtube }}
     <iframe src="https://www.youtube.com/embed/{{ .Params.youtube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     {{ end }}
+    {{ if .Params.vimeo }}
+    <iframe src="https://player.vimeo.com/video/{{ .Params.vimeo }}?title=0&byline=0&portrait=0" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>   
+    {{ end }}    
   </div>
 </div>
   
