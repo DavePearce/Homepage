@@ -63,7 +63,11 @@
       </div>
     </header>
     {{ if .Page.Params.banner }}
-    <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+    {{ if .Page.IsHome }}    
+    <img class="banner" width="1024" height="326" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+    {{ else }}
+    <img class="banner" width="1024" height="200" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>    
+    {{ end }}
     {{ end }}
     <div class="container">
       <div class="content">
