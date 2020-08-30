@@ -1,6 +1,6 @@
 ---
-title: "Whiley Repository is Ten Years Old!"
-date: 2020-08-01
+title: "Putting Semantics into Semantic Versioning"
+date: 2020-08-30
 draft: false
 ---
 
