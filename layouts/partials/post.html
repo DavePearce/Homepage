@@ -1,0 +1,15 @@
+<a href="{{ .RelPermalink }}">  
+  <div class="post">
+    <h2 class="post-title">{{ .Title }}</h2>
+    <div class="post-byline">
+      {{ .Date.Format "Monday, January" }}
+      {{ .Date.Format "2" | humanize}},
+      {{ .Date.Format "2006" }}      
+    </div>
+    {{ .Summary }}
+    {{ if .Truncated }}
+    <div class="post-readmore">Read More…</div>    
+    {{ end }}
+  </div>
+</a>
+

@@ -1,0 +1,15 @@
+{{ define "main" }}
+{{ $odd := false }}
+{{ $lc := "" }}
+
+<div class="list">
+  {{ range .Pages }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class={{$lc}}>  
+    {{ partial "post.html" . }}
+  </div>
+  {{ $odd = not $odd }}  
+  {{ end }}
+</div>
+
+{{ end }}
