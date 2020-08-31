@@ -1,0 +1,25 @@
+{{ $odd := false }}
+{{ $lc := "" }}
+{{ $head := first .max .items }}
+{{ $rest := after .max .items }}
+{{ $name := .partial }}
+
+<div class="list">
+  {{ range $head }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class={{$lc}}>
+    {{ partial $name . }}
+  </div>
+  {{ $odd = not $odd }}{{ end }}
+  {{ if gt (len $rest) 0 }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class="{{$lc}} list-more" onclick="toggleList(this)">...</div>
+  {{ range $rest }}
+  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
+  <div class="{{$lc}} hidden">
+    {{ partial $name . }}
+  </div>
+  {{ $odd = not $odd }}
+  {{ end }}
+  {{ end }}
+</div>

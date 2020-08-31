@@ -1,52 +1,28 @@
 {{ define "main" }}
-{{ $odd := false }}
-{{ $lc := "" }}
+
+{{ $journals := where .Pages.ByDate.Reverse ".Params.kind" "journal" }}
+{{ $conferences := where .Pages.ByDate.Reverse ".Params.kind" "conference" }}
+{{ $workshops := where .Pages.ByDate.Reverse ".Params.kind" "workshop" }}
+{{ $bookchapters := where .Pages.ByDate.Reverse ".Params.kind" "chapter" }}
+{{ $theses := where .Pages.ByDate.Reverse ".Params.kind" "thesis" }}
+
 <center>
   <a href="#journals">Journals</a> | <a href="#conferences">Conferences</a> | <a href="#workshops">Workshops</a> | <a href="#bookchapters">Chapters</a> | <a href="#theses">Theses</a>
 </center>
+
 <a id="journals"><h2>Journal Papers</h2></a>
-<div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.kind" "journal" }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}{{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $journals "max" 5 "partial" "publication.html") }}
+
 <a id="conferences"><h2>Conference Papers</h2></a>
-<div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.kind" "conference" }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}{{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $conferences "max" 5 "partial" "publication.html") }}
+
 <a id="workshops"><h2>Workshop Papers</h2></a>
-<div class="list">  
-  {{ range where .Pages.ByDate.Reverse ".Params.kind" "workshop" }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}{{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $workshops "max" 5 "partial" "publication.html") }}
+
 <a id="bookchapters"><h2>Book Chapters</h2></a>
-<div class="list">
-  {{ range where .Pages.ByDate.Reverse ".Params.kind" "chapter" }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-      {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}{{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $bookchapters "max" 5 "partial" "publication.html") }}
+
 <a id="theses"><h2>Theses</h2></a>
-<div class="list">
-  {{ range  where .Pages.ByDate.Reverse ".Params.kind" "thesis" }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}{{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $theses "max" 5 "partial" "publication.html") }}
+
 {{ end }}

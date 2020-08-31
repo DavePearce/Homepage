@@ -69,6 +69,15 @@ a:visited {
     margin: 0em;
 }
 
+.list-more {
+    text-align: center;
+    font-size: 2em;
+}
+
+.hidden {
+    display: none;
+}
+
 .list-even {
     background: #f7f5ed;
     border: 2px solid #f7f5ed;

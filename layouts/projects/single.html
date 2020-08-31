@@ -2,54 +2,25 @@
 {{ $tag := .Params.tag }}
 {{ $publications := where (.Site.GetPage "publications").Pages.ByDate.Reverse ".Params.tag" $tag }}
 {{ $talks := where (.Site.GetPage "talks").Pages.ByDate.Reverse ".Params.tag" $tag }}
-{{ $downloads := first 5 (where (.Site.GetPage "downloads").Pages.ByDate.Reverse ".Params.tag" $tag) }}
-{{ $alldownloads := where (.Site.GetPage "downloads").Pages.ByDate.Reverse ".Params.tag" $tag }}
+{{ $downloads := where (.Site.GetPage "downloads").Pages.ByDate.Reverse ".Params.tag" $tag }}
 
 <h1>{{ .Title }}</h1>
 {{ .Content }}
 
-{{ if gt (len $alldownloads) 0 }}
+{{ if gt (len $downloads) 0 }}
 <h2>Downloads</h2>
-<div class="list">
-  {{ $odd := false }}
-  {{ $lc := "" }} 
-  {{ range $alldownloads }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "download.html" . }}
-  </div>
-  {{ $odd = not $odd }}
-  {{ end }}
-</div>
-{{ end }}
-
-{{ if gt (len $talks) 0 }}
-<h2>Related Talk(s)</h2>
-<div class="list">
-  {{ $odd := false }}
-  {{ $lc := "" }} 
-  {{ range $talks }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "talk.html" . }}
-  </div>
-  {{ $odd = not $odd }}
-  {{ end }}
-</div>
+{{ partial "lists.html" (dict "items" $downloads "max" 3 "partial" "download.html") }}
 {{ end }}
 
 {{ if gt (len $publications) 0 }}
 <h2>Related Publication(s)</h2>
-<div class="list">
-  {{ $odd := false }}
-  {{ $lc := "" }} 
-  {{ range $publications }}
-  {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class={{$lc}}>
-    {{ partial "publication.html" . }}
-  </div>
-  {{ $odd = not $odd }}
-  {{ end }}
-  </div>
+{{ partial "lists.html" (dict "items" $publications "max" 5 "partial" "publication.html") }}
 {{ end }}
+
+
+{{ if gt (len $talks) 0 }}
+<h2>Related Talk(s)</h2>
+{{ partial "lists.html" (dict "items" $talks "max" 3 "partial" "talk.html") }}
+{{ end }}
+
 {{ end }}

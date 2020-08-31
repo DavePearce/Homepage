@@ -25,8 +25,23 @@
             m.style.filter = '';     
           } else {
             c.style.display = 'block';
-            m.style.filter = "brightness(0.7)";       
+            m.style.filter = "brightness(0.8)";
           }
+	}
+      }
+      function toggleList(element) {
+	  element.style.display="none";
+	  var parent = element.parentNode;
+	  var items = parent.childNodes;
+	  for(var i=0;i<items.length;++i) {
+	      var item = items[i];
+	      if(item.classList && item.classList.contains("hidden")) {
+		  if(item.style.display === 'block') {
+		      item.style.display="none";
+		  } else {
+		      item.style.display="block";
+		  }
+	      }
 	}
       }
     </script>    
