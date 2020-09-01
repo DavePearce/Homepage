@@ -13,7 +13,7 @@
   {{ $odd = not $odd }}{{ end }}
   {{ if gt (len $rest) 0 }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
-  <div class="{{$lc}} list-more" onclick="toggleList(this)">...</div>
+  <div class="{{$lc}} list-more" onclick="toggleList(this)">&bull;&bull;&bull;</div>
   {{ range $rest }}
   {{ if eq $odd false }}{{ $lc = "list-even" }}{{ else }}{{ $lc = "list-odd" }}{{ end }}
   <div class="{{$lc}} hidden">
