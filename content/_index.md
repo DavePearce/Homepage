@@ -1,6 +1,6 @@
 ---
 draft: false
-banner: "images/cover.jpg"
+banner: "images/cover4.jpg"
 banner_alt: "Image of David J. Pearce"
 ---
 
