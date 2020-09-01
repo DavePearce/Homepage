@@ -8,5 +8,7 @@ _build:
 cascade:
   _build:
     render: false
-    list: true # default  
+    list: true # default
+banner: "images/talks.jpg"
+banner_alt: "Image of David J. Pearce"    
 ---
