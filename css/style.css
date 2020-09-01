@@ -70,6 +70,7 @@ a:visited {
 }
 
 .list-more {
+    cursor: pointer;    
     text-align: center;
     font-size: 2em;
 }
