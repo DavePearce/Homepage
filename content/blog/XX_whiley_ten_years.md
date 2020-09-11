@@ -32,15 +32,39 @@ The [RFC process](https://github.com/Whiley/RFCs/) for developing extensions to 
 
 * [RFC#66 (type inference)](https://github.com/Whiley/RFCs/blob/master/text/0066-type-inference.md).  This added support for _bidirectional_ type inference allowed type information to flow both up and down the Abstract Syntax Tree for an expression.  Using this, native types can be implemented more easily (e.g. native JavaScript strings can be represented directly in Whiley).
 
+In addition to the formal RFC submissions, there are also a bunch of [lightweight ideas being floated around](https://github.com/Whiley/RFCs/issues) as well which may eventually be written up into an RFC.
+
 ### QuickCheck
 
-* Teaching using WhileyLabs.
-   * RFCs
-   * Generics
-   * Type Inference
-   * WebAssembly
-   * FPGAs
+Whilst the static verifier that comes with Whiley has slowly improved over the years, it remains difficult to use on large projects.  However, a surprising success has been the [QuickCheck for Whiley](https://whileydave.com/publications/chin18_engr489/) originally developed by Janice Chin.  The essential idea behind this tool arose from the original [QuickCheck for Haskell](https://en.wikipedia.org/wiki/QuickCheck) tool developed by John Hughes and Koen Claessen.  Essentially, this tool tests Whiley programs by generating inputs automatically based on certain criteria (e.g. for integers `-3..3`, arrays of max length `3`, etc).  For example, consider this (broken) program:
 
+```
+function find(int[] items, int item) -> (int r)
+ensures r >= 0 && r < |items|:
+    for i in 0..|items|:
+       if items[i] == item:
+          return i  // match
+    return -1       // no match
+```
+
+```
+> wy --verbose check
+```
+
+```
+Failed function main::find(int[],int)->int
+==========================================
+./src/main.whiley:6: postcondition not satisfied
+--> main::find([],0)
+    return -1       // no match
+    ^^^^^^^^^
+Stack Trace:
+--> main::find([],0)
+```
 ### Other
 
+* WebAssembley.  Quad Copter.
+
 * Pygments
+
+* Teaching in China and SWEN224, SWEN326.

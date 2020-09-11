@@ -5,6 +5,7 @@ tag: "tutte"
 title: "Tutte Polynomials"
 description: "Tutte polynomials play an import role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics.  This project involved developing a highly efficient algorithm (implemented in C++) for computing Tutte polynomials which was later incorporated into Mathematica and Sage."
 icon: "../icons/tutte.png"
+banner: "images/graphs.jpg"
 ---
 
 **Overview.** [Tutte polynomials](http://en.wikipedia.org/wiki/Tutte_polynomial) play an important role in graph theory, combinatorics, matroid theory, knot theory, and experimental physics. For example, the polynomials can be evaluated to find the number of [spanning trees](http://en.wikipedia.org/wiki/Spanning_tree) in a graph, the number of forests in a graph, the number of connected spanning subgraphs, the number of spanning subgraphs, and the number of acyclic orientations. In addition, Tutte polynomials specialise to [chromatic polynomials](http://en.wikipedia.org/wiki/Chromatic_polynomial), flow polynomials, [Jones polynomials](http://en.wikipedia.org/wiki/Jones_polynomial) for alternating links, and partition functions of the [q-state Potts model](http://en.wikipedia.org/wiki/Potts_model) from statistical physics.
