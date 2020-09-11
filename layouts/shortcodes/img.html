@@ -1,0 +1,6 @@
+<figure {{if .Params.class}}class="{{.Params.class}}"{{end}}>
+{{ if .Params.link }}<a href="{{.Params.link}}">{{end}}
+<img{{ if .Params.width }} width="{{.Params.width}}" {{ else if .Params.height }} height="{{.Params.height}}" {{ end }}{{ if .Params.alt }} alt="{{.Params.alt}}" {{end}}src="{{.Params.src}}"/>
+{{ if .Params.link }}</a>{{end}}
+{{ if .Params.title }}<figcaption>{{.Params.title}}</figcaption>{{end}}
+</figure>

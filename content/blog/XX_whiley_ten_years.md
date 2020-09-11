@@ -8,3 +8,39 @@ The [first commit](https://github.com/Whiley/WhileyCompiler/commit/0529dcf296877
 
 Anyway, I'm not going to bore you with a full break down of everything that's happened!  Instead, here are a few highlights for me right now:
 
+### Example Code
+
+There are now a few example projects in Whiley which demonstrate its potential for building useful programs.  For now, these are currently mostly restricted to simple web applications:
+
+{{<img class="inline-block float-left text-center" title="(Game of Life)" src="https://raw.githubusercontent.com/DavePearce/Conway.wy/master/conway.png" height="150px" alt="Game of Life Screenshot" link="https://davepearce.github.io/Conway.wy/">}}
+
+{{<img class="inline-block float-left text-center" title="(Minesweeper)" src="https://raw.githubusercontent.com/DavePearce/Minesweeper.wy/master/assets/screenshot.png" height="150px" alt="Minesweeper Screenshot" link="https://davepearce.github.io/Minesweeper.wy/">}}
+
+{{<img class="inline-block text-center" title="(Asteroids)" src="https://raw.githubusercontent.com/DavePearce/Asteroids.wy/master/assets/asteroids.png" height="150px" alt="Asteroids Screenshot" link="https://davepearce.github.io/Asteroids.wy/">}}
+
+On top of this, a number of libraries have been written which are finding use in various ways (e.g. [STD.wy](https://github.com/Whiley/STD.wy), [JS.wy](https://github.com/Whiley/JS.wy), [DOM.wy](https://github.com/Whiley/DOM.wy), [Web.wy](https://github.com/DavePearce/Web.wy), [Ace.wy](https://github.com/DavePearce/Ace.wy), [LZ.wy](https://github.com/DavePearce/LZ.wy)).  There is even a simple online [package repository](https://github.com/Whiley/Repository)!
+
+### Request For Comments (RFCs)
+
+The [RFC process](https://github.com/Whiley/RFCs/) for developing extensions to the Whiley language has been running since around 2017.  At the time of writing, there are [30 RFCs](https://github.com/Whiley/RFCs/tree/master/text) of which around [15 have been completed](https://github.com/Whiley/WhileyCompiler/projects/9).  A few of the "big ones" which have gone through are:
+
+* [RFC#23 (Templates)](https://github.com/Whiley/RFCs/blob/master/text/0023-templates.md).  This added support for _type polymorphism_ allowing us to types such as `vector<T>` (i.e. as in C++ templates Java generics).  This is a fairly fundamental feature which enabled significant improvements to the standard library (see e.g. [std::collections::vector](https://github.com/Whiley/STD.wy/blob/develop/src/whiley/std/collections/vector.whiley)).
+
+* [RFC#58 (import with)](https://github.com/Whiley/RFCs/blob/master/text/0058-importwith.md).  This extended the syntax for `import` statements to support a `with` clause (e.g. `import std::vector with Vector`).
+
+* [RFC#64 (for each)](https://github.com/Whiley/RFCs/blob/master/text/0063-foreach.md).  This finally added a syntax for `for`-loops to the language which had badly needed for quite a while!
+
+* [RFC#66 (type inference)](https://github.com/Whiley/RFCs/blob/master/text/0066-type-inference.md).  This added support for _bidirectional_ type inference allowed type information to flow both up and down the Abstract Syntax Tree for an expression.  Using this, native types can be implemented more easily (e.g. native JavaScript strings can be represented directly in Whiley).
+
+### QuickCheck
+
+* Teaching using WhileyLabs.
+   * RFCs
+   * Generics
+   * Type Inference
+   * WebAssembly
+   * FPGAs
+
+### Other
+
+* Pygments

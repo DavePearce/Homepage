@@ -101,6 +101,10 @@ a:visited {
     color: #594b26;
 }
 
+.inline-block{display: inline-block;}
+.float-left {float: left;}
+.text-center {text-align: center;}
+
 @media only screen and (max-width: 768px) {
     p { margin: 0em 0em 1em 0em; }    
     .list-odd  { padding: 0em 0.5em; }
