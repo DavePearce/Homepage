@@ -1,5 +1,16 @@
 h1,h2 { line-height: 100%; }
-
+code {
+    border: 1px solid #a28744;
+    border-radius: 0.25em;
+    padding: 0.05em 0.2em;
+    background: #d5c397;
+}
+pre code {
+    border: 0;
+    display: block;
+    border-radius: 0.5em;
+    padding: 0.5em;
+}
 hr {
     border: 1px solid #a28744;
 }
