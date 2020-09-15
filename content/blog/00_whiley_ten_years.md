@@ -57,11 +57,11 @@ In addition to the formal RFC submissions, there are also a bunch of [lightweigh
 Whilst the static verifier that comes with Whiley has slowly improved over the years, it remains difficult to use on large projects.  A surprising success has been the [QuickCheck for Whiley](https://whileydave.com/publications/chin18_engr489/) originally developed by Janice Chin.  The essential idea behind this tool arose from the original [QuickCheck for Haskell](https://en.wikipedia.org/wiki/QuickCheck) tool developed by John Hughes and Koen Claessen.  Essentially, this tool tests Whiley programs by generating inputs automatically based on certain (configurable) criteria, such as only `-3..3` for integers, restricting arrays to max length `3`, etc.  For example, consider this (broken) function:
 
 ```whiley
-function find(int[] items, int item) -> (int r)
-// Must return value index in items array
-ensures r >= 0 && r < |items|:
-    for i in 0..|items|:
-       if items[i] == item:
+function find(int[] xs, int x) -> (int r)
+// Return cannot be negative!
+ensures r >= 0:
+    for i in 0..|xs|:
+       if xs[i] == x:
           return i  // match
     return -1       // no match
 ```
@@ -69,7 +69,7 @@ ensures r >= 0 && r < |items|:
 This function is broken because its postcondition doesn't permit negative values to be returned.  Running this through QuickCheck quickly generates the following:
 
 ```
-./src/main.whiley:6: postcondition not satisfied
+main.whiley:6: postcondition not satisfied
 --> main::find([],0)
     return -1       // no match
     ^^^^^^^^^
