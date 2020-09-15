@@ -13,14 +13,14 @@ function toggleList(element){element.style.display="none";var parent=element.par
 Vector&lt;int&gt; vec = Vector()
 // Add something to vector
 vec = push(vec,1)
-</code></pre><p>In the last line, without type inference, we&rsquo;d have to give the type parameters explicitly (e.g. <code>push&lt;int>(vec,1)</code>). Type inference also helps implementing native types (e.g. a string literal assigned to a JavaScript string can be implemented directly as such).</p></li></ul><p>In addition to the formal RFC submissions, there are also a bunch of <a href=https://github.com/Whiley/RFCs/issues>lightweight ideas being floated around</a> as well which may eventually be written up into RFCs.</p><h3 id=quickcheck>QuickCheck</h3><p>Whilst the static verifier that comes with Whiley has slowly improved over the years, it remains difficult to use on large projects. A surprising success has been the <a href=https://whileydave.com/publications/chin18_engr489/>QuickCheck for Whiley</a> originally developed by Janice Chin. The essential idea behind this tool arose from the original <a href=https://en.wikipedia.org/wiki/QuickCheck>QuickCheck for Haskell</a> tool developed by John Hughes and Koen Claessen. Essentially, this tool tests Whiley programs by generating inputs automatically based on certain (configurable) criteria, such as only <code>-3..3</code> for integers, restricting arrays to max length <code>3</code>, etc. For example, consider this (broken) function:</p><pre><code class=language-whiley data-lang=whiley>function find(int[] items, int item) -&gt; (int r)
-// Must return value index in items array
-ensures r &gt;= 0 &amp;&amp; r &lt; |items|:
-    for i in 0..|items|:
-       if items[i] == item:
+</code></pre><p>In the last line, without type inference, we&rsquo;d have to give the type parameters explicitly (e.g. <code>push&lt;int>(vec,1)</code>). Type inference also helps implementing native types (e.g. a string literal assigned to a JavaScript string can be implemented directly as such).</p></li></ul><p>In addition to the formal RFC submissions, there are also a bunch of <a href=https://github.com/Whiley/RFCs/issues>lightweight ideas being floated around</a> as well which may eventually be written up into RFCs.</p><h3 id=quickcheck>QuickCheck</h3><p>Whilst the static verifier that comes with Whiley has slowly improved over the years, it remains difficult to use on large projects. A surprising success has been the <a href=https://whileydave.com/publications/chin18_engr489/>QuickCheck for Whiley</a> originally developed by Janice Chin. The essential idea behind this tool arose from the original <a href=https://en.wikipedia.org/wiki/QuickCheck>QuickCheck for Haskell</a> tool developed by John Hughes and Koen Claessen. Essentially, this tool tests Whiley programs by generating inputs automatically based on certain (configurable) criteria, such as only <code>-3..3</code> for integers, restricting arrays to max length <code>3</code>, etc. For example, consider this (broken) function:</p><pre><code class=language-whiley data-lang=whiley>function find(int[] xs, int x) -&gt; (int r)
+// Return cannot be negative!
+ensures r &gt;= 0:
+    for i in 0..|xs|:
+       if xs[i] == x:
           return i  // match
     return -1       // no match
-</code></pre><p>This function is broken because its postcondition doesn&rsquo;t permit negative values to be returned. Running this through QuickCheck quickly generates the following:</p><pre><code>./src/main.whiley:6: postcondition not satisfied
+</code></pre><p>This function is broken because its postcondition doesn&rsquo;t permit negative values to be returned. Running this through QuickCheck quickly generates the following:</p><pre><code>main.whiley:6: postcondition not satisfied
 --&gt; main::find([],0)
     return -1       // no match
     ^^^^^^^^^
