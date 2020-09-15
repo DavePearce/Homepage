@@ -83,8 +83,6 @@ The great thing about this is that it shows the exact input values which generat
 
 Whilst there are too many other things to mention, here are a few more highlights chosen at random:
 
-* **(Pygments)** This is a widely-used syntax highlighting package which now [supports Whiley](https://pygments.org/languages/), meaning you can get syntax highlighting for Whiley whenever Pygments is used (such as with [Hugo](https://gohugo.io)).
-
 * **(Teaching)** Whiley has been used for teaching here at Victoria University since 2014, and also at other instituations as well.  For example, at [Stellenbosch University](https://www.sun.ac.za/english/Lists/news/DispForm.aspx?ID=4970) under Prof. Bruce Watson and Macquarie University under Dr. Matt Roberts.  It was also used for a [summer school on Formal Methods](https://link.springer.com/book/10.1007/978-3-030-17601-3) in China.
 
 * **(Experimental Platforms)**.  There have been a bunch of experimental projects trying to get Whiley working on different platforms, including [WebAssembley](http://localhost:1313/publications/kumar19_engr489), [an FPGA](http://localhost:1313/publications/ppp18_vmil), the [Crazyflie Quad Copter](http://localhost:1313/publications/stevens14_engr489), the [Ethereum Virtual Machine](http://localhost:1313/publications/kumar19_engr489) and [more](http://localhost:1313/publications/ruarus13_engr489)!  Whilst these have all been instructive in the design of Whiley, perhaps the most promising future target is WebAssembly.
