@@ -8,4 +8,20 @@
 <hr/>
 {{ .Content }}
 <hr/>
+{{ if or (.Params.twitter) (.Params.reddit) }}
+<i>Follow the discussion on
+  {{ $first := true }}
+  {{ if .Params.twitter }}  
+  <a href="{{.Params.twitter}}">Twitter</a>
+  {{ $first = false }}
+  {{ end }}
+  {{ if .Params.reddit }}    
+  {{ if not $first }}
+  or
+  {{ end }}
+  <a href="{{.Params.reddit}}">Reddit</a>
+  {{ $first = false }}
+  {{ end }}  
+</i>
+{{ end }}
 {{ end }}
