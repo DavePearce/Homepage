@@ -7,7 +7,7 @@ enableRobotsTXT = true
 summaryLength = 30
 pygmentsUseClassic = true
 pygmentsCodeFences = true
-pygmentsCodeFencesGuessSyntax = true
+pygmentsCodeFencesGuessSyntax = false
 pygmentsUseClasses = true
 pygmentsStyle = "monokai"
 
