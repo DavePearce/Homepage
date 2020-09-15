@@ -12,7 +12,7 @@ Anyway, I'm not going to bore you with a full break down of everything that's ha
 
 There are now a few example projects in Whiley which demonstrate its potential for building useful programs.  For now, these are currently mostly restricted to simple web applications:
 
-{{<img class="inline-block float-left text-center" title="(Game of Life)" src="https://raw.githubusercontent.com/DavePearce/Conway.wy/master/conway.png" height="150px" alt="Game of Life Screenshot" link="https://davepearce.github.io/Conway.wy/">}}
+{{<img class="inline-block float-left text-center" title="(Game of Life)" src="https://raw.githubusercontent.com/DavePearce/Conway.wy/master/assets/conway.png" height="150px" alt="Game of Life Screenshot" link="https://davepearce.github.io/Conway.wy/">}}
 
 {{<img class="inline-block float-left text-center" title="(Minesweeper)" src="https://raw.githubusercontent.com/DavePearce/Minesweeper.wy/master/assets/screenshot.png" height="150px" alt="Minesweeper Screenshot" link="https://davepearce.github.io/Minesweeper.wy/">}}
 
@@ -47,13 +47,9 @@ ensures r >= 0 && r < |items|:
     return -1       // no match
 ```
 
-```
-> wy --verbose check
-```
+This program is broken because its postcondition doesn't allow for negative values being returned.  Running this through QuickCheck quickly generates the following:
 
 ```
-Failed function main::find(int[],int)->int
-==========================================
 ./src/main.whiley:6: postcondition not satisfied
 --> main::find([],0)
     return -1       // no match
@@ -61,10 +57,17 @@ Failed function main::find(int[],int)->int
 Stack Trace:
 --> main::find([],0)
 ```
+
+The great thing about this is that it shows the exact input values which generated the error!  And, now we can even run QuickCheck as part of our [CI pipeline](https://github.com/marketplace/actions/whiley-build-action) as well!
+
 ### Other
+
+Whilst there are too many other things to mention, here are a few more highlights chosen at random:
 
 * WebAssembley.  Quad Copter.
 
-* Pygments
+* **Pygments** now [supports Whiley](https://pygments.org/languages/).  This is a widely-used syntax highlighting package, meaning you can get syntax highlighting for Whiley whenever Pygments is used.
 
-* Teaching in China and SWEN224, SWEN326.
+* Whiley has been used for **teaching** here at Victoria University since 2014, and also at other instituations as well.  For example, at [Stellenbosch University](https://www.sun.ac.za/english/Lists/news/DispForm.aspx?ID=4970) under Prof. Bruce Watson and Macquarie University under Dr. Matt Roberts.
+
+in China and SWEN224, SWEN326.
