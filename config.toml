@@ -9,6 +9,6 @@ pygmentsUseClassic = true
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 pygmentsUseClasses = false
-pygmentsStyle = perldoc
+pygmentsStyle = "perldoc"
 [permalinks]
   blog = "/:year/:month/:day/:title/"
