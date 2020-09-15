@@ -8,7 +8,8 @@ summaryLength = 30
 pygmentsUseClassic = true
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
-pygmentsUseClasses = false
-pygmentsStyle = "perldoc"
+pygmentsUseClasses = true
+pygmentsStyle = "monokai"
+
 [permalinks]
   blog = "/:year/:month/:day/:title/"
