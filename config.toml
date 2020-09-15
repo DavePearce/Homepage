@@ -5,6 +5,6 @@ googleAnalytics = "UA-5582165-7"
 paginate=10
 enableRobotsTXT=true
 summaryLength=30
+pygmentsUseClassic=true
 [permalinks]
   blog = "/:year/:month/:day/:title/"
-
