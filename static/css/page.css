@@ -63,7 +63,7 @@ html, body {
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
     .topbar-subtitle::before { content: "A/Prof Computer Science"; }
-    .topbar-social { line-height: 1em; font-size: 1em; padding: 0em 0em 0.25em 0em; }
+    .topbar-social { line-height: 1em; font-size: 1.4em; padding: 0.25em 0.25em 0.25em 0.5em; }
     .topbar-social a { padding: 0em 0.25em 0em 0em; }
 }
 
