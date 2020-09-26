@@ -16,6 +16,15 @@
   <body>
     <script>
       "use strict";
+      function clearMenu() {
+        var q = window.matchMedia("(max-width: 768px)");
+        if(q.matches) {
+            var c = document.getElementById("menu-content");
+            var m = document.getElementById("menu");
+            c.style.display = 'none';
+            m.style.filter = '';     
+	}
+      }      
       function toggleMenu() {
         var q = window.matchMedia("(max-width: 768px)");
         if(q.matches) {
@@ -47,11 +56,11 @@
       }
     </script>    
     <header class="topbar">
-      <div class="topbar-header">
+      <div class="topbar-header" onclick="clearMenu()">
 	<div class="topbar-title">Dr. David J. Pearce</div>
 	<div class="topbar-subtitle"></div>
       </div>
-      <div class="topbar-social">	
+      <div class="topbar-social"  onclick="clearMenu()">	
 	<a href="https://github.com/DavePearce"><i class="fa fa-github" aria-hidden="true"></i></a>
 	<a href="https://twitter.com/WhileyDave"><i class="fa fa-twitter" aria-hidden="true"></i></a>
 	<a href="https://www.youtube.com/user/redjamjar/"><i class="fa fa-youtube-play" aria-hidden="true"></i></a>	
@@ -78,10 +87,10 @@
 	</div>
       </div>
     </header>
-    {{ if .Page.Params.banner }}
-    <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
-    {{ end }}
-    <div class="container">
+    <div class="container" onclick="clearMenu()">
+      {{ if .Page.Params.banner }}
+      <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+      {{ end }}
       <div class="content">
 	{{ block "main" . }}
 	{{ end }}

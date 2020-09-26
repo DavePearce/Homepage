@@ -6,13 +6,15 @@ html, body {
     font-family: Helvetica; 
 }
 .container {
-    margin: 0em auto;
+    width: 100%;
+    margin: 0;
     padding: 0px;
     border: none;
     background: #ffffff;
     border-radius: 10px;
 }
 .content {
+    margin: 0em auto;    
     color: #594b26;
 }
 .topbar {
@@ -56,8 +58,7 @@ html, body {
 }
 
 @media only screen and (max-width: 992px) {    
-    .container { width: 100%; }
-    .content { padding: 0.75em; font-size: 14pt; line-height: 130%; }
+    .content { width: 90%; padding: 5%; font-size: 14pt; line-height: 130%; }
     .topbar { padding: 0em; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
@@ -67,8 +68,7 @@ html, body {
 }
 
 @media only screen and (min-width: 992px) {
-    .container { width: 75%; }
-    .content { font-size: 16pt; line-height: 150%; padding: 2em;}
+    .content { width: 75%; font-size: 16pt; line-height: 150%; padding: 2em;}
     .topbar { padding: 0em 0.5em; }    
     .topbar-title { font-size: 2em; }
     .topbar-subtitle { font-size: 1.5em; }
