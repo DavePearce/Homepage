@@ -20,7 +20,6 @@ html, body {
 .topbar {
     display: flex;
     flex-wrap: nowrap;    
-    align-items: flex-end;    
     background: #d5c397;
     border-color: black;
     border-style: solid;
@@ -61,17 +60,17 @@ html, body {
 
 @media only screen and (max-width: 992px) {    
     .content { width: 90%; padding: 5%; font-size: 14pt; line-height: 130%; }
-    .topbar { padding: 0em; margin: 0em; }
+    .topbar { padding: 0em; margin: 0em; align-items: center; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
     .topbar-subtitle::before { content: "A/Prof Computer Science"; }
     .topbar-social { line-height: 1em; font-size: 1.4em; padding: 0.25em 0.25em 0.25em 0.5em; }
-    .topbar-social a { padding: 0em 0.25em 0em 0em; }
+    .topbar-social a { padding: 0em 0.5em 0em 0em; }
 }
 
 @media only screen and (min-width: 992px) {
     .content { width: 75%; font-size: 16pt; line-height: 150%; padding: 2em;}
-    .topbar { padding: 0em 0.5em; }    
+    .topbar { padding: 0em 0.5em; align-items: flex-end; }
     .topbar-title { font-size: 2em; }
     .topbar-subtitle { font-size: 1.5em; }
     .topbar-subtitle::before { content: "Associate Professor of Computer Science"; }
