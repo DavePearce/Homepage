@@ -20,7 +20,7 @@ html, body {
 .topbar {
     display: flex;
     flex-wrap: nowrap;    
-    align-items: stretch;    
+    align-items: flex-end;    
     background: #d5c397;
     border-color: black;
     border-style: solid;
