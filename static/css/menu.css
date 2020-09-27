@@ -44,12 +44,11 @@
 	display: block;
     }
     #menu-icon img {
-	width: 40px;
-	height: 90%;
-	padding: 5% 10% 5% 0;
+	display: inline-block;
+	width: 32px;
+	height: 100%;
+	padding: 0% 10% 10% 0%;
 	margin: 0;
-	/*height: 2em;*/
-	/*object-fit: contain;*/
     }
     #menu-content {
 	/* position relative to parent */
