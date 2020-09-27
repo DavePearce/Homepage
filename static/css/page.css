@@ -19,8 +19,8 @@ html, body {
 }
 .topbar {
     display: flex;
-    flex-wrap: nowrap;
-    align-items: flex-end;    
+    flex-wrap: nowrap;    
+    align-items: stretch;    
     background: #d5c397;
     border-color: black;
     border-style: solid;
@@ -46,6 +46,8 @@ html, body {
 
 .topbar-menu {
     background: inherit;
+    padding: 0;
+    margin: 0;
 }
 
 .banner {
@@ -59,7 +61,7 @@ html, body {
 
 @media only screen and (max-width: 992px) {    
     .content { width: 90%; padding: 5%; font-size: 14pt; line-height: 130%; }
-    .topbar { padding: 0em; }
+    .topbar { padding: 0em; margin: 0em; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
     .topbar-subtitle::before { content: "A/Prof Computer Science"; }
