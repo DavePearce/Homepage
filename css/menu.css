@@ -35,7 +35,7 @@
     color: #d5c397;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 992px) {
     #menu {
 	margin: 0em;
 	padding: 0em;
@@ -45,7 +45,7 @@
 	height: 100%;
     }
     #menu-icon img {	
-	width: 48px;
+	width: 40px;
 	height: 28px;
 	padding: 5% 0 5% 0;
     }
@@ -68,7 +68,7 @@
     }	
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 992px) {
     #menu-content {
 	display: inline-block;
     }
