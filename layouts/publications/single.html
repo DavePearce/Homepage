@@ -29,7 +29,7 @@
 {{ $first := true }}
 {{ if .Params.preprint }}
 {{ if (not $first) }} / {{ end }}  
-<a href="{{.Site.BaseURL}}/publications/{{.Params.preprint}}">PDF</a>
+<a href="{{.Site.BaseURL}}publications/{{.Params.preprint}}">PDF</a>
 {{ $first = false }}
 {{end}}
 {{ if .Params.slides }}
