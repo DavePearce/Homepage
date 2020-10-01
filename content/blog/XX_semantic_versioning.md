@@ -1,7 +1,7 @@
 ---
 date: 2020-09-24
 title: "The Semantics of Semantic Versioning?"
-draft: true
+draft: false
 ---
 
 Semantic versioning is a surprisingly interesting topic when you get into it.  Recently, myself and a few colleagues have been giving it some thought (and even wrote an [essay on it](https://whileydave.com/publications/ldp20/))!  If you haven't seen it already, check out the [manifesto for semantics versioning](https://semver.org/).  Whilst that provides a nice overview, there is a lot left unsaid.  There are two different perspectives on semantic versioning:
@@ -75,13 +75,16 @@ _So, there should be tools, and lots of 'em!_  Both upstream _and_ downstream de
 
 Well, that's enough for now!!  If you made it this far, then you should check out our [essay](https://whileydave.com/publications/ldp20/) which goes into way more detail.
 
-And finally, just to get you thinking, here are some crazy ideas that people are already thinking about:
+And finally, just to get you thinking, here's a cool idea for upstream
+  developers: **know your dependencies!** These days, its easy to find
+  your downstream clients.  Before releasing a new version, just check
+  for breaking changes by _running all your client's tests!_ That's
+  exactly what [Crater does for
+  Rust](https://github.com/rust-lang/crater) and also what [these
+  folks](https://dl.acm.org/doi/abs/10.1145/3379597.3387476) and
+  [these folks](https://drops.dagstuhl.de/opus/volltexte/2018/9239/)
+  are suggesting.
 
-* Approaches based on testing existing clients.
-
-* Scan my code base to see whether anything could be affected. Slicing or tree shaking.
-
-* Other static analysis.
 
 ### Related Articles
 
