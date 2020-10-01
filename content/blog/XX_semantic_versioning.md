@@ -41,16 +41,26 @@ An important question here is: _what are "breaking changes" anyway?_  Knowing th
   * _Should a change in the order of elements returned by a method be considered breaking?_
 
 Most of these could be considered breaking changes in certain
-situations (i.e. depending on the client). The point is that upstream
-developers often ignore such changes when choosing version numbers.
-_But, with appropriate tooling, maybe they could._
+situations (i.e. depending on the client):
 
-**TODO:** Talk about examples where a bug-fix caused problems because
-clients assumed stuff.
+**Exhibit A.** Firefox (downstream developer) uses
+[fontconfig](http://fontconfig.org) (upstream developer).  A
+[commit](http://cgit.freedesktop.org/fontconfig/commit/?id=95af7447dba7c54ed162b667c0bb2ea6500e8f32)
+to fontconfig `v2.10.92` meant it now rejected empty filenames.  It's
+documentation didn't say whether empty filenames were allowed or not,
+_so this was reasonable right?_ Well, it [broke
+Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=857922). 
 
-  * Talk about bug-fix which caused problems because clients made
-    assumptions. What if a method documentation makes no claims about
-    the ordering (i.e. because it has no documentation)?_
+**Exhibit B.** [JSoup](https://jsoup.org/) `v1.10.1` included a
+performance refactoring for "_reducing memory allocation and garbage
+collection_".  Again, this seemed reasonable but clients quickly
+started [reporting problems](https://github.com/jhy/jsoup/issues/830).
+
+These are just some examples and you can easily find more with a
+little digging.  The point is that upstream developers miss (or
+ignore) changes affecting downstream clients all the time.  _So, what
+can we do?_
+
 
 ### Tooling
 
@@ -63,7 +73,7 @@ _So, there should be tools, and lots of 'em!_  Both upstream _and_ downstream de
 
 ### Conclusion
 
-Well, that's enough for now!!  If you're interested in this kind of thing, you should check out our [essay](https://whileydave.com/publications/ldp20/) which goes into way more detail.
+Well, that's enough for now!!  If you made it this far, then you should check out our [essay](https://whileydave.com/publications/ldp20/) which goes into way more detail.
 
 And finally, just to get you thinking, here are some crazy ideas that people are already thinking about:
 
