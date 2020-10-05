@@ -4,6 +4,7 @@ title: "The Semantics of Semantic Versioning?"
 draft: false
 metaimg: "images/2020/semver.png"
 metatxt: "Semantic versioning is a low fidelity communication channel.  However, tooling could be used to improve this situation, such as through static analysis"
+metacreator: "@whileydave"
 ---
 
 Semantic versioning is a surprisingly interesting topic when you get into it.  Recently, myself and a few colleagues ([Patrick](http://patricklam.ca/) & [Jens](https://sites.google.com/site/jensdietrich/)) have been giving it some thought (and we even wrote an [essay on it](https://whileydave.com/publications/ldp20/))!  If you haven't seen it already, check out the [manifesto for semantic versioning](https://semver.org/).  Whilst that provides a nice overview, there is a lot left unsaid.  There are two different perspectives on semantic versioning:
