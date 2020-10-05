@@ -18,11 +18,11 @@
     <meta name="twitter:card" content="summary_large_image"/>    
     <meta name="twitter:image" content="{{.Site.BaseURL}}{{.Page.Params.metaimg}}"/>
     {{ end }}
-    {{ if .Page.Params.metaimgalt }}
-    <meta name="twitter:image:alt" content="{{.Site.BaseURL}}{{.Page.Params.metaimgalt}}"/>
+    {{ if .Page.Params.twitterimgalt }}
+    <meta name="twitter:image:alt" content="{{.Site.BaseURL}}{{.Page.Params.twitterimgalt}}"/>
     {{ end }}
-    {{ if .Page.Params.metacreator }}
-    <meta name="twitter:creator" content="{{.Page.Params.metacreator}}"/>
+    {{ if .Page.Params.twittersite }}
+    <meta name="twitter:site" content="{{.Page.Params.twittersite}}"/>
     {{ end }}
     <meta property="og:url" content="{{.Permalink}}"/>
     <title>David J. Pearce
