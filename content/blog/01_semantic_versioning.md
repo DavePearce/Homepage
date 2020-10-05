@@ -4,7 +4,7 @@ title: "The Semantics of Semantic Versioning?"
 draft: false
 ---
 
-Semantic versioning is a surprisingly interesting topic when you get into it.  Recently, myself and a few colleagues have been giving it some thought (and even wrote an [essay on it](https://whileydave.com/publications/ldp20/))!  If you haven't seen it already, check out the [manifesto for semantics versioning](https://semver.org/).  Whilst that provides a nice overview, there is a lot left unsaid.  There are two different perspectives on semantic versioning:
+Semantic versioning is a surprisingly interesting topic when you get into it.  Recently, myself and a few colleagues ([Patrick](http://patricklam.ca/) & [Jens](https://sites.google.com/site/jensdietrich/)) have been giving it some thought (and we even wrote an [essay on it](https://whileydave.com/publications/ldp20/))!  If you haven't seen it already, check out the [manifesto for semantic versioning](https://semver.org/).  Whilst that provides a nice overview, there is a lot left unsaid.  There are two different perspectives on semantic versioning:
 
    1) **Downstream**.  This is perhaps the more obvious scenario.  Downstream developers (clients) want access to the library features offered by (upstream) developers!  They also want both *stability* and *protection*.  That is, they don't want future releases of a library to break their code but (ideally) they want to get future releases automatically (e.g. for critical security updates).
    
@@ -66,10 +66,10 @@ can we do?_
 
 [RevAPI](https://revapi.org/) provides food-for-thought here.  If you haven't come across it before, this tool compares two versions of a Jar file and identifies certain kinds of breaking change.  Examples of breaking changes include: reducing the visibility of a method; removing a `public` declaration; or, modifying a `public` class so that it no longer implements some interface.  _This is actually awesome!_ _People should use this stuff all the time!_
 
-Our interest here is not what the tool thinks _are_ breaking changes, but what it _doesn't_.  For example, when a method no longer accepts `null` for some parameter, or moves from [linear to quadractic time](https://en.wikipedia.org/wiki/Time_complexity), or returns the elements of an array in a different order, etc.  Ok, we have to be reasonable --- one tool cannot do everything and these are _hard_ problems.  Still, RevAPI offers a glimmer of hope that semantics versioning could be much more than it currently is.  And, there are others: 
+Our interest here is not what the tool thinks _are_ breaking changes, but what it _doesn't_.  For example, when a method no longer accepts `null` for some parameter, or moves from [linear to quadratic time](https://en.wikipedia.org/wiki/Time_complexity), or returns the elements of an array in a different order, etc.  Ok, we have to be reasonable --- one tool cannot do everything and these are _hard_ problems.  Still, RevAPI offers a glimmer of hope that semantics versioning could be much more than it currently is.  And, there are others: 
 [Elm Bump](https://medium.com/@Max_Goldstein/how-to-publish-an-elm-package-3053b771e545), [rust-semverver](https://github.com/rust-dev-tools/rust-semverver), and [clirr](http://clirr.sourceforge.net/) to name a few.  
 
-_So, there should be tools, and lots of 'em!_  Both upstream _and_ downstream developers should be using them to spot inadvertent breaking changes, or to gauge the cost of upgrades.  Whilst current tools are fairly shallow in their assessment of breaking changes, there is a wealth of techniques from fields like [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis) and automated testing which could be repurposed. 
+_So, there should be tools, and lots of &apos;em!_  Both upstream _and_ downstream developers should be using them to spot inadvertent breaking changes, or to gauge the cost of upgrades.  Whilst current tools are fairly shallow in their assessment of breaking changes, there is a wealth of techniques from fields like [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis) and automated testing which could be used here. 
 
 ### Conclusion
 
@@ -78,7 +78,7 @@ Well, that's enough for now!!  If you made it this far, then you should check ou
 And finally, just to get you thinking, here's a cool idea for upstream
   developers: **know your dependencies!** These days, its easy to find
   your downstream clients.  Before releasing a new version, just check
-  for breaking changes by _running all your client's tests!_ That's
+  for breaking changes by _running all your clients' tests!_ That's
   exactly what [Crater does for
   Rust](https://github.com/rust-lang/crater) and also what [these
   folks](https://dl.acm.org/doi/abs/10.1145/3379597.3387476) and
