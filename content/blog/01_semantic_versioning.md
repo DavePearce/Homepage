@@ -3,6 +3,7 @@ date: 2020-09-24
 title: "The Semantics of Semantic Versioning?"
 draft: false
 metaimg: "images/2020/semver.png"
+metaimgalt: "Image showing example dependencies with versions in a build file."
 metatxt: "Semantic versioning is a low fidelity communication channel.  However, tooling could be used to improve this situation, such as through static analysis"
 metacreator: "@whileydave"
 ---

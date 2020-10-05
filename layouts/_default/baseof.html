@@ -18,6 +18,9 @@
     <meta property="twitter:image" content="{{.Site.BaseURL}}{{.Page.Params.metaimg}}"/>
     <meta property="twitter:card" content="summary_large_image"/>
     {{ end }}
+    {{ if .Page.Params.metaimgalt }}
+    <meta property="twitter:image:alt" content="{{.Site.BaseURL}}{{.Page.Params.metaimgalt}}"/>
+    {{ end }}
     {{ if .Page.Params.metacreator }}
     <meta property="twitter:creator" content="{{.Page.Params.metacreator}}"/>
     {{ end }}
