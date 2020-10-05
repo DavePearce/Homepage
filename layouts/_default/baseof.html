@@ -1,7 +1,22 @@
 <!doctype html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    {{ if .Page.Params.metatitle }}
+    <meta property="og:title" content="{{.Page.Params.metatitle}}">
+    <meta property="twitter:title" content="{{.Page.Params.metatitle}}">
+    {{ else }}
+    <meta property="og:title" content="{{.Page.Title}}">
+    <meta property="twitter:title" content="{{.Page.Title}}">
+    {{ end }}
+    {{ if .Page.Params.metatxt }}
+    <meta property="og:description" content="{{.Page.Params.metatxt}}">
+    <meta property="twitter:description" content="{{.Page.Params.metatxt}}">
+    {{ end }}    
+    {{ if .Page.Params.metaimg }}
+    <meta property="og:image" content="{{.Site.BaseURL}}/{{.Page.Params.metaimg}}">
+    <meta property="twitter:image" content="{{.Site.BaseURL}}/{{.Page.Params.metaimg}}">
+    {{ end }}
     <title>David J. Pearce
       {{ if .Title }}
       ({{.Title}})
