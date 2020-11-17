@@ -2,7 +2,7 @@
 draft: false
 date: 2010-01-01
 kind: "journal"
-tag: "tutte"
+tags: ["tutte"]
 title: "Computing Tutte Polynomials"
 authors: "Gary Haggard, David J. Pearce and Gordon Royle"
 booktitle: "ACM Transactions on Mathematical Software"

@@ -1,7 +1,7 @@
 ---
 date: 2018-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "QuickCheck for Whiley"
 authors: "Janice Chin"
 thesis: "Final Year Project (ENGR489)"

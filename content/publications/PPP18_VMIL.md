@@ -1,7 +1,7 @@
 ---
 date: 2018-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "Towards Compilation of an Imperative Language for FPGAs"
 authors: "Baptiste Pauget, Alex Potanin and David J. Pearce"
 booktitle: "Workshop on Virtual Machines and Language Implementations (VMIL)"

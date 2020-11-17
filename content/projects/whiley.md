@@ -3,7 +3,7 @@ draft: false
 date: 2010-01-01
 title: "Whiley"
 description: "A hybrid imperative and functional programming language which provides static checking of pre- and post-conditions."
-tag: "whiley"
+tags: ["whiley"]
 icon: "../icons/whiley.png"
 banner: "images/whiley.jpg"
 ---

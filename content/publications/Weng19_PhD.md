@@ -1,7 +1,7 @@
 ---
 date: 2019-01-01
 kind: "external"
-tag: "whiley"
+tags: ["whiley"]
 title: "Efficient compilation of a verification-friendly programming language"
 authors: "Min Hsien (Sam) Weng"
 thesis: "PhD"

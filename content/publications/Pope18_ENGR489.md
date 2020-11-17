@@ -1,7 +1,7 @@
 ---
 date: 2018-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Inferring invariants from postconditions in Whiley"
 authors: "Simon Pope"
 thesis: "Final Year Project (ENGR489)"

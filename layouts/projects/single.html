@@ -1,8 +1,8 @@
 {{ define "main" }}
-{{ $tag := .Params.tag }}
-{{ $publications := where (.Site.GetPage "publications").Pages.ByDate.Reverse ".Params.tag" $tag }}
-{{ $talks := where (.Site.GetPage "talks").Pages.ByDate.Reverse ".Params.tag" $tag }}
-{{ $downloads := where (.Site.GetPage "downloads").Pages.ByDate.Reverse ".Params.tag" $tag }}
+{{ $tags := .Params.tags }}
+{{ $publications := where (.Site.GetPage "publications").Pages.ByDate.Reverse "Params.tags" "intersect" $tags }}
+{{ $talks := where (.Site.GetPage "talks").Pages.ByDate.Reverse ".Params.tags" "intersect" $tags }}
+{{ $downloads := where (.Site.GetPage "downloads").Pages.ByDate.Reverse ".Params.tags" "intersect" $tags }}
 
 <h1>{{ .Title }}</h1>
 {{ .Content }}

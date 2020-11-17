@@ -3,7 +3,7 @@ draft: false
 date: 2004-01-01
 title: "Dynamic Topological Sort"
 description: "Efficient algorithms for updating the topological sort of a directed graph after one or more edge insertions.  Such algorithms can also be used for detecting cycles in dynamically changing graphs as well."
-tag: "dts"
+tags: ["dts"]
 ---
 
 The problem of topologically sorting a directed graph is about arranging its nodes so that all edges go in the same direction. For example, consider the following directed graph:

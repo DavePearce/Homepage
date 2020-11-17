@@ -1,7 +1,7 @@
 ---
 date: 2019-01-01
 kind: "honsproject"
-tag: "whiley"
+tags: ["whiley"]
 title: "Compiling Whiley for WebAssembly"
 authors: "Wei Hua"
 thesis: "Final Year Project (COMP489)"

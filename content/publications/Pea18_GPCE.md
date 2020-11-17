@@ -2,7 +2,7 @@
 draft: false
 date: 2018-01-01
 kind: "conference"
-tag: "whiley"
+tags: ["whiley"]
 title: "Rewriting for Sound and Complete Union, Intersection and Negation Types"
 authors: "David J. Pearce"
 booktitle: "Proceedings of the Conference on Generative Programming: Concepts & Experience (GPCE)"

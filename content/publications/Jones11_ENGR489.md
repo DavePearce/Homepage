@@ -1,7 +1,7 @@
 ---
 date: 2011-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Integrating the Actor Model into the Whiley Programming Language"
 authors: "Timothy Jones"
 thesis: "Final Year Project (ENGR489)"

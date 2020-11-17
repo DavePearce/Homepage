@@ -2,7 +2,7 @@
 date: 2000-01-01
 kind: "thesis"
 title: "Instrumenting the Linux Kernel"
-tag: "gilk"
+tags: ["gilk"]
 authors: "David J. Pearce"
 thesis: "MEng"
 school: "Imperial College of Science, Technology and Medicine, University of London"

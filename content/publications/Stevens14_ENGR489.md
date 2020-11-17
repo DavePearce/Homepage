@@ -1,7 +1,7 @@
 ---
 date: 2014-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Demonstrating Whiley on an Embedded System"
 authors: "Matt Stevens"
 thesis: "Final Year Project (ENGR489)"

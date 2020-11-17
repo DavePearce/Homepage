@@ -1,7 +1,7 @@
 ---
 date: 2017-01-01
 kind: "project"
-tag: "whiley"
+tags: ["whiley"]
 title: "Compiling Whiley to FPGAs"
 authors: "Baptiste Pauget"
 school: "Victoria University of Wellington"

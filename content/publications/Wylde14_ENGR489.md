@@ -1,7 +1,7 @@
 ---
 date: 2014-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Verifying Whiley Programs using an Off-the-Shelf SMT Solver"
 authors: "Henry Wylde"
 thesis: "Final Year Project (ENGR489)"

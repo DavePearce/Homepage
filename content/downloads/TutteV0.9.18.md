@@ -1,6 +1,6 @@
 ---
 date: 2018-01-01
-tag: "tutte"
+tags: ["tutte"]
 title: "Version 0.9.18"
 download: "tuttepoly-v0.9.18.tgz"
 ---

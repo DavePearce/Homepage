@@ -1,7 +1,7 @@
 ---
 date: 2015-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Developing a Whiley-to-JavaScript Translator"
 authors: "Cody Slater"
 thesis: "Final Year Project (ENGR489)"

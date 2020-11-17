@@ -1,7 +1,7 @@
 ---
 date: 2017-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "Array Programming in Whiley"
 authors: "David J. Pearce"
 booktitle: "Workshop on Libraries, Languages and Compilers for Array Programming (ARRAY)"

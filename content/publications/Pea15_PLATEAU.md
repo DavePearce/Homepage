@@ -1,7 +1,7 @@
 ---
 date: 2015-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "Some Usability Hypotheses for Verification"
 authors: "David J. Pearce"
 booktitle: "Proceedings of the Workshop on Evaluation and Usability of Programming Languages (PLATEAU),"

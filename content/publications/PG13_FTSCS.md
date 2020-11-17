@@ -1,7 +1,7 @@
 ---
 date: 2013-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "Reflections on Verifying Software with Whiley"
 authors: "David J. Pearce and Lindsay Groves"
 booktitle: "Workshop on Formal Techniques for Safety-Critical Systems (FTSCS)"

@@ -1,7 +1,7 @@
 ---
 date: 2016-01-01
 kind: "thesis"
-tag: "whiley"
+tags: ["whiley"]
 title: "Lifetime Analysis for Whiley"
 authors: "Sebastian Schweizer"
 school: "University of Kaiserslautern"

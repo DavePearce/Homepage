@@ -1,7 +1,7 @@
 ---
 date: 2013-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "A Calculus for Constraint-Based Flow Typing"
 authors: "David J. Pearce"
 booktitle: "Workshop on Formal Techniques for Java-like Languages (FTFJP)"

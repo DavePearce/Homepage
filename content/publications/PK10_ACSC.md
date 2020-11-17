@@ -1,7 +1,7 @@
 ---
 date: 2010-01-01
 kind: "conference"
-tag: "dts"
+tags: ["dts"]
 title: "A Batch Algorithm for Maintaining a Topological Order"
 authors: "David J. Pearce and Paul H.J. Kelly"
 booktitle: "Australasian Computer Science Conference (ACSC)"

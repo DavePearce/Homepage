@@ -1,7 +1,7 @@
 ---
 date: 2015-01-01
 kind: "workshop"
-tag: "whiley"
+tags: ["whiley"]
 title: "Integer Range Analysis for Whiley on Embedded Systems"
 authors: "David J. Pearce"
 booktitle: "IEEE/IFIP Workshop on Software Technologies for Future Embedded and Ubiquitous Systems (SEUS)"

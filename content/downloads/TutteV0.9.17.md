@@ -1,6 +1,6 @@
 ---
 date: 2016-01-01
-tag: "tutte"
+tags: ["tutte"]
 title: "Version 0.9.17"
 download: "tuttepoly-v0.9.17.tgz"
 ---

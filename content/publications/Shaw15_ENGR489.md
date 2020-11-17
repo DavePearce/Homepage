@@ -1,7 +1,7 @@
 ---
 date: 2015-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Identifying Redundant Test Cases"
 authors: "Marc Shaw"
 thesis: "Final Year Project (ENGR489)"

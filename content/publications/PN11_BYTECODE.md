@@ -2,7 +2,7 @@
 draft: false
 date: 2011-01-01
 kind: "journal"
-tag: "whiley"
+tags: ["whiley"]
 title: "Implementing a Language with Flow-Sensitive and Structural Typing on the JVM"
 authors: "David J. Pearce and James Noble"
 booktitle: "Proceedings of the Workshop on Bytecode Semantics, Verification, Analysis and Transformation (BYTECODE), ENTCS"

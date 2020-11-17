@@ -3,7 +3,7 @@ draft: false
 date: 2003-01-01
 title: "DJProf"
 description: "An experimental Java profiling tool which employs AspectJ to insert the necessary instrumentation for profiling rather than, for example, the Java Machine Profiler Interface (JVMPI). DJProf can be used to profile Java programs without modification (i.e. there is no need to recompile them for profiling) and does not require the user to have any knowledge of AspectJ. "
-tag: "djprof"
+tags: ["djprof"]
 ---
 
 DJProf is an experimental Java profiling tool which employs AspectJ to insert the necessary instrumentation for profiling rather than, for example, the Java Machine Profiler Interface (JVMPI). DJProf can be used to profile Java programs without modification (i.e. there is no need to recompile them for profiling) and does not require the user to have any knowledge of AspectJ. The Load-Time Weaving capability of AspectJ is utilised to make this possible. The tool (including its source code) is release under a very straightforward (and unrestrictive) license for the benefit of all.

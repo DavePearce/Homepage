@@ -4,7 +4,7 @@ date: 2010-01-01
 title: "JPure"
 subtitle: "JPure"
 description: "JPure is a novel purity system for Java that employs modularly checkable purity annotations."
-tag: "jpure"
+tags: ["jpure"]
 ---
 
 Purity Analysis is the problem of determining whether or not a method may have side-effects.  This has applications in automatic parallelisation, extended static checking, and more.  JPure is a novel purity system for Java that employs purity annotations which can be checked modularly.  For example, you can add `@Pure` annotations as follows:

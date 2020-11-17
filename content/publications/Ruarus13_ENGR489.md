@@ -1,7 +1,7 @@
 ---
 date: 2013-01-01
 kind: "honsreport"
-tag: "whiley"
+tags: ["whiley"]
 title: "Compiling Whiley Programs for a General Purpose GPU"
 authors: "Melby Ruarus"
 thesis: "Final Year Project (ENGR489)"

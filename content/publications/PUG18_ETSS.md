@@ -1,7 +1,7 @@
 ---
 date: 2018-01-01
 kind: "chapter"
-tag: "whiley"
+tags: ["whiley"]
 title: "An Introduction to Software Verification with Whiley"
 authors: "David J. Pearce and Mark Utting and Lindsay Groves"
 booktitle: "Engineering Trustworthy Software Systems"

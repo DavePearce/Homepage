@@ -1,7 +1,7 @@
 ---
 date: 2013-01-01
 kind: "conference"
-tag: "jkit"
+tags: ["jkit"]
 title: "OwnKit: Inferring Modularly Checkable Ownership Annotations for Java"
 authors: "Constantine Dymnikov, David J. Pearce and Alex Potanin"
 booktitle: "Australasian Software Engineering Conference (ASWEC)"

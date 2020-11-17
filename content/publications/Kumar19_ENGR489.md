@@ -1,7 +1,7 @@
 ---
 date: 2019-01-01
 kind: "honsproject"
-tag: "whiley"
+tags: ["whiley"]
 title: "Compiling Whiley for the Ethereum Virtial Machine"
 authors: "Dylan Kumar"
 thesis: "Final Year Project (ENGR489)"
