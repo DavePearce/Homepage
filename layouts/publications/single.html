@@ -1,6 +1,6 @@
 {{ define "main" }}
-{{ $tag := slice .Params.tag }}
-{{ $projects := where (.Site.GetPage "projects").Pages.ByDate.Reverse ".Params.tags" "intersect" $tag }}
+{{ $tags := .Params.tags }}
+{{ $projects := where (.Site.GetPage "projects").Pages.ByDate.Reverse ".Params.tags" "intersect" $tags }}
 {{ $talks := where (.Site.GetPage "talks").Pages.ByDate.Reverse ".Params.tags" "intersect" (slice .File.TranslationBaseName) }}
 
 <h1>{{ .Title }}</h1>
