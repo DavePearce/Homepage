@@ -3,8 +3,9 @@ date: 2020-08-04
 kind: "conference"
 title: "Putting the Semantics into Semantic Versioning"
 authors: "Patrick Lam, Jens Dietrich and David J. Pearce"
-pages: "(to appear)"
+pages: "157--179"
 booktitle: "Onward! Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software"
+DOI: "10.1145/3426428.3426922"
 preprint: "LDP20_ONWARD_preprint.pdf"
 ---
 
