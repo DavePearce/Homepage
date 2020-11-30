@@ -7,6 +7,7 @@ metatxt: "Partial moves are an interesting but often misunderstood feature of Ru
 twitterimgalt: "Illustrating a reference being moved out of a tuple in Rust."
 twittersite: "@whileydave"
 twitter: "https://twitter.com/whileydave/status/1333545363165175809"
+reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
 ---
 
 Recently I've been digging into [Rust](https://www.rust-lang.org/) and, whilst it's a great language on many fronts, I do find lots of hidden complexity.  One example which doesn't get much attention is _partial moves_.  So, I thought, _why not write an introduction?_
