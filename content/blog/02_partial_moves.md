@@ -1,10 +1,10 @@
 ---
 date: 2020-11-30
 title: "Understanding Partial Moves in Rust"
-draft: false
-metaimg: "images/2020/PartialMoves_PartialMove.png"
-metatxt: "Partial Moves in Rust are an interesting but often misunderstood feature.  To understand them, what we need is a good mental model!"
-twitterimgalt: "Image showing an owning reference in Rust being moved out of a tuple."
+draft: true
+#metaimg: "images/2020/semver.png"
+#metatxt: "Semantic versioning is a low fidelity communication channel.  However, tooling could be used to improve this situation, such as through static analysis"
+#twitterimgalt: "Image showing example dependencies with versions in a build file."
 twittersite: "@whileydave"
 ---
 
@@ -70,6 +70,5 @@ would be problematic regardless.
 
 ### Conclusion
 
-Partial moves are a pretty interesting feature of Rust which are
-sometimes misunderstood.  In fact, with a good mental model they are
-not so hard to understand!
+Rust is a pretty awesome language, but there is still a lot of subtle
+features.  Hopefully this helps explains one piece of the puzzle!

@@ -43,9 +43,10 @@ make this kind of investment, but it often comes at a personal cost.
 -- https://medium.com/quote-of-the-week/crises-in-academia-today-74fcbe1a80f4
 -- https://www.sixthtone.com/news/1003146/publish-or-perish-the-dark-world-of-chinese-academic-publishing
 
-* PL is a dying field.  Artifact evaluation.
+* PL is a dying field?  Artifact evaluation adds overhead.
 
-* Examples of big projects?  Jikes. Scala. Soot. Why3.
+* Examples of big projects?
+  Jikes. Scala. Soot. Why3. Racket. Haskell. 
 
 * Doesn't incentivize refactoring or quality.
 
