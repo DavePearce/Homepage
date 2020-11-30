@@ -1,7 +1,7 @@
 ---
 date: 2020-11-30
 title: "Understanding Partial Moves in Rust"
-draft: true
+draft: false
 metaimg: "images/2020/PartialMoves_PartialMove.png"
 metatxt: "Partial moves are an interesting but often misunderstood feature of Rust.  However, with the right mental model, they are not so hard to understand."
 twitterimgalt: "Illustrating a reference being moved out of a tuple in Rust."
