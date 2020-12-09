@@ -18,11 +18,52 @@ _What is this new "check" feature then?_ In a nutshell, it automatically generat
 
 ## Example
 
+As a simple example to illustrate how it works, consider the following
+signature for the `max(int[])` function:
+
+```whiley
+function max(int[] items) -> (int r)
+// items cannot be empty, otherwise there is no max!
+requires |items| > 0
+// result cannot be smaller than any element in items
+ensures all { i in 0..|items| | r >= items[i] }
+// result must match at least one element of items
+ensures some { i in 0..|items| | r == items[i] }:
+   ...
+```
+
+We're not really concerned with the implementation here and, for
+example, it might have bugs.  To check this function, the tool will do
+the following:
+
+   1. **(Generation)** The tool generates some number of valid inputs.
+   That is, input values which meet the precondition.  For our example
+   above, that is any `int` array containing at least one element.
+
+   2. **(Execution)**. The function in question is then executed using
+   each of the generated inputs.  This may lead to obvious failures
+   (e.g. out-of-bounds or divide-by-zero errors), in which case we've
+   found some bugs.
+
+   3. **(Checking)**. For any execution which completed, the tool then
+   checks the result against the postcondition.  If the postcondition
+   doesn't hold then, again, this indicates a bug somewhere.
+
+The key here that the specification acts as the [test
+oracle](https://en.wikipedia.org/wiki/Test_oracle).  In other words,
+_having written the specification we get testing for free_!  And, the
+tool takes care of the technical challenges so we don't have to.  For
+example, generating valid inputs efficiently is harder than it looks
+(more on this below).
+
 ## Pros / Cons
 
    * Incomplete specifications
    * No need for loop invariants
    * No need to additionally provide properties as for QuickCheck
+
+   * Problems generating enough inputs.  Could look at array example
+     from scc benchmark.
 
 ## Technical Stuff
 
