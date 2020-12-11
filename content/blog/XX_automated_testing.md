@@ -67,4 +67,20 @@ example, generating valid inputs efficiently is harder than it looks
 
 ## Technical Stuff
 
-   * How to generate inputs
+The main technical challenge is that of efficiently generating inputs
+_values under constraints_.  To start with, we can generate raw input
+values for the various data types in Whiley as follows:
+
+   * **Primitives.** These are pretty easy.  For example, to generate
+       values of type `int`, we'll use some (configurable) domain
+       (e.g. `-3 .. 3`) of values.  We can easily sample from this
+       domain as well.
+
+   * **Arrays**.  The approach here is to put a maximum limit on the
+       length of arrays we'll consider (e.g. length `3`).
+
+   * **Records**.
+
+   * **References**.
+
+   * **Lambdas**.
