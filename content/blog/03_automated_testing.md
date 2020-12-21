@@ -12,7 +12,7 @@ twittersite: "@whileydave"
 
 Recently, the [online editor for Whiley](http://whileylabs.com) was updated with some new features.  Actually, the update represents a _complete rewrite of the front-end in Whiley_.  Obviously, I am very excited about that!  Previously it was written using raw (i.e. ugly) JavaScript, but now uses a framework for [Functional Reactive Programming](https://www.youtube.com/watch?v=yYGEcyCHiZk) (called [Web.wy](https://github.com/DavePearce/Web.wy)).  That has made a huge difference to how the code looks.  Still, I'm not going to talk about that here.  Rather, it is the new _check_ feature (highlighted in red below) that I'm interested in:
 
-{{<img class="text-center" link="http://whileylabs.com" src="/images/2020/AutomatedTesting_WhileyLabs.png" width="60%" alt="Illustrating a screenshot of whileylabs.com with the check option highlighted.">}}
+{{<img class="text-center" link="http://whileylabs.com" src="/images/2020/AutomatedTesting_WhileyLabs.png" width="80%" alt="Illustrating a screenshot of whileylabs.com with the check option highlighted.">}}
 
 _What is this new "check" feature then?_ In a nutshell, it automatically generates test inputs for functions and runs them through the code looking for problems (e.g. _divide-by-zero_, _index-out-of-bounds_, etc).  In many ways, it is similar to the [QuickCheck](https://en.wikipedia.org/wiki/QuickCheck) line of tools (with the added benefit that Whiley has first-class specifications).  We can think of it as a "half-way" step towards formal verification.  The key is that it is easier to check a program than it is to statically verify it (more on this below).  Some might think that having a check feature like this doesn't make sense when you also have static verification.  But, I prefer to think of them as _complementary_.  Thinking about a developer's workflow, we might imagine checking a function first as we develop it (since this is easier and quicker) before, finally, attempting to statically verify it (since this is harder and may force the specification to be further refined).  
 
@@ -111,7 +111,8 @@ type List<T> is {
      int length,
      T[] items
 }
-where 0 <= length && length <= |items|
+where 0 <= length
+where length <= |items|
 ```
 
 The current approach we take is rather simplistic here.  We simply
@@ -134,7 +135,9 @@ don't satisfy the invariant.  This works, but it has some problems:
 	    bool[] visited,
 	    int[] lowlink,
 	    int[] index
-      } where |visited| == |lowlink| && |lowlink| == |index|
+      }
+      where |visited| == |lowlink|
+      where |lowlink| == |index|
       ```
       In this case, there are
       _2.4M_ values of the underlying type, of which only _946K_ match
@@ -194,7 +197,15 @@ Of course, there are some disadvantages with checking as well.  Most
 importantly, checking doesn't guarantee to find all problems with your
 program!  But, in our experience, it usually finds most of them.
 There are also problems (discussed above) with generating enough
-values for complex data types to properly test our functions.  Still,
-despite all this, we find checking to be incredibly useful ---
-especially as its free.  So, you should head over to our [online
-editor for Whiley](http://whileylabs.com) and give it a go!
+values for complex data types to properly test our functions.  
+
+### Conclusion
+
+Overall, despite some limitations, we find checking to be incredibly
+useful --- _especially as its free_.  Here's a short demo to give you
+a taste:
+
+{{<youtube id="d_liFzxlpjA" width="560" height="315">}}
+
+So, head on over to the [online editor for
+Whiley](http://whileylabs.com) and give it a go!
