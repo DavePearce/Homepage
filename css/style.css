@@ -144,7 +144,8 @@ a:visited {
     .talk { padding: 0.5em; }    
     .talk-description { padding: 0.5em 0em 0.5em 0em; }    
     .talk-embedding { max-width: 100%; grid-column: 1; grid-row: 3; }
-    .download div { padding: 0.25em 0.25em; }    
+    .download div { padding: 0.25em 0.25em; }
+    .youtube { width: 280px; height: 158px; }    
 }
 
 @media only screen and (min-width: 768px) {
@@ -158,4 +159,5 @@ a:visited {
     .talk { padding: 1em; grid-template-rows: auto 1fr; }
     .talk-embedding { grid-column: 2; grid-row: 1 / span 2; }
     .download div { padding: 1em 1em; }
+    .youtube { width: 560px; height: 315px; }
 }
