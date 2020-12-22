@@ -6,8 +6,8 @@ draft: false
 #metatxt: ""
 #twitterimgalt: ""
 twittersite: "@whileydave"
-#twitter: "https://twitter.com/whileydave/status/1333545363165175809"
-#reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
+twitter: "https://twitter.com/whileydave/status/1341212594154049537"
+reddit: "https://www.reddit.com/r/programming/comments/khwdyb/automated_testing_for_free/"
 ---
 
 Recently, the [online editor for Whiley](http://whileylabs.com) was updated with some new features.  Actually, the update represents a _complete rewrite of the front-end in Whiley_.  Obviously, I am very excited about that!  Previously it was written using raw (i.e. ugly) JavaScript, but now uses a framework for [Functional Reactive Programming](https://www.youtube.com/watch?v=yYGEcyCHiZk) (called [Web.wy](https://github.com/DavePearce/Web.wy)).  That has made a huge difference to how the code looks.  Still, I'm not going to talk about that here.  Rather, it is the new _check_ feature (highlighted in red below) that I'm interested in:
