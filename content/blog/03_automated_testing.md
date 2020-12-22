@@ -6,7 +6,7 @@ metaimg: "images/2020/QuickCheckDemo.jpg"
 metatxt: "New functionality for automated testing is available on whileylabs.com.  This generates test inputs for functions and runs them through the code looking for problems (e.g. divide-by-zero, index-out-of-bounds, etc). In many ways, it is similar to the QuickCheck line of tools (with the added benefit that Whiley has first-class specifications)."
 twitterimgalt: "Image of Editing Code in WhileyLabs"
 twittersite: "@whileydave"
-twitter: "https://twitter.com/whileydave/status/1341212594154049537"
+twitter: "https://twitter.com/whileydave/status/1341215592733274112"
 reddit: "https://www.reddit.com/r/programming/comments/khwdyb/automated_testing_for_free/"
 ---
 
