@@ -23,11 +23,11 @@ signature for the `max(int[])` function:
 
 ```c
 function max(int[] items) -> (int r)
-// items cannot be empty, otherwise there is no max!
+// items cannot be empty
 requires |items| > 0
-// result cannot be smaller than any element in items
+// result not smaller than any in items
 ensures all { i in 0..|items| | r >= items[i] }
-// result must match at least one element of items
+// result is element in items
 ensures some { i in 0..|items| | r == items[i] }:
    ...
 ```
