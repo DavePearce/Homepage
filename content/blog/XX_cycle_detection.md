@@ -21,31 +21,48 @@ example, suppose we have two mutexes `M0` and `M1` which can be held
 at the same time by threads `T0` and `T1`.  A deadlock can easily
 occur if, for example, `T0` acquires `M0` before `M1`, whilst `T1`
 acquires `M1` before `M0`.  Of course, this doesn't mean a deadlock
-will happen every time, but in the (rare) situation when both `T0` has
-acquired `M0` and `T1` has acuiqred `M1` and they are waiting on each
-other.
+will happen every time but, if `T0` acquires `M0` and then `T1` has
+aqcuires `M1`, then they are waiting on each other and it's a
+deadlock.
 
-The key observation is that, if mutexes are acquired according to a
-globally consistent ordering (e.g. `M0` always before `M1`), _then no
-deadlock can arise_.  The challenge to determine an appropriate
-consistent ordering of mutexes.  In fact, `mutex` does not attempt to
-determine this beforehand (presumably as it is considered too hard).
-Instead, it simply observes program execution and reconstructs the
-ordering dynamically.  Furthermore, if some thread attempts to acquire
-a mutex in an order inconsistent with this, then a potential deadlock
-has been detected.
+The key is that, if mutexes are acquired according to a globally
+consistent ordering (e.g. `M0` always before `M1`), _then no deadlock
+can arise_.  The challenge is to determine an appropriate consistent
+ordering of mutexes.  In fact, `mutex` does not attempt to determine
+this beforehand (presumably as it is considered too hard).  Instead,
+it simply observes program execution and reconstructs the ordering
+dynamically.  Then, during execution, if some thread attempts to
+acquire a mutex in an order inconsistent with this, then a potential
+deadlock has been detected.
 
 ### Acquires-Before Graph
 
-More specifically, it detects cycles in the _acquires-before_ graph
-where a cycle indicates a potential deadlock.
+To detect deadlocks, `mutex` maintains a (global) ordering of lock
+acquisition called the _aquires-before graph_.  This is implemented
+using a global variable called `deadlock_graph` which stores a
+directed graph, such as the following:
+
+{{<img class="text-center" src="/images/2021/DeadlockDetection_Ordering.png" height="96em" alt="Illustrating different examples of aliasing between references.">}}
+
+In this example, we have four mutexes and to interpret the graph we
+should consider that an edge from `Mx` to `My` indicates that `Mx` has
+been acquired before `My` in _all lock acquisitions observed thus
+far_.
+
+In addition to `deadlock_graph`, every thread is associated with a
+structure holding the set of mutexes it currently holds.  When a
+thread holding mutex `Mx` attempts to acquire mutex `My` an edge is
+added to `deadlock_graph`.  If that edge is consistent with the
+current ordering (i.e. does not introduce a cycle) then the
+acquisition is successfull, otherwise an error message is reported
+highlighting the potential deadlock.
+
+#### NOTES
 
 The key challenge faced here is that the graph is changing in real
 time.  Therefore, we want to perform the least amount of work when the
 graph is updated to check whether there is a cycle or not, and this is
 where my algorithm comes in.
-
-#### NOTES
 
   * Only in debug mode
   
