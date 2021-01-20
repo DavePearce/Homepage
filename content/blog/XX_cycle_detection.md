@@ -16,16 +16,52 @@ Recently, I discovered that an [algorithm of mine]({{<ref "/publications/pk07_je
 
 The algorithm is being used in `mutex` to ensure [locks are acquired
 in a consistent
-order](https://abseil.io/docs/cpp/guides/synchronization).  More
-specifically, it detects cycles in the _acquires-before_ graph where a
-cycle indicates a potential deadlock.  **(SAY MORE.  Not in
-production.  What is this graph?)**
+order](https://abseil.io/docs/cpp/guides/synchronization).  For
+example, suppose we have two mutexes `M0` and `M1` which can be held
+at the same time by threads `T0` and `T1`.  A deadlock can easily
+occur if, for example, `T0` acquires `M0` before `M1`, whilst `T1`
+acquires `M1` before `M0`.  Of course, this doesn't mean a deadlock
+will happen every time, but in the (rare) situation when both `T0` has
+acquired `M0` and `T1` has acuiqred `M1` and they are waiting on each
+other.
+
+The key observation is that, if mutexes are acquired according to a
+globally consistent ordering (e.g. `M0` always before `M1`), _then no
+deadlock can arise_.  The challenge to determine an appropriate
+consistent ordering of mutexes.  In fact, `mutex` does not attempt to
+determine this beforehand (presumably as it is considered too hard).
+Instead, it simply observes program execution and reconstructs the
+ordering dynamically.  Furthermore, if some thread attempts to acquire
+a mutex in an order inconsistent with this, then a potential deadlock
+has been detected.
+
+### Acquires-Before Graph
+
+More specifically, it detects cycles in the _acquires-before_ graph
+where a cycle indicates a potential deadlock.
 
 The key challenge faced here is that the graph is changing in real
 time.  Therefore, we want to perform the least amount of work when the
 graph is updated to check whether there is a cycle or not, and this is
 where my algorithm comes in.
 
-### Cycle Detection
+#### NOTES
 
-Talk about Tarjan's algorithm briefly.
+  * Only in debug mode
+  
+  * Requires annotations
+
+  * From looking at the code.  It holds a per-thread structure which
+    records all mutexes currently held, along with the deadlock graph.
+    When a new lock is acquired, edges are added from all held mutexes
+    to the new one.  What it does is dynamically build up the
+    ordering. The `deadlock_graph` is a global data structured shared
+    amongst all threads.  hence why only in debug mode.
+
+### Efficiency
+
+  * During debug mode, every lock acquisition requires updating the
+    topological ordering of the graph.
+
+  * Tarjan's algorithm is quite slow for this, and also unnecessary as
+    we need only to identify one cycle.
