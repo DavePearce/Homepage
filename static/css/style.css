@@ -146,9 +146,11 @@ a:visited {
     .talk-embedding { max-width: 100%; grid-column: 1; grid-row: 3; }
     .download div { padding: 0.25em 0.25em; }
     .youtube { width: 280px; height: 158px; }
+    img { width: 100%; }
 }
 
 @media only screen and (min-width: 768px) {
+    img { max-width: 80%; }    
     .list-even { padding: 0em 1em; }
     .list-odd  { padding: 0em 1em; }
     .publication { padding: 0em; }
