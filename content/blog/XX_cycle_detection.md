@@ -10,7 +10,7 @@ twittersite: "@whileydave"
 #reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
 ---
 
-Recently, I discovered that an [algorithm of mine]({{<ref "/publications/pk07_jea" >}}) from a few years back is being used in both [TensorFlow](https://www.tensorflow.org/) and the [Abseil C++](https://abseil.io/) library (see [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/compiler/xla/service/graphcycles/graphcycles.cc) and [here](https://github.com/abseil/abseil-cpp/blob/master/absl/synchronization/internal/graphcycles.cc)).  That is of course pretty exciting since they are both widely used libraries!  So, I thought a summary of the algorithm and what it does might be in order ...
+Recently, I discovered that an [algorithm of mine]({{<ref "/publications/pk07_jea" >}}) from a few years back is being used in both [TensorFlow](https://www.tensorflow.org/) and the [Abseil C++](https://abseil.io/) library (see [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/compiler/xla/service/graphcycles/graphcycles.cc) and [here](https://github.com/abseil/abseil-cpp/blob/master/absl/synchronization/internal/graphcycles.cc)).  That is of course pretty exciting since they are both widely used libraries!  So, I thought it would be interesting to look at what it is being used for.
 
 ### Deadlock Detection
 
