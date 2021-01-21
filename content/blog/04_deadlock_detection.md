@@ -2,7 +2,7 @@
 date: 2020-12-19
 title: "Dynamic Cycle Detection for Lock Ordering"
 draft: false
-metaimg: "images/2021/DeadlockDetection_Ordering.png"
+metaimg: "images/2021/DeadlockDetection_Preview.png"
 metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynamic deadlock detection.  So, I thought I would give an overview of how it works."
 twitterimgalt: "Illusstrating a partial ordering of mutexes"
 twittersite: "@whileydave"
