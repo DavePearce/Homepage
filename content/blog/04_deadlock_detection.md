@@ -42,7 +42,7 @@ acquisitions called the _aquires-before graph_.  This is implemented
 using a global variable called `deadlock_graph` which stores a
 directed acyclic graph, such as the following:
 
-{{<img class="text-center mobile-max-width" src="/images/2021/DeadlockDetection_Ordering.png" alt="Illustrating an acquires before graph.">}}
+{{<img class="text-center image" width="50%" src="/images/2021/DeadlockDetection_Ordering.png" alt="Illustrating an acquires before graph.">}}
 
 Here, we have four mutexes and an edge `Mx -> My` means `Mx` must be
 _acquired before_ `My`.  Actually, it indicates that `Mx` has been
@@ -56,7 +56,7 @@ and `M3` above) are ordered _on demand_.  For example, if a thread
 comes along and acquires `M2` whilst holding `M3`, the ordering is
 updated accordingly:
 
-{{<img class="text-center" src="/images/2021/DeadlockDetection_Ordering_Updated.png" alt="Illustrating the reorded graph after the edge insertion.">}}
+{{<img class="text-center image" width="50%" src="/images/2021/DeadlockDetection_Ordering_Updated.png" alt="Illustrating the reorded graph after the edge insertion.">}}
 
 From now on, any attempt to acquire `M2` before `M3` generates an
 error message highlighting the potential deadlock.  To make this work,
@@ -91,7 +91,7 @@ ordering](https://en.wikipedia.org/wiki/Topological_sorting) of the
 graph.  For example, consider adding the edge `M3 --> M1` to the
 following graph:
 
-{{<img class="text-center" src="/images/2021/DeadlockDetection_AffectedRegion.png" alt="Illustrating the affected region after an edge insertion.">}}
+{{<img class="text-center image" width="100%" src="/images/2021/DeadlockDetection_AffectedRegion.png" alt="Illustrating the affected region after an edge insertion.">}}
 
 Observe, when inserting an edge `Mx --> My`, there is a 50% chance
 mutexes `Mx` and `My` are already correctly ordered and, hence, _no
