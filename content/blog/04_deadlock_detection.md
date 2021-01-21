@@ -6,7 +6,7 @@ metaimg: "images/2021/DeadlockDetection_Preview.png"
 metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynamic deadlock detection.  So, I thought I would give an overview of how it works."
 twitterimgalt: "Illusstrating a partial ordering of mutexes"
 twittersite: "@whileydave"
-#twitter: "https://twitter.com/whileydave/status/1333545363165175809"
+twitter: "https://twitter.com/whileydave/status/1352366798448910336"
 #reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
 ---
 
