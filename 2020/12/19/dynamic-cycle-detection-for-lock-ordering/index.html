@@ -1,0 +1,79 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Dynamic Cycle Detection for Lock Ordering"><meta name=twitter:title content="Dynamic Cycle Detection for Lock Ordering"><meta name=twitter:site content="@whileydave"><meta property="og:url" content="https://whileydave.com/2020/12/19/dynamic-cycle-detection-for-lock-ordering/"><title>David J. Pearce
+(Dynamic Cycle Detection for Lock Ordering)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Dynamic Cycle Detection for Lock Ordering</h1><div class=post-date>Saturday, December
+19th,
+2020</div><hr><p>Recently, I discovered that an <a href=https://whileydave.com/publications/pk07_jea/>algorithm of mine</a> from a few years back is being used in both <a href=https://www.tensorflow.org/>TensorFlow</a> and the <a href=https://abseil.io/>Abseil C++</a> library (see <a href=https://github.com/tensorflow/tensorflow/blob/master/tensorflow/compiler/xla/service/graphcycles/graphcycles.cc>here</a> and <a href=https://github.com/abseil/abseil-cpp/blob/master/absl/synchronization/internal/graphcycles.cc>here</a>). That is of course pretty exciting since they are both widely used libraries! So, I thought it would be interesting to look at what it is being used for.</p><h3 id=deadlock-detection>Deadlock Detection</h3><p>In Abseil, the algorithm is used in
+<a href=https://github.com/abseil/abseil-cpp/blob/master/absl/synchronization/mutex.cc><code>mutex</code></a>
+to ensure <a href=https://abseil.io/docs/cpp/guides/synchronization>locks are acquired in a consistent
+order</a>. Suppose we
+have two mutexes <code>M0</code> and <code>M1</code> which can be held at the same time by
+two threads. A deadlock can easily occur if, for example, the first
+thread acquires <code>M0</code> then <code>M1</code>, whilst the second acquires <code>M1</code>
+then <code>M0</code>. This doesn&rsquo;t mean a deadlock will happen every time.
+But if, by chance, the first thread acquires <code>M0</code> at the same time as
+the second aqcuires <code>M1</code> &mdash; then we have a deadlock.</p><p>On the other hand, if mutexes are acquired according to a globally
+consistent ordering (e.g. <code>M0</code> always acquired before <code>M1</code>), <em>then no
+deadlock can arise</em>. The challenge is to determine an appropriate
+ordering of mutexes. In fact, <code>mutex</code> does not attempt to determine
+this statically (presumably this is considered too hard). Instead, it
+simply observes program execution and reconstructs the ordering
+dynamically. Then, during execution, if some thread attempts to
+acquire a mutex in an order inconsistent with this, a potential
+deadlock is reported.</p><h3 id=acquires-before-graph>Acquires-Before Graph</h3><p>To detect deadlocks, <code>mutex</code> maintains a (global) ordering of lock
+acquisitions called the <em>aquires-before graph</em>. This is implemented
+using a global variable called <code>deadlock_graph</code> which stores a
+directed acyclic graph, such as the following:</p><figure class=text-center><img height=96em alt="Illustrating an acquires before graph." src=/images/2021/DeadlockDetection_Ordering.png></figure><p>Here, we have four mutexes and an edge <code>Mx -> My</code> means <code>Mx</code> must be
+<em>acquired before</em> <code>My</code>. Actually, it indicates that <code>Mx</code> has been
+acquired before <code>My</code> in <em>all lock acquisitions observed thus far</em>. As
+an example, consider mutex <code>M3</code>. Both <code>M0</code> and <code>M1</code> must be acquired
+before <code>M3</code>. In contrast, it doesn&rsquo;t matter whether <code>M2</code> is acquired
+before <code>M3</code> or not.</p><p>Mutexes which are unordered with respect to each other (as for <code>M2</code>
+and <code>M3</code> above) are ordered <em>on demand</em>. For example, if a thread
+comes along and acquires <code>M2</code> whilst holding <code>M3</code>, the ordering is
+updated accordingly:</p><figure class=text-center><img height=96em alt="Illustrating the reorded graph after the edge insertion." src=/images/2021/DeadlockDetection_Ordering_Updated.png></figure><p>From now on, any attempt to acquire <code>M2</code> before <code>M3</code> generates an
+error message highlighting the potential deadlock. To make this work,
+every thread is associated with the mutexes it currently holds. When
+a thread holding mutex <code>Mx</code> attempts to acquire mutex <code>My</code>, the
+corresponding edge is added to <code>deadlock_graph</code>. If that edge
+introduces a cycle, we have a potential deadlock. Otherwise, the
+ordering is updated (as above) and execution proceeds.</p><p>At this point, it is becoming clear that performance is an issue.
+Whenever any thread acquires a lock, the <code>deadlock_graph</code> must be
+updated and the current ordering recalculated. For this reason,
+deadlock detection in <code>mutex</code> is only enabled when debugging.
+Furthermore, an efficient algorithm for updating the ordering is
+desirable (and this is where my algorithm comes in).</p><h3 id=dynamic-cycle-detection>Dynamic Cycle Detection</h3><p>Detecting cycles in a directed graph is actually pretty easy. We can
+just traverse the entire graph using a depth-first search and, if we
+encounter a vertex already visited, then we&rsquo;ve found a cycle. We can
+also use <a href=https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm>Tarjan&rsquo;s algorithm for detecting strongly connected
+components</a>
+if we want to know what&rsquo;s in the cycle.</p><p>Whilst detecting cycles is easy, the challenge lies in doing it
+<em>efficiently</em> after an edge has been inserted. A simple solution is
+just to retraverse the <em>entire graph</em> (e.g. using Tarjan&rsquo;s algorithm),
+but this is quite wasteful. Instead, my algorithm limits the traveral
+as much as possible by maintaining a <a href=https://en.wikipedia.org/wiki/Topological_sorting>topoligical (i.e. consistent)
+ordering</a> of the
+graph. For example, consider adding the edge <code>M3 --> M1</code> to the
+following graph:</p><figure class=text-center><img height=156em alt="Illustrating the affected region after an edge insertion." src=/images/2021/DeadlockDetection_AffectedRegion.png></figure><p>Observe, when inserting an edge <code>Mx --> My</code>, there is a 50% chance
+mutexes <code>Mx</code> and <code>My</code> are already correctly ordered and, hence, <em>no
+further work is required!</em> However, if they are incorrectly ordered
+(as above), then either: they do form a cycle (hence, we have detected
+a potential deadlock); or, they don&rsquo;t and the ordering needs updating.
+To figure this out, we must traverse some (or all) of the graph. My
+algorithm improves upon the naive approach (i.e. always traversing the
+whole graph) by limiting the search to just the <em>affected region</em>.
+That is, those mutexes beteween the two end points of the edge being
+inserted (as shown above). Of course, in the worst case, the affected
+region is the whole graph! But, in the average case, it is often much
+less (as above). The key is that my algorithm never does more work
+than the naive approach, and usually does a lot less. For graphs with
+a reasonable number of vertices, this offers considerable performance
+improvements (hence, presumably why the Abseil developers chose it).</p><h3 id=conclusion>Conclusion</h3><p>Hopefully, that&rsquo;s given you an insight into the deadlock detection
+algorithm used in Abseil. It&rsquo;s an interesting problem that turns out
+to be ideally suited to my algorithm, and something I had never
+thought of. That&rsquo;s the beauty of algorithms &mdash; sometimes they have a
+life of their own!</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
