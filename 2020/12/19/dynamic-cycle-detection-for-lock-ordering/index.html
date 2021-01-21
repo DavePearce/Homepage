@@ -27,7 +27,7 @@ acquire a mutex in an order inconsistent with this, a potential
 deadlock is reported.</p><h3 id=acquires-before-graph>Acquires-Before Graph</h3><p>To detect deadlocks, <code>mutex</code> maintains a (global) ordering of lock
 acquisitions called the <em>aquires-before graph</em>. This is implemented
 using a global variable called <code>deadlock_graph</code> which stores a
-directed acyclic graph, such as the following:</p><figure class="text-center mobile-max-width"><img alt="Illustrating an acquires before graph." src=/images/2021/DeadlockDetection_Ordering.png></figure><p>Here, we have four mutexes and an edge <code>Mx -> My</code> means <code>Mx</code> must be
+directed acyclic graph, such as the following:</p><figure class="text-center image"><img width=50% alt="Illustrating an acquires before graph." src=/images/2021/DeadlockDetection_Ordering.png></figure><p>Here, we have four mutexes and an edge <code>Mx -> My</code> means <code>Mx</code> must be
 <em>acquired before</em> <code>My</code>. Actually, it indicates that <code>Mx</code> has been
 acquired before <code>My</code> in <em>all lock acquisitions observed thus far</em>. As
 an example, consider mutex <code>M3</code>. Both <code>M0</code> and <code>M1</code> must be acquired
@@ -35,7 +35,7 @@ before <code>M3</code>. In contrast, it doesn&rsquo;t matter whether <code>M2</c
 before <code>M3</code> or not.</p><p>Mutexes which are unordered with respect to each other (as for <code>M2</code>
 and <code>M3</code> above) are ordered <em>on demand</em>. For example, if a thread
 comes along and acquires <code>M2</code> whilst holding <code>M3</code>, the ordering is
-updated accordingly:</p><figure class=text-center><img alt="Illustrating the reorded graph after the edge insertion." src=/images/2021/DeadlockDetection_Ordering_Updated.png></figure><p>From now on, any attempt to acquire <code>M2</code> before <code>M3</code> generates an
+updated accordingly:</p><figure class="text-center image"><img width=50% alt="Illustrating the reorded graph after the edge insertion." src=/images/2021/DeadlockDetection_Ordering_Updated.png></figure><p>From now on, any attempt to acquire <code>M2</code> before <code>M3</code> generates an
 error message highlighting the potential deadlock. To make this work,
 every thread is associated with the mutexes it currently holds. When
 a thread holding mutex <code>Mx</code> attempts to acquire mutex <code>My</code>, the
@@ -58,7 +58,7 @@ but this is quite wasteful. Instead, my algorithm limits the traveral
 as much as possible by maintaining a <a href=https://en.wikipedia.org/wiki/Topological_sorting>topoligical (i.e. consistent)
 ordering</a> of the
 graph. For example, consider adding the edge <code>M3 --> M1</code> to the
-following graph:</p><figure class=text-center><img alt="Illustrating the affected region after an edge insertion." src=/images/2021/DeadlockDetection_AffectedRegion.png></figure><p>Observe, when inserting an edge <code>Mx --> My</code>, there is a 50% chance
+following graph:</p><figure class="text-center image"><img width=100% alt="Illustrating the affected region after an edge insertion." src=/images/2021/DeadlockDetection_AffectedRegion.png></figure><p>Observe, when inserting an edge <code>Mx --> My</code>, there is a 50% chance
 mutexes <code>Mx</code> and <code>My</code> are already correctly ordered and, hence, <em>no
 further work is required!</em> However, if they are incorrectly ordered
 (as above), then either: they do form a cycle (hence, we have detected
