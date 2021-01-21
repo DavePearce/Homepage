@@ -2,9 +2,9 @@
 date: 2020-12-19
 title: "Dynamic Cycle Detection for Lock Ordering"
 draft: false
-#metaimg: ""
-#metatxt: ""
-#twitterimgalt: ""
+metaimg: "images/2021/DeadlockDetection_Ordering.png"
+metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynamic deadlock detection.  So, I thought I would give an overview of how it works."
+twitterimgalt: "Illusstrating a partial ordering of mutexes"
 twittersite: "@whileydave"
 #twitter: "https://twitter.com/whileydave/status/1333545363165175809"
 #reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
