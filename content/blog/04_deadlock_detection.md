@@ -7,7 +7,7 @@ metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynam
 twitterimgalt: "Illusstrating a partial ordering of mutexes"
 twittersite: "@whileydave"
 twitter: "https://twitter.com/whileydave/status/1352366798448910336"
-#reddit: "https://www.reddit.com/r/rust/comments/k47rr0/understanding_partial_moves_in_rust/"
+reddit: "https://www.reddit.com/r/cpp/comments/l6hqfi/understanding_deadlock_detection_in_abseil/"
 ---
 
 Recently, I discovered that an [algorithm of mine]({{<ref "/publications/pk07_jea" >}}) from a few years back is being used in both [TensorFlow](https://www.tensorflow.org/) and the [Abseil C++](https://abseil.io/) library (see [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/compiler/xla/service/graphcycles/graphcycles.cc) and [here](https://github.com/abseil/abseil-cpp/blob/master/absl/synchronization/internal/graphcycles.cc)).  That is of course pretty exciting since they are both widely used libraries!  So, I thought it would be interesting to look at what it is being used for.
