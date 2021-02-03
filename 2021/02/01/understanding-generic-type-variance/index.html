@@ -1,0 +1,29 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Understanding Generic Type Variance"><meta name=twitter:title content="Understanding Generic Type Variance"><meta property="og:url" content="https://whileydave.com/2021/02/01/understanding-generic-type-variance/"><title>David J. Pearce
+(Understanding Generic Type Variance)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Understanding Generic Type Variance</h1><div class=post-date>Monday, February
+1st,
+2021</div><hr><p>For languages which support <a href=https://en.wikipedia.org/wiki/Parametric_polymorphism>generic
+types</a>, an
+important question is deciding whether or not a type <code>C&lt;T></code> is a
+<em>subtype</em> of another related type <code>C&lt;S></code>. Perhaps surprisingly,
+different languages take different approaches to this question, for
+example:</p><ul><li><p><strong>(Java)</strong>. Java is quite strict as it does not allow subtyping
+like this (unless we use wildcards). For example, <code>List&lt;Integer></code> is
+not a subtype of <code>List&lt;Number></code>. However, <code>List&lt;Integer></code> is a
+subtype of <code>List&lt;? extends Number></code> (with some limitations imposed).</p></li><li><p><strong>(Rust)</strong>. Rust is (in some ways) more flexible than Java, as it
+allows variance for traits. For example, <code>Vec&lt;String></code> can be a
+subtype of <code>Vec&lt;T></code> (e.g. if <code>T</code> is bounded by trait
+<code>ToString</code>). <strong>(THIS IS WRONG AS CAN SIMULATE THIS IN JAVA)</strong></p></li></ul><h2 id=kinds-of-variance>Kinds of Variance</h2><ul><li><p><strong>(Covariance)</strong> If <code>C&lt;T></code> is a subtype of <code>C&lt;S></code> whenever <code>T</code> is
+a subtype of <code>S</code>, we say that <code>T</code> is <em>covariant</em> in <code>C&lt;T></code>.</p></li><li><p><strong>(Contravariance)</strong> In
+contrast, if <code>T</code> is <em>contravariant</em> in <code>C&lt;T></code>, then <code>C&lt;T></code> is a
+subtype of <code>C&lt;S></code> whenever <code>T</code> is a <em>supertype</em> of <code>S</code>.</p></li><li><p><strong>(Invariance)</strong> Finally, we can say that <code>T</code> is <em>invariant</em> in
+<code>C&lt;T></code> meaning that (like Java without wildcards) <code>C&lt;T></code> is <em>never</em> a
+subtype of <code>C&lt;S></code> (unless <code>T=S</code>).</p></li></ul><h2 id=definition-site-variance>Definition-Site Variance</h2><h3 id=notes>Notes</h3><ul><li><p>Whiley <a href=https://rustc-dev-guide.rust-lang.org/variance.html>follows
+Rust</a> in adopting
+<em>definition-site variance</em> for generic types which (for example)
+differs from the approach taken in Java.</p></li><li><p>Java supports use-site variance through wildcards.</p></li></ul><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
