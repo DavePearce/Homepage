@@ -1,7 +1,7 @@
 ---
 date: 2021-02-01
 title: "On the Two Schools of Verification"
-draft: false
+draft: true
 #metaimg: "images/2021/DeadlockDetection_Preview.png"
 #metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynamic deadlock detection.  So, I thought I would give an overview of how it works."
 #twitterimgalt: "Illusstrating a partial ordering of mutexes"
