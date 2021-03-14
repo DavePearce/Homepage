@@ -1,11 +1,11 @@
 ---
-date: 2021-02-01
+date: 2021-03-14
 title: "Understanding Generic Type Variance (in Whiley)"
-draft: true
-#metaimg: "images/2021/DeadlockDetection_Preview.png"
-#metatxt: "An algorithm of mine is being used in the Abseil C++ library for dynamic deadlock detection.  So, I thought I would give an overview of how it works."
-#twitterimgalt: "Illusstrating a partial ordering of mutexes"
-#twittersite: "@whileydave"
+draft: false
+metaimg: "images/2021/TypeVariance_Preview.png"
+metatxt: "Understanding type variance is important in languages with generic types.  So, I thought I'd take a look at this."
+twitterimgalt: "Illustrating a partial definition of a generic hashmap."
+twittersite: "@whileydave"
 #twitter: "https://twitter.com/whileydave/status/1352366798448910336"
 #reddit: "https://www.reddit.com/r/cpp/comments/l6hqfi/understanding_deadlock_detection_in_abseil/"
 ---
@@ -14,8 +14,8 @@ For languages which support [generic
 types](https://en.wikipedia.org/wiki/Parametric_polymorphism), an
 important question is deciding whether or not a type `C<T>` is a
 _subtype_ of another related type `C<S>`.  Since Whiley was recently
-extended to support generic types, this was a question I faced.  Let's
-start by thinking about subtyping in Whiley:
+extended to support generic types, its interesting to think about how
+this was handled.  Firstly, let's recap subtyping in Whiley:
 
 ```[whiley]
 type nat is (int n) where n >= 0
@@ -61,7 +61,7 @@ function f_n(nat x) -> (bool r):
     ...
 ```
 
-I've left out the function body here, since it isn't important.  If `Pred<nat>` a subtype of `Pred<int>`, then the following should be allowed:
+I've left out the function body here, since it isn't important.  If `Pred<nat>` is a subtype of `Pred<int>`, then the following should be allowed:
 
 ```
 Pred<int> p = &f_n
@@ -116,24 +116,12 @@ The reason this is invariant is that the field `T value` imposes a constraints t
 Whiley [follows
 Rust](https://rustc-dev-guide.rust-lang.org/variance.html) in adopting
 _definition-site variance_ for generic types which (for example)
-differs from the approach taken in Java.  In contrast, Java supports
-use-site variance through wildcards.
-
-### What about other languages?
-
-Perhaps surprisingly,
-different languages take different approaches to this question, for
-example:
-
-  * **(Java)**.  Java is quite strict as it does not allow subtyping
-like this (unless we use wildcards).  For example, `List<Integer>` is
-not a subtype of `List<Number>`.  However, `List<Integer>` is a
-subtype of `List<? extends Number>` (with some limitations imposed).
-
-  * **(Rust)**.  Rust is (in some ways) more flexible than Java, as it
-      allows variance for traits.  For example, `Vec<String>` can be a
-      subtype of `Vec<T>` (e.g. if `T` is bounded by trait
-      `ToString`).  **(THIS IS WRONG AS CAN SIMULATE THIS IN JAVA)**
+differs from the approach taken in Java.  This means the permitted
+subtyping relationships for a type are determined at its
+definition-site (i.e. declaration).  In constrast, Java supports
+*use-site variance* through wildcards (e.g. we can give `ArrayList<?
+extends Number>` for a variable's type).  Obviously there are some
+pros/cons here, but that's a story for another day...
 
 ## References
 
