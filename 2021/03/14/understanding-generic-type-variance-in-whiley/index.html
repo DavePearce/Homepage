@@ -1,0 +1,51 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Understanding Generic Type Variance (in Whiley)"><meta name=twitter:title content="Understanding Generic Type Variance (in Whiley)"><meta property="og:description" content="Understanding type variance is important in languages with generic types.  So, I thought I'd take a look at this."><meta name=twitter:description content="Understanding type variance is important in languages with generic types.  So, I thought I'd take a look at this."><meta property="og:image" content="https://whileydave.com/images/2021/TypeVariance_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2021/TypeVariance_Preview.png"><meta name=twitter:image:alt content="https://whileydave.com/Illustrating a partial definition of a generic hashmap."><meta name=twitter:site content="@whileydave"><meta property="og:url" content="https://whileydave.com/2021/03/14/understanding-generic-type-variance-in-whiley/"><title>David J. Pearce
+(Understanding Generic Type Variance (in Whiley))</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Understanding Generic Type Variance (in Whiley)</h1><div class=post-date>Sunday, March
+14th,
+2021</div><hr><p>For languages which support <a href=https://en.wikipedia.org/wiki/Parametric_polymorphism>generic
+types</a>, an
+important question is deciding whether or not a type <code>C&lt;T></code> is a
+<em>subtype</em> of another related type <code>C&lt;S></code>. Since Whiley was recently
+extended to support generic types, its interesting to think about how
+this was handled. Firstly, let&rsquo;s recap subtyping in Whiley:</p><pre><code class=language-[whiley] data-lang=[whiley]>type nat is (int n) where n &gt;= 0
+</code></pre><p>This defines a type <code>nat</code> as a <em>subtype</em> of <code>int</code>, meaning we can assign a <code>nat</code> to an <code>int</code> (but not the other way around). This makes sense as every value of <code>nat</code> is an <code>int</code> but not every <code>int</code> is a <code>nat</code> (e.g. <code>-1</code>).</p><h3 id=example-1>Example 1</h3><p>Let&rsquo;s add a simple generic type to illustrate:</p><pre><code>type Box&lt;T&gt; is { T item }
+</code></pre><p><em>The question arising is whether or not <code>Box&lt;nat></code> is a subtype of <code>Box&lt;int></code>?</em> Well, yes, this makes total sense! For example, the following is allowed:</p><pre><code>Box&lt;nat&gt; b1 = {item:0}
+Box&lt;int&gt; b2 = b1
+</code></pre><p>In contrast the following is (quite rightly) not allowed:</p><pre><code>Box&lt;int&gt; b1 = {item:-1}
+Box&lt;nat&gt; b2 = b1
+</code></pre><p>The above is not allowed because <code>{item:-1}</code> is clearly not a valid instance of <code>Box&lt;nat></code>.</p><h3 id=example-2>Example 2</h3><p>Now, let&rsquo;s add another simple generic type:</p><pre><code>type Pred&lt;T&gt; is function(T)-&gt;(bool)
+</code></pre><p>Here, <code>Pred&lt;int></code> represents a lambda which accepts an <code>int</code> and
+returns an <code>int</code>. <em>So, is <code>Pred&lt;nat></code> a subtype of <code>Pred&lt;int></code>?</em> This is an interesting question. Let&rsquo;s create a function to illustrate:</p><pre><code>function f_n(nat x) -&gt; (bool r):
+    ...
+</code></pre><p>I&rsquo;ve left out the function body here, since it isn&rsquo;t important. If <code>Pred&lt;nat></code> is a subtype of <code>Pred&lt;int></code>, then the following should be allowed:</p><pre><code>Pred&lt;int&gt; p = &amp;f_n
+bool y = p(-1)
+</code></pre><p>(Here, <code>&f_n</code> returns a reference to function <code>f_n()</code> and has type <code>Pred&lt;nat></code>)</p><p><em>But, isn&rsquo;t there a problem here?</em> Yes, there is! If <code>Pred&lt;nat></code> is a subtype of <code>Pred&lt;int></code> then (as illustrated above) we can call <code>f_nat(-1)</code> &mdash; <em>which does not make sense</em>.</p><h3 id=recap>Recap</h3><p>In summary, <code>Box&lt;nat></code> should be a subtype of <code>Box&lt;int></code>, but <code>Pred&lt;nat></code> should <em>not</em> be a subtype of <code>Pred&lt;int></code>. <em>So, for a given type <code>C&lt;T></code>, how can we tell which way around it is?</em> Good question! We need some theory here:</p><ul><li><p><strong>(Covariance)</strong> If <code>C&lt;T></code> is a subtype of <code>C&lt;S></code> whenever <code>T</code> is
+a subtype of <code>S</code>, we say that <code>T</code> is <em>covariant</em> in <code>C&lt;T></code>.</p></li><li><p><strong>(Contravariance)</strong> In
+contrast, if <code>T</code> is <em>contravariant</em> in <code>C&lt;T></code>, then <code>C&lt;T></code> is a
+subtype of <code>C&lt;S></code> whenever <code>T</code> is a <em>supertype</em> of <code>S</code>.</p></li><li><p><strong>(Invariance)</strong> Finally, we can say that <code>T</code> is <em>invariant</em> in
+<code>C&lt;T></code> meaning that (like Java without wildcards) <code>C&lt;T></code> is <em>never</em> a
+subtype of <code>C&lt;S></code> (unless <code>T=S</code>).</p></li></ul><p>From this, it follows that <code>Box&lt;T></code> is <em>covariant</em> in <code>T</code>, whilst <code>Pred&lt;T></code> is <em>contravariant</em> in <code>T</code>. <em>But how do we know this?</em> Well, roughly speaking, it really stems from the fact that <code>function(T)->(S)</code> is <em>contravariant</em> in <code>T</code> and <em>covariant</em> in <code>S</code>. Therefore, any generic type containing a <code>function</code> type is constrained accordingly. For example:</p><pre><code>type BoxFn&lt;T&gt; is {
+  function test(T)-&gt;(bool),
+  ...
+}
+</code></pre><p>The presence of field <code>test</code> imposes a constraint that <code>BoxFn&lt;T></code> cannot be <em>covariant</em> in <code>T</code>. However, it can still be contravariant &mdash; but this depends on what other fields it contains. For example, the following variation is contravariant in <code>T</code>:</p><pre><code>type BoxFn&lt;T&gt; is {
+  function test(T)-&gt;(bool),
+  int value
+}
+</code></pre><p>In contrast, the following is <em>invariant</em> in <code>T</code>:</p><pre><code>type BoxFn&lt;T&gt; is {
+  function test(T)-&gt;(bool),
+  T value
+}
+</code></pre><p>The reason this is invariant is that the field <code>T value</code> imposes a constraints that <code>T</code> cannot be contravariant. Combining the constraints from both fields leaves only one possibility!</p><h3 id=conclusion>Conclusion</h3><p>Whiley <a href=https://rustc-dev-guide.rust-lang.org/variance.html>follows
+Rust</a> in adopting
+<em>definition-site variance</em> for generic types which (for example)
+differs from the approach taken in Java. This means the permitted
+subtyping relationships for a type are determined at its
+definition-site (i.e. declaration). In constrast, Java supports
+<em>use-site variance</em> through wildcards (e.g. we can give <code>ArrayList&lt;? extends Number></code> for a variable&rsquo;s type). Obviously there are some
+pros/cons here, but that&rsquo;s a story for another day&mldr;</p><h2 id=references>References</h2><ol><li><em>Taming the Wildcards: Combining Definition and Use-Site Variance</em>, J. Altidor, S. Huang and Y Smaragdakis. In <em>PLDI'11</em>. <a href=https://yanniss.github.io/variance-pldi11.pdf>PDF</a></li></ol><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
