@@ -2,7 +2,7 @@
 date: 2021-03-14
 title: "Understanding Generic Type Variance (in Whiley)"
 draft: false
-metaimg: "images/2021/TypeVariance_Preview.png"
+metaimg: "images/2021/Type_Variance_Preview.png"
 metatxt: "Understanding type variance is important in languages with generic types.  So, I thought I'd take a look at this."
 twitterimgalt: "Illustrating a partial definition of a generic hashmap."
 twittersite: "@whileydave"
