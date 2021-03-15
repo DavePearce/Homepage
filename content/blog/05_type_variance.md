@@ -6,7 +6,7 @@ metaimg: "images/2021/Type_Variance_Preview.png"
 metatxt: "Understanding type variance is important in languages with generic types.  So, I thought I'd take a look at this."
 twitterimgalt: "Illustrating a partial definition of a generic hashmap."
 twittersite: "@whileydave"
-#twitter: "https://twitter.com/whileydave/status/1352366798448910336"
+twitter: "https://twitter.com/whileydave/status/1371551037400641536"
 #reddit: "https://www.reddit.com/r/cpp/comments/l6hqfi/understanding_deadlock_detection_in_abseil/"
 ---
 
