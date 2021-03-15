@@ -109,7 +109,7 @@ type BoxFn<T> is {
   T value
 }
 ```
-The reason this is invariant is that the field `T value` imposes a constraints that `T` cannot be contravariant.  Combining the constraints from both fields leaves only one possibility!
+The reason this is invariant is that the field `T value` imposes a constraint that `T` cannot be contravariant.  Combining the constraints from both fields leaves only one possibility!
 
 ### Conclusion
 
@@ -118,7 +118,7 @@ Rust](https://rustc-dev-guide.rust-lang.org/variance.html) in adopting
 _definition-site variance_ for generic types which (for example)
 differs from the approach taken in Java.  This means the permitted
 subtyping relationships for a type are determined at its
-definition-site (i.e. declaration).  In constrast, Java supports
+definition-site (i.e. declaration).  In contrast, Java supports
 *use-site variance* through wildcards (e.g. we can give `ArrayList<?
 extends Number>` for a variable's type).  Obviously there are some
 pros/cons here, but that's a story for another day...
