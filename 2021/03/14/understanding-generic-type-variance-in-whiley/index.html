@@ -41,11 +41,11 @@ subtype of <code>C&lt;S></code> (unless <code>T=S</code>).</p></li></ul><p>From 
   function test(T)-&gt;(bool),
   T value
 }
-</code></pre><p>The reason this is invariant is that the field <code>T value</code> imposes a constraints that <code>T</code> cannot be contravariant. Combining the constraints from both fields leaves only one possibility!</p><h3 id=conclusion>Conclusion</h3><p>Whiley <a href=https://rustc-dev-guide.rust-lang.org/variance.html>follows
+</code></pre><p>The reason this is invariant is that the field <code>T value</code> imposes a constraint that <code>T</code> cannot be contravariant. Combining the constraints from both fields leaves only one possibility!</p><h3 id=conclusion>Conclusion</h3><p>Whiley <a href=https://rustc-dev-guide.rust-lang.org/variance.html>follows
 Rust</a> in adopting
 <em>definition-site variance</em> for generic types which (for example)
 differs from the approach taken in Java. This means the permitted
 subtyping relationships for a type are determined at its
-definition-site (i.e. declaration). In constrast, Java supports
+definition-site (i.e. declaration). In contrast, Java supports
 <em>use-site variance</em> through wildcards (e.g. we can give <code>ArrayList&lt;? extends Number></code> for a variable&rsquo;s type). Obviously there are some
 pros/cons here, but that&rsquo;s a story for another day&mldr;</p><h2 id=references>References</h2><ol><li><em>Taming the Wildcards: Combining Definition and Use-Site Variance</em>, J. Altidor, S. Huang and Y Smaragdakis. In <em>PLDI'11</em>. <a href=https://yanniss.github.io/variance-pldi11.pdf>PDF</a></li></ol><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
