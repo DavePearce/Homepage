@@ -20,7 +20,7 @@ Box&lt;int&gt; b2 = b1
 Box&lt;nat&gt; b2 = b1
 </code></pre><p>The above is not allowed because <code>{item:-1}</code> is clearly not a valid instance of <code>Box&lt;nat></code>.</p><h3 id=example-2>Example 2</h3><p>Now, let&rsquo;s add another simple generic type:</p><pre><code>type Pred&lt;T&gt; is function(T)-&gt;(bool)
 </code></pre><p>Here, <code>Pred&lt;int></code> represents a lambda which accepts an <code>int</code> and
-returns an <code>int</code>. <em>So, is <code>Pred&lt;nat></code> a subtype of <code>Pred&lt;int></code>?</em> This is an interesting question. Let&rsquo;s create a function to illustrate:</p><pre><code>function f_n(nat x) -&gt; (bool r):
+returns a <code>bool</code>. <em>So, is <code>Pred&lt;nat></code> a subtype of <code>Pred&lt;int></code>?</em> This is an interesting question. Let&rsquo;s create a function to illustrate:</p><pre><code>function f_n(nat x) -&gt; (bool r):
     ...
 </code></pre><p>I&rsquo;ve left out the function body here, since it isn&rsquo;t important. If <code>Pred&lt;nat></code> is a subtype of <code>Pred&lt;int></code>, then the following should be allowed:</p><pre><code>Pred&lt;int&gt; p = &amp;f_n
 bool y = p(-1)
