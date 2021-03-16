@@ -54,7 +54,7 @@ type Pred<T> is function(T)->(bool)
 ```
 
 Here, `Pred<int>` represents a lambda which accepts an `int` and
-returns an `int`.  _So, is `Pred<nat>` a subtype of `Pred<int>`?_  This is an interesting question.  Let's create a function to illustrate:
+returns a `bool`.  _So, is `Pred<nat>` a subtype of `Pred<int>`?_  This is an interesting question.  Let's create a function to illustrate:
 
 ```
 function f_n(nat x) -> (bool r):
