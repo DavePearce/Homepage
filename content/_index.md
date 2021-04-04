@@ -2,6 +2,7 @@
 draft: false
 banner: "images/cover7.jpg"
 banner_alt: "Image of David J. Pearce"
+banner_ratio: "2048_850"
 ---
 
 ## Bio

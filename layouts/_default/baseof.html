@@ -112,7 +112,15 @@
     </header>
     <div class="container" onclick="clearMenu()">
       {{ if .Page.Params.banner }}
-      <img class="banner" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>
+      <div class="banner">
+	{{ if .Page.Params.banner_ratio }}
+	  <div class="size_{{ .Page.Params.banner_ratio }}">
+	{{ else }}
+	<div class="size_2048_400">
+	{{ end }}
+	<img class="banner-image" src="{{ .Site.BaseURL }}{{.Page.Params.banner}}" alt="{{.Page.Params.banner_alt}}"/>	
+	</div>
+      </div>
       {{ end }}
       <div class="content">
 	{{ block "main" . }}

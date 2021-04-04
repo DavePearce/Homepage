@@ -10,5 +10,6 @@ cascade:
     render: false
     list: true # default
 banner: "images/talks.jpg"
+banner_ratio: "1024_300"
 banner_alt: "Image of David J. Pearce"    
 ---
