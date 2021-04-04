@@ -47,6 +47,7 @@ html, body {
     background: inherit;
     padding: 0;
     margin: 0;
+    z-index: 1;
 }
 
 .banner {
