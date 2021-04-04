@@ -50,12 +50,38 @@ html, body {
 }
 
 .banner {
+    position: relative;
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;    
     width: 100%;
-    height: auto;
+}
+
+.banner-image {
+    position: absolute;
+    width: 100%;
+    top: 0;  bottom: 0;  left: 0;  right: 0;
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
     border-style: solid;
-    border-width: 0 0 1px 0;
+    border-width: 0 0 1px 0;    
+}
+
+.size_1024_300 {
+    width: 100%;
+    padding-bottom: 29.3%;
+    background: white;
+}
+
+.size_2048_400 {
+    width: 100%;
+    padding-bottom: 19%;
+    background: white;
+}
+
+.size_2048_850 {
+    width: 100%;
+    padding-bottom: 41.5%;
+    background: white;
 }
 
 @media only screen and (max-width: 992px) {    
