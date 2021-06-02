@@ -11,7 +11,7 @@ number: "1"
 pages: "Article 3"
 copyright: "ACM"
 DOI: "10.1145/3443420"
-preprint: "Pea21_TOPLAS_preprint.pdf"
+preprint: "Pea21_TOPLAS_postprint.pdf"
 ---
 **Abstract.** Rust is a relatively new programming language which has gained significant traction since its v1.0 release in 2015.  Rust aims to be a systems language that competes with C/C++.  A claimed advantage of Rust is a strong focus on memory safety without garbage collection.  This is primarily achieved through two concepts, namely _reference lifetimes_ and _borrowing_.  Both of these are well known ideas stemming from the literature on _region-based memory management_ and _linearity_ / _uniqueness_.  Rust brings both of these ideas together to form a coherent programming model.  Furthermore, Rust has a strong focus on stack-allocated data and, like C/C++ but unlike Java, permits references to local variables.
 
