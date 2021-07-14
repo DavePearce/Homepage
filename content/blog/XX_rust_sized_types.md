@@ -56,12 +56,21 @@ simplicity).
 
 Now, we fast forward to a moment early on in my journey towards
 learning Rust.  I'm writing a program, and I want an array to hold
-some data (like in Jave above).  After some Googling, I think no
-problem ... _Rust has arrays!_ And, of we go down the rabbit hole ...
+some data (like in Jave above).  I think no problem, Rust has
+arrays --- _I've seen them!_ After some Googling, I find [this](https://doc.rust-lang.org/rust-by-example/primitives/array.html):
+
+> "_An array is a collection of objects of the same type `T`, stored in contiguous memory. Arrays are created using brackets `[]`, and their length, which is known at compile time, is part of their type signature `[T; length]`._"
+
+That remainds of C where we have `int[N]` and `int[]` for arrays, so I
+figure something like `[i32]` makes sense.  And, of we go down the rabbit hole ...
 
 ```rust
-
+fn main() {
+  let xs : [i32] = [1,2,3];
+}
 ```
+
+But, Rust complains `expecting slice [i32], but found array [i32;3]`, and also something about `xs` not having a size known at compile-time.  _But, I don't want something complicated like a slice ... I just want an array!_
 
 ### Enlightenment
 
