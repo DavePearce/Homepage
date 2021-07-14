@@ -5,10 +5,10 @@ googleAnalytics = "UA-5582165-7"
 paginate = 10
 enableRobotsTXT = true
 summaryLength = 30
-PygmentsStyle = "manni"
-PygmentsUseClassic = true
-PygmentsCodeFences = true
-PygmentsCodeFencesGuessSyntax = false
+pygmentsUseClassic = true
+pygmentsStyle = "monokai"
+#pygmentsUseClasses = true
+pygmentsCodefences = true
 
 [permalinks]
 blog = "/:year/:month/:day/:title/"

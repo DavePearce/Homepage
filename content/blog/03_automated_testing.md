@@ -21,7 +21,7 @@ _What is this new "check" feature then?_ In a nutshell, it automatically generat
 As a simple example to illustrate how it works, consider the following
 signature for the `max(int[])` function:
 
-```c
+```whiley
 function max(int[] items) -> (int r)
 // items cannot be empty
 requires |items| > 0
@@ -106,7 +106,7 @@ Given the ability to generate arbitrary values for a type, the more
 difficult question is how to generate values which meet some
 constraint.  For example, consider this data type:
 
-```c
+```whiley
 type List<T> is {
      int length,
      T[] items
@@ -130,7 +130,7 @@ don't satisfy the invariant.  This works, but it has some problems:
       Consider this example taken from an implementation of [Tarjan's
       algorithm](https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm)
       for computing _strongly connected compoenents_:
-      ```c
+      ```whiley
       type Data is {
 	    bool[] visited,
 	    int[] lowlink,

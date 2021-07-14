@@ -17,7 +17,7 @@ _subtype_ of another related type `C<S>`.  Since Whiley was recently
 extended to support generic types, its interesting to think about how
 this was handled.  Firstly, let's recap subtyping in Whiley:
 
-```[whiley]
+```whiley
 type nat is (int n) where n >= 0
 ```
 This defines a type `nat` as a _subtype_ of `int`, meaning we can assign a `nat` to an `int` (but not the other way around).  This makes sense as every value of `nat` is an `int` but not every `int` is a `nat` (e.g. `-1`).
@@ -25,20 +25,20 @@ This defines a type `nat` as a _subtype_ of `int`, meaning we can assign a `nat`
 ### Example 1
 Let's add a simple generic type to illustrate:
 
-```
+```whiley
 type Box<T> is { T item }
 ```
 
 _The question arising is whether or not `Box<nat>` is a subtype of `Box<int>`?_ Well, yes, this makes total sense!  For example, the following is allowed:
 
-```
+```whiley
 Box<nat> b1 = {item:0}
 Box<int> b2 = b1
 ```
 
 In contrast the following is (quite rightly) not allowed:
 
-```
+```whiley
 Box<int> b1 = {item:-1}
 Box<nat> b2 = b1
 ```
@@ -49,21 +49,21 @@ The above is not allowed because `{item:-1}` is clearly not a valid instance of 
 
 Now, let's add another simple generic type:
 
-```
+```whiley
 type Pred<T> is function(T)->(bool)
 ```
 
 Here, `Pred<int>` represents a lambda which accepts an `int` and
 returns a `bool`.  _So, is `Pred<nat>` a subtype of `Pred<int>`?_  This is an interesting question.  Let's create a function to illustrate:
 
-```
+```whiley
 function f_n(nat x) -> (bool r):
     ...
 ```
 
 I've left out the function body here, since it isn't important.  If `Pred<nat>` is a subtype of `Pred<int>`, then the following should be allowed:
 
-```
+```whiley
 Pred<int> p = &f_n
 bool y = p(-1)
 ```
@@ -89,21 +89,21 @@ subtype of `C<S>` (unless `T=S`).
 
 From this, it follows that `Box<T>` is _covariant_ in `T`, whilst `Pred<T>` is _contravariant_ in `T`.  _But how do we know this?_  Well, roughly speaking, it really stems from the fact that `function(T)->(S)` is _contravariant_ in `T` and _covariant_ in `S`.  Therefore, any generic type containing a `function` type is constrained accordingly.  For example:
 
-```
+```whiley
 type BoxFn<T> is {
   function test(T)->(bool),
   ...
 }
 ```
 The presence of field `test` imposes a constraint that `BoxFn<T>` cannot be _covariant_ in `T`.  However, it can still be contravariant --- but this depends on what other fields it contains.  For example, the following variation is contravariant in `T`:
-```
+```whiley
 type BoxFn<T> is {
   function test(T)->(bool),
   int value
 }
 ```
 In contrast, the following is _invariant_ in `T`:
-```
+```whiley
 type BoxFn<T> is {
   function test(T)->(bool),
   T value
