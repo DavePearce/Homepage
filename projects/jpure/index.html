@@ -5,20 +5,20 @@ function toggleList(element){element.style.display="none";var parent=element.par
 <a href=https://whileydave.com/projects/>Projects</a>
 <a href=https://whileydave.com/publications/>Publications</a>
 <a href=https://whileydave.com/talks/>Talks</a>
-<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1>JPure</h1><p>Purity Analysis is the problem of determining whether or not a method may have side-effects. This has applications in automatic parallelisation, extended static checking, and more. JPure is a novel purity system for Java that employs purity annotations which can be checked modularly. For example, you can add <code>@Pure</code> annotations as follows:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Doc</span> <span style=color:#f92672>{</span>
-  <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>final</span> List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> items <span style=color:#f92672>=</span> <span style=color:#f92672>...;</span>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1>JPure</h1><p>Purity Analysis is the problem of determining whether or not a method may have side-effects. This has applications in automatic parallelisation, extended static checking, and more. JPure is a novel purity system for Java that employs purity annotations which can be checked modularly. For example, you can add <code>@Pure</code> annotations as follows:</p><div class=highlight><pre style=color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#6ab825;font-weight:700>public</span> <span style=color:#6ab825;font-weight:700>class</span> <span style=color:#447fcf;text-decoration:underline>Doc</span> {
+  <span style=color:#6ab825;font-weight:700>private</span> <span style=color:#6ab825;font-weight:700>final</span> List&lt;String&gt; items = ...;
   
-  <span style=color:#f92672>...</span>
+  ...
   
-  <span style=color:#a6e22e>@Pure</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>has</span><span style=color:#f92672>(</span>String x<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
-    Iterator iter <span style=color:#f92672>=</span> items<span style=color:#f92672>.</span><span style=color:#a6e22e>iterator</span><span style=color:#f92672>();</span>
-    <span style=color:#66d9ef>while</span><span style=color:#f92672>(</span>iter<span style=color:#f92672>.</span><span style=color:#a6e22e>hasNext</span><span style=color:#f92672>())</span> <span style=color:#f92672>{</span>
-      String i <span style=color:#f92672>=</span> iter<span style=color:#f92672>.</span><span style=color:#a6e22e>next</span><span style=color:#f92672>();</span>
-      <span style=color:#66d9ef>if</span><span style=color:#f92672>(</span>x <span style=color:#f92672>==</span> i<span style=color:#f92672>)</span> <span style=color:#f92672>{</span> <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>;</span> <span style=color:#f92672>}</span>
-    <span style=color:#f92672>}</span>
-    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
-   <span style=color:#f92672>}</span>
-<span style=color:#f92672>}</span>
+  <span style=color:orange>@Pure</span> <span style=color:#6ab825;font-weight:700>boolean</span> <span style=color:#447fcf>has</span>(String x) {
+    Iterator iter = items.<span style=color:#bbb>iterator</span>();
+    <span style=color:#6ab825;font-weight:700>while</span>(iter.<span style=color:#bbb>hasNext</span>()) {
+      String i = iter.<span style=color:#bbb>next</span>();
+      <span style=color:#6ab825;font-weight:700>if</span>(x == i) { <span style=color:#6ab825;font-weight:700>return</span> <span style=color:#6ab825;font-weight:700>true</span>; }
+    }
+    <span style=color:#6ab825;font-weight:700>return</span> <span style=color:#6ab825;font-weight:700>false</span>;
+   }
+}
 </code></pre></div><p>This is done using a flow-sensitive, intraprocedural analysis. The system exploits two properties, called <em>freshness</em> and <em>locality</em>, to increase the range of methods that can be considered pure. JPure also includes an inference engine for annotating legacy code. JPure builds upon the <a href=https://whileydave.com/projects/jkit/>Java Compiler Kit</a>.</p><p><strong>Notes.</strong> You will need to download the <a href=http://www.antlr.org/download>ANTLR runtime</a> library as well (v3.2 last known to work); this should be loaded onto the classpath, or copied into the jpure/lib directory (where it should be picked up by the bin/jpure script).</p><h2>Downloads</h2><div class=list><div class=list-even><div class=download><div class=download-title>Version 0.2 (Jul 2011)</div><div class=download-notes><a href=https://whileydave.com/downloads/jpure-110711/><i class="fa fa-file-text" aria-hidden=true></i></a></div><div class=download-file><a href=https://whileydave.com//downloads/jpure-110711.tgz><i class="fa fa-download" aria-hidden=true></i></a></div></div></div><div class=list-odd><div class=download><div class=download-title>Version 0.1 (Oct 2010)</div><div class=download-notes><a href=https://whileydave.com/downloads/jpure-210410/><i class="fa fa-file-text" aria-hidden=true></i></a></div><div class=download-file><a href=https://whileydave.com//downloads/jpure-210410.tgz><i class="fa fa-download" aria-hidden=true></i></a></div></div></div></div><h2>Related Publication(s)</h2><div class=list><div class=list-even><a href=https://whileydave.com/publications/pea11_cc/><p class=publication><b>JPure: a Modular Purity System for Java</b>. David J. Pearce.
 In <i>Conference on Compiler Construction (CC),</i>
 pages 104--123,
