@@ -5,8 +5,8 @@ googleAnalytics = "UA-5582165-7"
 paginate = 10
 enableRobotsTXT = true
 summaryLength = 30
-pygmentsUseClassic = true
-pygmentsStyle = "monokai"
+#pygmentsUseClassic = true
+pygmentsStyle = "native"
 #pygmentsUseClasses = true
 pygmentsCodefences = true
 
