@@ -6,9 +6,9 @@ paginate = 10
 enableRobotsTXT = true
 summaryLength = 30
 #pygmentsUseClassic = true
-pygmentsStyle = "native"
+pygmentsStyle = "manni"
 #pygmentsUseClasses = true
-pygmentsCodefences = true
+#pygmentsCodeFences = true
 
 [permalinks]
 blog = "/:year/:month/:day/:title/"
