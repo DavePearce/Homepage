@@ -8,10 +8,10 @@ function toggleList(element){element.style.display="none";var parent=element.par
 <a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Sizing Up Types in Rust</h1><div class=post-date>Thursday, July
 15th,
 2021</div><hr><p>When learning Rust, understanding the difference between statically
-and dynamically sized types seems critical. There are some good
+and dynamically sized types seems critical to me. There are some good
 discussions out there already
 (e.g. <a href=https://github.com/pretzelhammer/rust-blog/blob/master/posts/sizedness-in-rust.md>here</a>
-and <a href=https://stackoverflow.com/questions/25740916/how-do-you-actually-use-dynamically-sized-types-in-rust>here</a>). Whilst these explain the mechanics, they didn&rsquo;t tell me
+and here). Whilst these explain the mechanics, they didn&rsquo;t tell me
 <em>why</em> its done like this in Rust. The articles made sense, but I was
 still confused! Eventually I had my &ldquo;eureka&rdquo; moment, so I figured I
 should share that.</p><h3 id=getting-started>Getting Started</h3><p>I&rsquo;m a C/C++/Java programmer (amongst other things) and the basic idea
@@ -26,7 +26,7 @@ it contains at compile time):</p><pre><code>int[] xs = new []{256,15};
 </code></pre><p>At some level, this all makes sense &mldr; but, unfortunately, <strong>it is
 completely wrong!</strong> In fact, a Java array would be considered
 <strong>statically sized</strong> in the terminology of Rust. A diagram helps to
-shed some light on this:</p><figure class=text-center><img width=90% alt="Illustrating the layout of an array in Java." src=/images/2021/SizingUpTypes_Java.png></figure><p>Its pretty easy to see that the size of <code>x</code> is known at compile time,
+shed some light on this:</p><figure class=text-center><img height=175px alt="Illustrating owning reference being copied to another variable." src=/images/2021/SizingUpTypes_Java.png></figure><p>Its pretty easy to see that the size of <code>x</code> is known at compile time,
 but what about <code>xs</code>? Well, yes, it is known at compile time &mdash; its
 the size of a pointer (which I&rsquo;ve just assumed is 32bits above for
 simplicity).</p><h3 id=confusion-dawns>Confusion Dawns</h3><p>Now, we fast forward to a moment early on in my journey towards
