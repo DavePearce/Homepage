@@ -1,0 +1,77 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Sizing Up Types in Rust"><meta name=twitter:title content="Sizing Up Types in Rust"><meta property="og:description" content="Unlike C, Rust doesn't hide the difference between statically- and dynamically-sized types."><meta name=twitter:description content="Unlike C, Rust doesn't hide the difference between statically- and dynamically-sized types."><meta property="og:image" content="https://whileydave.com/images/2021/Sized_Types_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2021/Sized_Types_Preview.png"><meta name=twitter:site content="@whileydave"><meta property="og:url" content="https://whileydave.com/2021/07/15/sizing-up-types-in-rust/"><title>David J. Pearce
+(Sizing Up Types in Rust)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Sizing Up Types in Rust</h1><div class=post-date>Thursday, July
+15th,
+2021</div><hr><p>When learning Rust, understanding the difference between statically
+and dynamically sized types seems critical to me. There are some good
+discussions out there already
+(e.g. <a href=https://github.com/pretzelhammer/rust-blog/blob/master/posts/sizedness-in-rust.md>here</a>
+and here). Whilst these explain the mechanics, they didn&rsquo;t tell me
+<em>why</em> its done like this in Rust. The articles made sense, but I was
+still confused! Eventually I had my &ldquo;eureka&rdquo; moment, so I figured I
+should share that.</p><h3 id=getting-started>Getting Started</h3><p>I&rsquo;m a C/C++/Java programmer (amongst other things) and the basic idea
+of a statically- versus dynamically-sized type seemed pretty
+straightforward: A statically-sized type is one whose size is known at
+compile time; and, a dynamically sized type is everything else. Easy
+as! For example, an <code>int</code> is statically sized in Java (i.e. because
+its a 32-bit two&rsquo;s complement integer):</p><pre><code>int x = 10;
+</code></pre><p>Now, on the other hand I figured an array <code>int[]</code> in Java is
+dynamically sized (i.e. because we cannot determine how many elements
+it contains at compile time):</p><pre><code>int[] xs = new []{256,15};
+</code></pre><p>At some level, this all makes sense &mldr; but, unfortunately, <strong>it is
+completely wrong!</strong> In fact, a Java array would be considered
+<strong>statically sized</strong> in the terminology of Rust. A diagram helps to
+shed some light on this:</p><figure class=text-center><img height=175px alt="Illustrating owning reference being copied to another variable." src=/images/2021/SizingUpTypes_Java.png></figure><p>Its pretty easy to see that the size of <code>x</code> is known at compile time,
+but what about <code>xs</code>? Well, yes, it is known at compile time &mdash; its
+the size of a pointer (which I&rsquo;ve just assumed is 32bits above for
+simplicity).</p><h3 id=confusion-dawns>Confusion Dawns</h3><p>Now, we fast forward to a moment early on in my journey towards
+learning Rust. I&rsquo;m writing a program, and I want an array to hold
+some data (like in Jave above). I think no problem, Rust has
+arrays &mdash; <em>I&rsquo;ve seen them!</em> After some Googling, I find <a href=https://doc.rust-lang.org/rust-by-example/primitives/array.html>this</a>:</p><blockquote><p>&ldquo;<em>An array is a collection of objects of the same type <code>T</code>, stored in contiguous memory. Arrays are created using brackets <code>[]</code>, and their length, which is known at compile time, is part of their type signature <code>[T; length]</code>.</em>&rdquo;</p></blockquote><p>That remainds of C where we have <code>int[N]</code> and <code>int[]</code> for arrays, so I
+figure something like <code>[i32]</code> makes sense. And, of we go down the rabbit hole &mldr;</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>main</span>()<span style=color:#bbb> </span>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>xs<span style=color:#bbb> </span>: [<span style=color:#078;font-weight:700>i32</span>]<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>[<span style=color:#f60>1</span>,<span style=color:#f60>2</span>,<span style=color:#f60>3</span>];<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>But, Rust complains <code>expecting slice [i32], but found array [i32;3]</code>, and also something about <code>xs</code> not having a size known at compile-time. <em>But, I don&rsquo;t want something complicated like a slice &mldr; I just want an array!</em></p><p>After a bit more playing around, I notice that I can&rsquo;t even write this:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-rust data-lang=rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>main</span>()<span style=color:#bbb> </span>{<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>xs<span style=color:#bbb> </span>: [<span style=color:#078;font-weight:700>i32</span>];<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>The Rust compiler complains that <code>xs</code> doesn&rsquo;t have a <code>size known at compile-time</code>. This is all pretty confusing given my background in
+C/C++ and Java. <em>An array is an array, right?</em></p><h3 id=digression>Digression</h3><p>Most C programmers are aware that C is not consistent in what an array
+is. And, as a C programmer, you workaround this without thinking
+about it. This little example illustrates:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#078;font-weight:700>void</span> <span style=color:#c0f>main</span>(<span style=color:#078;font-weight:700>int</span> argv, <span style=color:#078;font-weight:700>char</span><span style=color:#555>**</span> args) {
+  <span style=color:#078;font-weight:700>int</span> x <span style=color:#555>=</span> <span style=color:#f60>0</span>;
+  <span style=color:#078;font-weight:700>int</span> xs[] <span style=color:#555>=</span> {<span style=color:#f60>1</span>,<span style=color:#f60>2</span>,<span style=color:#f60>3</span>};
+  printf(<span style=color:#c30>&#34;sizeof(x)=%d</span><span style=color:#c30;font-weight:700>\n</span><span style=color:#c30>&#34;</span>,<span style=color:#069;font-weight:700>sizeof</span>(x));
+  printf(<span style=color:#c30>&#34;sizeof(xs)=%d</span><span style=color:#c30;font-weight:700>\n</span><span style=color:#c30>&#34;</span>,<span style=color:#069;font-weight:700>sizeof</span>(xs));
+  f(xs);
+}
+
+<span style=color:#078;font-weight:700>void</span> <span style=color:#c0f>f</span>(<span style=color:#078;font-weight:700>int</span> ys[]) {
+  printf(<span style=color:#c30>&#34;sizeof(ys)=%d</span><span style=color:#c30;font-weight:700>\n</span><span style=color:#c30>&#34;</span>,<span style=color:#069;font-weight:700>sizeof</span>(ys));
+}
+</code></pre></div><p>On my machine, running this code gives the following output:</p><pre><code>sizeof(x)=4
+sizeof(xs)=12
+sizeof(ys)=8
+</code></pre><p>This is kind of curious! Both <code>xs</code> and <code>ys</code> have the same type but
+different sizes! <em>What&rsquo;s going on?</em> The type of <code>ys</code> is really
+equivalent to <code>int *</code> (in that position) whilst the type of <code>xs</code> is
+really <code>int[3]</code> (in that position). In fact, <code>gcc</code> rather nicely warns
+me about this:</p><pre><code>test.c:11:12: ‘sizeof’ on array parameter ‘ys’ returns size of ‘int *’
+</code></pre><p>Somehow C is trying to hide the differences between array
+representations. We might say <code>xs</code> has an <em>inline</em> representation,
+whilst <code>ys</code> has a <em>pointer</em> representation. Java, at least, is more
+consistent here since an array always has a pointer representation.
+Still, <code>int[]</code> is not really an array in Java &mdash; it&rsquo;s a <em>pointer</em> to
+an array.</p><h3 id=enlightenment>Enlightenment</h3><p>Eventually, somewhere along the line, the penny dropped. I&rsquo;m not sure
+what helped it finally click (though it wasn&rsquo;t something I read).
+But, the problem is exactly my background in C/C++ and Java! <em>I&rsquo;m
+just so used to assuming an array is actually a pointer to an array</em>.
+In Rust, an array (e.g. <code>[i32]</code>) really is just an array. If you want
+a pointer to an array, then you need a slice (e.g. <code>&[i32]</code>). Unlike
+C, Rust is not trying to hide anything &mdash; and, if you ask me, that
+can only be a good thing! And, unlike Java, Rust let&rsquo;s you
+work with both representations.</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
