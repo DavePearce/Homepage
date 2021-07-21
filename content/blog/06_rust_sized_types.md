@@ -4,10 +4,10 @@ title: "Sizing Up Types in Rust"
 draft: false
 metaimg: "images/2021/Sized_Types_Preview.png"
 metatxt: "Unlike C, Rust doesn't hide the difference between statically- and dynamically-sized types."
-#twitterimgalt: "Illustrating a partial definition of a generic hashmap."
+twitterimgalt: "Illustrating a partial definition of a generic hashmap."
 twittersite: "@whileydave"
-#twitter: "https://twitter.com/whileydave/status/1371551037400641536"
-#reddit: "https://www.reddit.com/r/cpp/comments/l6hqfi/understanding_deadlock_detection_in_abseil/"
+twitter: "https://twitter.com/whileydave/status/1415940939357450244"
+reddit: "https://www.reddit.com/r/rust/comments/ooiorh/sizing_up_types_in_rust/"
 ---
 
 When learning Rust, understanding the difference between statically
@@ -111,7 +111,7 @@ On my machine, running this code gives the following output:
 
 ```
 x=4bytes
-y=16bytes
+y=12bytes
 z=8bytes
 ```
 
