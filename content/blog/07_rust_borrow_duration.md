@@ -109,3 +109,4 @@ fn main() {
 
    * Taking two parameters (even if always the same)
    * Lifetime bounds
+   * Mention paper
