@@ -76,6 +76,11 @@ the lifetimes `a` and `b`).
 
 ## Puzzle #2
 
+Could do a control-flow puzzle?  Where we exploit the diamond property
+to know something.
+
+## Puzzle #2
+
 Talk about other compounds like arrays or structs.
 
 ## Puzzle #3
