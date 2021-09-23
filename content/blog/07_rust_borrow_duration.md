@@ -1,6 +1,6 @@
 ---
 date: 2021-20-01
-title: "Playing Games with the Borrow Checker"
+title: "Some Borrow Checker Puzzles"
 draft: true
 #twitter: ""
 #reddit: ""
@@ -39,7 +39,7 @@ fn f<'a>(p : &'a i32) -> &'a i32 { ... }
 In this case, it must return the borrow as there is nothing else it
 could return.
 
-## One Step Further
+## Puzzle #1
 
 The above is pretty straightforward, but we can make it a bit more
 interesting as follows:
@@ -74,11 +74,11 @@ This might seem cumbersome, but it does the job as Rust now knows `q`
 could never be returned (i.e. since there is no relationship between
 the lifetimes `a` and `b`).
 
-## Arrays?
+## Puzzle #2
 
 Talk about other compounds like arrays or structs.
 
-## Diving Deeper
+## Puzzle #3
 
 An interesting (largely pointless) question arising from all this, was
 whether we could completely "fool" the borrow checker.  That is,
