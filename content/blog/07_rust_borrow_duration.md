@@ -1,5 +1,5 @@
 ---
-date: 2021-20-01
+date: 2021-09-01
 title: "Some Borrow Checker Puzzles"
 draft: true
 #twitter: ""
