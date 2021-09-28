@@ -1,6 +1,6 @@
 ---
 date: 2021-09-01
-title: "Puzzling the Borrow Checker"
+title: "Fooling the Borrow Checker"
 draft: true
 #twitter: ""
 #reddit: ""
@@ -76,7 +76,32 @@ the lifetimes `a` and `b`).
 
 ## Stretching Out
 
-Talk about other compounds like arrays or structs.
+In the above examples, its fairly obvious from the method signature
+that it could return the borrow.  We can obfuscate this a little by
+trying to hide it in something else.  For example:
+
+```Rust
+struct Wrap<'a> { field: &'a i32 }
+
+fn f<'a>(p : &'a i32) -> Wrap<'a> { ... }
+```
+
+This is still not enough to fool the borrow checker though as the
+presence of lifetime `a` in the return type suggests our borrow could
+be hiding in there.  The same applies for arrays, such as:
+
+
+```Rust
+fn f<'a>(p : &'a i32) -> Box<[Wrap<'a>]> { ... }
+```
+
+(**NOTE:** to make this compile add `#[derive(Copy,Clone)]` before
+`struct Wrap`)
+
+Again, the presence of `a` is enough to trigger the borrow checker
+that our borrow might be returned.  Still, in this case, we don't
+actually _have_ to return the borrow --- we could just return an empty
+array.
 
 ## The Puzzle
 
@@ -113,7 +138,8 @@ fn f<'a>(v : &'a i32) -> Empty<'a> {
 ```
 
 And now Rust will always think the borrow could be live after the
-call, even though that's impossible.
+call, _even though there is no valid implementation of `f()` where
+this is true_.
 
 ## Another Puzzle
 
@@ -123,6 +149,5 @@ to know something.
 
 # Stuff
 
-   * Taking two parameters (even if always the same)
    * Lifetime bounds
-   * Mention paper
+   * Array generators?
