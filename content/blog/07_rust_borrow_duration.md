@@ -1,6 +1,6 @@
 ---
 date: 2021-09-01
-title: "Some Borrow Checker Puzzles"
+title: "Puzzling the Borrow Checker"
 draft: true
 #twitter: ""
 #reddit: ""
@@ -39,7 +39,7 @@ fn f<'a>(p : &'a i32) -> &'a i32 { ... }
 In this case, it must return the borrow as there is nothing else it
 could return.
 
-## Puzzle #1
+## Warm Up
 
 The above is pretty straightforward, but we can make it a bit more
 interesting as follows:
@@ -74,22 +74,21 @@ This might seem cumbersome, but it does the job as Rust now knows `q`
 could never be returned (i.e. since there is no relationship between
 the lifetimes `a` and `b`).
 
-## Puzzle #2
-
-Could do a control-flow puzzle?  Where we exploit the diamond property
-to know something.
-
-## Puzzle #2
+## Stretching Out
 
 Talk about other compounds like arrays or structs.
 
-## Puzzle #3
+## The Puzzle
 
-An interesting (largely pointless) question arising from all this, was
-whether we could completely "fool" the borrow checker.  That is,
-return something we know could never hold the borrow, but where Rust
-assumes it could.  In fact, it's not so hard.  But, my first attempt
-failed:
+An interesting (though largely pointless) question arising from all
+this, is the following puzzle:
+
+> _Can a method signature fool the borrow checker into thinking a
+> borrow can be returned when, in fact, it cannot?_
+
+That is, where the return type is something we know could never hold
+the borrow, but where Rust must still assume it could.  In fact, it's
+not so hard.  But, my first attempt failed:
 
 ```Rust
 struct Empty<'a> { }
@@ -114,7 +113,12 @@ fn f<'a>(v : &'a i32) -> Empty<'a> {
 ```
 
 And now Rust will always think the borrow could be live after the
-call.
+call, even though that's impossible.
+
+## Another Puzzle
+
+Could do a control-flow puzzle?  Where we exploit the diamond property
+to know something.
 
 
 # Stuff
