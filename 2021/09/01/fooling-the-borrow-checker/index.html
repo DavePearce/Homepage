@@ -87,10 +87,11 @@ knowledge of control-flow like so:</p><div class=highlight><pre style=background
 </span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>//
 </span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span>println<span style=color:#555>!</span>(<span style=color:#c30>&#34;x={},p={}&#34;</span>,x,p);<span style=color:#bbb>
 </span><span style=color:#bbb></span>}<span style=color:#bbb>
-</span></code></pre></div><p>Here, we know the borrow <code>&mut x</code> has expired by the time we reach the
-<code>println!()</code> call, but the borrow checker is no this smart (it is just
-a data-flow analysis after all). We can also fix this program by just
-using an <code>else</code> block:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>f</span>(n:<span style=color:#078;font-weight:700>i32</span>)<span style=color:#bbb> </span>{<span style=color:#bbb>
+</span></code></pre></div><p>Here, we know the borrow <code>&mut x</code> has expired by the time we reach
+<code>println!()</code>, but the borrow checker is not this smart (it is just a
+fancy <a href=https://en.wikipedia.org/wiki/Data-flow_analysis>data-flow
+analysis</a> after
+all). We can also fix this program by just using an <code>else</code> block:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>f</span>(n:<span style=color:#078;font-weight:700>i32</span>)<span style=color:#bbb> </span>{<span style=color:#bbb>
 </span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>123</span>;<span style=color:#bbb>
 </span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>234</span>;<span style=color:#bbb>
 </span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>z<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>456</span>;<span style=color:#bbb>
