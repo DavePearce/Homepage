@@ -1,7 +1,7 @@
 ---
 date: 2021-09-01
 title: "Fooling the Borrow Checker"
-draft: true
+draft: false
 #twitter: ""
 #reddit: ""
 ---
@@ -27,17 +27,17 @@ above to answer this definitively.  There are two cases:
        can assume the borrow is dead and allow `x` to be mutated
        again.
 
-Answering the question then comes down to the return type `f()`.  For
+Answering the question comes down to the return type of `f()`.  For
 example, if `f()` returns `i32` then it certainly cannot return the
-borrow.  On the otherhand, if `f()` has this type then it can (in fact
-must) return the borrow:
+borrow.  On the otherhand, if `f()` has the following type then it can
+return the borrow:
 
 ```Rust
 fn f<'a>(p : &'a i32) -> &'a i32 { ... }
 ```
 
-In this case, it must return the borrow as there is nothing else it
-could return.
+In this case, it _must_ return the borrow as there is nothing else it
+could return to satisfy the return type (well, assuming its not doing something `unsafe`).
 
 ## Warm Up
 
@@ -86,9 +86,10 @@ struct Wrap<'a> { field: &'a i32 }
 fn f<'a>(p : &'a i32) -> Wrap<'a> { ... }
 ```
 
-This is still not enough to fool the borrow checker though as the
-presence of lifetime `a` in the return type suggests our borrow could
-be hiding in there.  The same applies for arrays, such as:
+This is still not enough to fool the borrow checker though.  The
+presence of lifetime `a` in the return type is a giveaway that our
+borrow could be hiding in there.  The same applies for arrays, such
+as:
 
 
 ```Rust
@@ -138,16 +139,55 @@ fn f<'a>(v : &'a i32) -> Empty<'a> {
 ```
 
 And now Rust will always think the borrow could be live after the
-call, _even though there is no valid implementation of `f()` where
-this is true_.
+call, _even though this is no valid implementation of `f()` where this
+is true_ (again, assuming it doesn't do something `unsafe`).
 
 ## Another Puzzle
 
-Could do a control-flow puzzle?  Where we exploit the diamond property
-to know something.
+Now, there are other ways to fool the borrow checker, but these
+somehow don't seem as interesting to me.  For example, we can exploit
+knowledge of control-flow like so:
 
+```Rust
+fn f(n:i32) {
+    let mut x = 123;
+    let mut y = 234;
+    let mut z = 456;
+    let mut p = &mut x;
+    //
+    if n >= 0 { p = &mut y; } 
+    if n <= 0 { p = &mut z; } 
+    //
+    println!("x={},p={}",x,p);
+}
+```
 
-# Stuff
+Here, we know the borrow `&mut x` has expired by the time we reach the
+`println!()` call, but the borrow checker is no this smart (it is just
+a data-flow analysis after all).  We can also fix this program by just
+using an `else` block:
 
-   * Lifetime bounds
-   * Array generators?
+```Rust
+fn f(n:i32) {
+    let mut x = 123;
+    let mut y = 234;
+    let mut z = 456;
+    let mut p = &mut x;
+    //
+    if n >= 0 { p = &mut y; } 
+    else { p = &mut z; } 
+    //
+    println!("x={},p={}",x,p);
+}
+```
+
+This now compiles because the borrow checker can easily determine that
+the borrow has expired on all paths through the function.
+
+## Conclusion
+
+Well, hopefully that was an interesting take on a few subtle points of
+Rust!  There is no real conclusion, but if you like studying the
+borrow checker you might find my [recent paper on the
+subject](https://whileydave.com/publications/pea21_toplas/) provides
+interesting reading.
