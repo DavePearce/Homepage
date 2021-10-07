@@ -162,10 +162,11 @@ fn f(n:i32) {
 }
 ```
 
-Here, we know the borrow `&mut x` has expired by the time we reach the
-`println!()` call, but the borrow checker is no this smart (it is just
-a data-flow analysis after all).  We can also fix this program by just
-using an `else` block:
+Here, we know the borrow `&mut x` has expired by the time we reach
+`println!()`, but the borrow checker is not this smart (it is just a
+fancy [data-flow
+analysis](https://en.wikipedia.org/wiki/Data-flow_analysis) after
+all).  We can also fix this program by just using an `else` block:
 
 ```Rust
 fn f(n:i32) {
