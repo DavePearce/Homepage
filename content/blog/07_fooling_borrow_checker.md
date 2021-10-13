@@ -35,7 +35,9 @@ borrow.  On the otherhand, if `f()` has the following type then it can
 return the borrow:
 
 ```Rust
-fn f<'a>(p : &'a i32) -> &'a i32 { ... }
+fn f<'a>(p : &'a i32) -> &'a i32 { 
+   ... 
+}
 ```
 
 In this case, it _must_ return the borrow as there is nothing else it
@@ -49,11 +51,11 @@ interesting as follows:
 ```Rust
 fn f<'a>(p : &'a i32, q : &'a i32) -> &'a i32 { ... }
 
-...
-let mut x = 1234;
-let mut y = 678;
-let z = f(&x,&y);
-...
+   ...
+   let mut x = 1234;
+   let mut y = 678;
+   let z = f(&x,&y);
+   ...
 ```
 
 Now, there are two borrows going in and only one coming out.  To be
@@ -69,7 +71,9 @@ In fact, we can resolve this using a simple pattern by rewriting `f`
 as follows:
 
 ```Rust
-fn f<'a,'b>(p : &'a i32, q : &'b i32) -> &'a i32 { p }
+fn f<'a,'b>(p : &'a i32, q : &'b i32) -> &'a i32 { 
+   p 
+}
 ```
 
 This might seem cumbersome, but it does the job as Rust now knows `q`
@@ -83,9 +87,13 @@ that it could return the borrow.  We can obfuscate this a little by
 trying to hide it in something else.  For example:
 
 ```Rust
-struct Wrap<'a> { field: &'a i32 }
+struct Wrap<'a> { 
+   field: &'a i32 
+}
 
-fn f<'a>(p : &'a i32) -> Wrap<'a> { ... }
+fn f<'a>(p : &'a i32) -> Wrap<'a> { 
+   ... 
+}
 ```
 
 This is still not enough to fool the borrow checker though.  The
@@ -95,7 +103,9 @@ as:
 
 
 ```Rust
-fn f<'a>(p : &'a i32) -> Box<[Wrap<'a>]> { ... }
+fn f<'a>(p : &'a i32) -> Box<[Wrap<'a>]> { 
+   ... 
+}
 ```
 
 (**NOTE:** to make this compile add `#[derive(Copy,Clone)]` before
@@ -133,10 +143,12 @@ lifetimes that aren't used.  So, we just need to use it without using
 it:
 
 ```Rust
-struct Empty<'a> { phantom: PhantomData<&'a i32> }
+struct Empty<'a> { 
+   phantom: PhantomData<&'a i32> 
+}
 
 fn f<'a>(v : &'a i32) -> Empty<'a> {
-    Empty{phantom:PhantomData}
+   Empty{phantom:PhantomData}
 }
 ```
 
@@ -152,15 +164,15 @@ knowledge of control-flow like so:
 
 ```Rust
 fn f(n:i32) {
-    let mut x = 123;
-    let mut y = 234;
-    let mut z = 456;
-    let mut p = &mut x;
-    //
-    if n >= 0 { p = &mut y; } 
-    if n <= 0 { p = &mut z; } 
-    //
-    println!("x={},p={}",x,p);
+   let mut x = 123;
+   let mut y = 234;
+   let mut z = 456;
+   let mut p = &mut x;
+   //
+   if n >= 0 { p = &mut y; } 
+   if n <= 0 { p = &mut z; } 
+   //
+   println!("x={},p={}",x,p);
 }
 ```
 
@@ -172,15 +184,15 @@ all).  We can also fix this program by just using an `else` block:
 
 ```Rust
 fn f(n:i32) {
-    let mut x = 123;
-    let mut y = 234;
-    let mut z = 456;
-    let mut p = &mut x;
-    //
-    if n >= 0 { p = &mut y; } 
-    else { p = &mut z; } 
-    //
-    println!("x={},p={}",x,p);
+   let mut x = 123;
+   let mut y = 234;
+   let mut z = 456;
+   let mut p = &mut x;
+   //
+   if n >= 0 { p = &mut y; } 
+   else { p = &mut z; } 
+   //
+   println!("x={},p={}",x,p);
 }
 ```
 
