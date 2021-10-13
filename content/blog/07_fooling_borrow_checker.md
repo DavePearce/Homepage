@@ -2,6 +2,8 @@
 date: 2021-09-01
 title: "Fooling the Borrow Checker"
 draft: false
+metaimg: "images/2021/Fooling_Borrow_Checker_Preview.png"
+metatxt: "Pondering how the Rust borrow checker decides when a borrow could still be live"
 #twitter: ""
 #reddit: ""
 ---
