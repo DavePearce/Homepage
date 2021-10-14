@@ -4,8 +4,8 @@ title: "Fooling the Borrow Checker"
 draft: false
 metaimg: "images/2021/Fooling_Borrow_Checker_Preview.png"
 metatxt: "Pondering how the Rust borrow checker decides when a borrow could still be live"
-#twitter: ""
-#reddit: ""
+twitter: "https://twitter.com/whileydave/status/1448180236781166594"
+reddit: "https://www.reddit.com/r/rust/comments/q7o5n8/fooling_the_borrow_checker/"
 ---
 
 An interesting question is how the Rust borrow checker decides when a
@@ -40,8 +40,9 @@ fn f<'a>(p : &'a i32) -> &'a i32 {
 }
 ```
 
-In this case, it _must_ return the borrow as there is nothing else it
-could return to satisfy the return type (well, assuming its not doing something `unsafe`).
+In this case, it must either return the borrow or return a `'static`
+as there is nothing else it could return to satisfy the return type
+(well, assuming its not doing something `unsafe`).
 
 ## Warm Up
 
