@@ -121,3 +121,7 @@ Generalising
 ## Good Stuff
 
 Final solution.
+
+## Conclusion
+
+[Getting Started Guide](https://model-checking.github.io/rmc/)
