@@ -79,8 +79,8 @@ So, let's write our first simple proof:
 #[cfg(rmc)]
 #[no_mangle]
 pub fn test_01() {
-    let xs : [u32; 2] = __nondet();
-    assert!(indexof(&xs,0) == usize::MAX);
+  let xs : [u32; 2] = __nondet();
+  assert!(indexof(&xs,0) == usize::MAX);
 }
 ```
 
@@ -103,10 +103,10 @@ size of `xs`:
 #[cfg(rmc)]
 #[no_mangle]
 pub fn test_01() {
-    let xs : [u32; 2] = __nondet();
-    __VERIFIER_assume(xs[0] != 0);
-    __VERIFIER_assume(xs[1] != 0);
-    assert!(indexof(&xs,0) == usize::MAX);
+  let xs : [u32; 2] = __nondet();
+  __VERIFIER_assume(xs[0] != 0);
+  __VERIFIER_assume(xs[1] != 0);
+  assert!(indexof(&xs,0) == usize::MAX);
 }
 ```
 
@@ -114,13 +114,73 @@ We've used `__VERIFIER_assume()` to tell RMC that it should assume the
 elements in our array do not hold `0`.  And finally RMC reports, as
 expected, that our proof suceeds!
 
-## Getting more sophisticated
+## Going Forward
 
-Generalising
+So, we've written our first proof.  _Now what?_ Well, since our proof
+only applies for arrays of size `2`, it would be nice to *generalise*
+it more.  Unfortunately, testing arrays of arbitrary size is beyong
+the limit of RMC but, for example, we can prove for all arrays _upto_
+size `3`.  Furthermore our proof only checks for `item=0` but we could
+check arbitrary values.  So, let's put that altogether:
 
-## Good Stuff
+```Rust
+#[cfg(rmc)]
+#[no_mangle]
+pub fn test_01() {
+  // Create arbitrary element
+  let x : u32 = __nondet();
+  // Create arbitrary (valid) length
+  let len : usize = __nondet();
+  __VERIFIER_assume(len <= 3);
+  // Create arbitrary array
+  let xs : [u32; 3] = __nondet();  
+  // Ensure element not in array
+  __VERIFIER_assume(xs[0] != x);
+  __VERIFIER_assume(xs[1] != x);
+  __VERIFIER_assume(xs[2] != x);
+  // Check
+  assert!(indexof(&xs[..len],x) == usize::MAX);
+}
+```
 
-Final solution.
+So, this is getting more interesting!  Now, we have an arbitrary value
+`x` instead of `0` as the value to look for.  Likewise, the final
+statement takes a _slice_ of `xs` upto a given length `len`.  Since
+`len` is constrained to be anything upto and including length `3`,
+this means RMC now checks all arrays upto length `3`.
+
+Our updated proof represents a significant improvement over the first.
+But, there are still tweaks we can make.  For example, its good to
+employ a constant `LIMIT` which determines the maximum length:
+
+```Rust
+  ...
+  __VERIFIER_assume(len <= LIMIT);
+  // Create arbitrary array
+  let xs : [u32; LIMIT] = __nondet();  
+  // Ensure element not in array below len
+  for i in 0..len {
+    __VERIFIER_assume(xs[i] != x);
+  }  
+  ...
+```
+
+Using `LIMIT` means we can easily try larger maximum lengths to see
+how far RMC can go.  One issue, however, is that we have used `for`
+loop which causes difficulties for the underyling CBMC tool.  To
+address this, we must provide a command-line argument `--unwind X`
+where `X` is some bound (e.g. `3`).  This tells CBMC to _unroll_ the
+loop at most `X` times.  In this case the maximum length of the array
+determines how much unrolling CBMC needs to be confident the proof
+holds
+
+
+## The Flip Side
+
+Now we've generalised our proof, its looking pretty nice.  But, it
+only checks the case when `item` is _not_ in `items` --- that's only
+half the story!  So, we should add a second proof for the case where
+`item` _is_ in `items`
 
 ## Conclusion
 
