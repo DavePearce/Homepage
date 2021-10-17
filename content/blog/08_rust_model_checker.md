@@ -64,7 +64,9 @@ Here, we assigned arbitrary values to `x` and `y` and then constrained
 some requirement of the API we're testing.  This means RMC will never
 consider the values e.g. `x=10, y=10` or `x=0, y=255`.  But, it will
 still consider _all_ values where `x < y`, such as `x=0,y=1`,
-`x=255,y=256`, etc.
+`x=255,y=256`, etc.  We can visualise this as follows:
+
+{{<img class="text-center" src="/images/2021/Fooling_Borrow_Checker_Plane.png" width="25%" alt="Illustrating a 2D plane showing which values of x and y meet the condition x < y.">}}
 
 ## Our First Proof
 
