@@ -19,7 +19,7 @@ it works, I'm going to walk through the process of checking the
 following simple function:
 
 ```Rust 
-fn indexof(items: &[u32], item: u32) -> usize {
+fn index_of(items: &[u32], item: u32) -> usize {
     for i in 0..items.len() {
         if items[i] == item {
             return i;
@@ -80,22 +80,22 @@ So, let's write our first proof:
 #[no_mangle]
 pub fn test_01() {
   let xs : [u32; 2] = __nondet();
-  assert!(indexof(&xs,0) == usize::MAX);
+  assert!(index_of(&xs,0) == usize::MAX);
 }
 ```
 
-This tells RMC to test `indexof()` for all possible arrays of size `2`
+This tells RMC to test `index_of()` for all possible arrays of size `2`
 and, in doing so, RMC finds the `assert` can fail.  This makes sense
-as some arrays may contain `0` so `indexof()` will not always return
+as some arrays may contain `0` so `index_of()` will not always return
 `usize::MAX`.  This is the key difference between using RMC and an
 automated testing tool: _upto certain bounds, RMC checks all possible
 values_.
 
-Of course, something isn't quite right yet.  The `indexOf()` method is
+Of course, something isn't quite right yet.  The `index_of()` method is
 correct, but our proof is failing.  We need to refine our proof so
-that it reflects the true contract of `indexOf()`.  Specifically, when
+that it reflects the true contract of `index_of()`.  Specifically, when
 given an array `xs` which doesn't contain `0`, we expect
-`indexOf(xs,0)` to return `usize::MAX`.  The question is how to set
+`index_of(xs,0)` to return `usize::MAX`.  The question is how to set
 this up with RMC.  In fact, its pretty easy since we know the size of
 `xs`:
 
@@ -106,7 +106,7 @@ pub fn test_01() {
   let xs : [u32; 2] = __nondet();
   __VERIFIER_assume(xs[0] != 0);
   __VERIFIER_assume(xs[1] != 0);
-  assert!(indexof(&xs,0) == usize::MAX);
+  assert!(index_of(&xs,0) == usize::MAX);
 }
 ```
 
@@ -136,7 +136,7 @@ pub fn test_01() {
   __VERIFIER_assume(xs[1] != x);
   __VERIFIER_assume(xs[2] != x);
   // Check
-  assert!(indexof(&xs[..len],x) == usize::MAX);
+  assert!(index_of(&xs[..len],x) == usize::MAX);
 }
 ```
 
@@ -192,18 +192,18 @@ pub fn test_02() {
     __VERIFIER_assume(i < len);
     __VERIFIER_assume(xs[i] == x);    
     // Compute result
-    let result = indexof(&xs[..len],x);
+    let result = index_of(&xs[..len],x);
     // Check it matches
     assert!(xs[result] == x);
 }
 ```
 
 This is roughly similar to before, except we now require _some_ `i`
-where `xs[i] == x`.  Also, we cannot assume `indexOf(&xs[..len],x)`
+where `xs[i] == x`.  Also, we cannot assume `index_of(&xs[..len],x)`
 returns `i` _since there might be more than one occurence of `x` in
 the array_.
 
-We can observe that `indexOf()` actually returns the _first_ index of
+We can observe that `index_of()` actually returns the _first_ index of
 `item`.  So, to make things more interesting, let's assume this is
 actually part of its contract.  To check this, we must further
 constrain `xs` to ensure `x` does not occur below `i` as follows:
@@ -216,7 +216,7 @@ constrain `xs` to ensure `x` does not occur below `i` as follows:
     __VERIFIER_assume(xs[j] != x);
   }
   // Check found correct one
-  assert!(indexof(&xs[..len],x) == i);
+  assert!(index_of(&xs[..len],x) == i);
   ...
 ```
 
@@ -230,5 +230,5 @@ proof is like.  We've only touched the tip of the iceberg here, but
 the post was already quite long!  You can learn more about using RMC
 from the [Getting Started
 Guide](https://model-checking.github.io/rmc/).  Also, I found [this
-paper](https://nchong.github.io/papers/icse-seip20.pdf) provides good
+paper](https://www.amazon.science/publications/model-checking-as-a-human-endeavor) provides good
 background on using tools like this in an industrial setting.
