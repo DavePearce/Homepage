@@ -241,8 +241,8 @@ paper](https://www.amazon.science/publications/model-checking-as-a-human-endeavo
 provides good background on using tools like this in an industrial
 setting.
 
-Also, if you want to play around with RMC, here's a few suggestions of
-things you could try:
+Finally, if you want to play around with RMC, here are a few
+suggestions of things you could try:
    
    * Implement `fill(items: &mut [u32], item: u32)` which fills a given
      array `items` with a given value `item`.
