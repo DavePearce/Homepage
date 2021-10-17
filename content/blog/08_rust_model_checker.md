@@ -91,12 +91,17 @@ as some arrays may contain `0` so `index_of()` will not always return
 automated testing tool: _upto certain bounds, RMC checks all possible
 values_.
 
-Of course, something isn't quite right yet.  The `index_of()` method is
+**NOTE:** At the moment, RMC requires `#[cfg(rmc)]` to identify
+proofs.  However, [the
+plan](https://github.com/model-checking/rmc/issues/464) is eventually
+to use `#[proof]` in the same way `#[test]` is used.
+
+Anyway, something isn't quite right yet.  The `index_of()` method is
 correct, but our proof is failing.  We need to refine our proof so
-that it reflects the true contract of `index_of()`.  Specifically, when
-given an array `xs` which doesn't contain `0`, we expect
+that it reflects the true contract of `index_of()`.  Specifically,
+when given an array `xs` which doesn't contain `0`, we expect
 `index_of(xs,0)` to return `usize::MAX`.  The question is how to set
-this up with RMC.  In fact, its pretty easy since we know the size of
+this up with RMC.  In fact, it's pretty easy since we know the size of
 `xs`:
 
 ```Rust
@@ -147,7 +152,7 @@ to be anything upto and including length `3`, this means RMC now
 checks all arrays upto length `3`.
 
 Our updated proof represents a significant improvement over the first.
-But, there are still tweaks we can make.  For example, its good to
+But, there are still tweaks we can make.  For example, it's good to
 employ a constant `LIMIT` which determines the maximum length:
 
 ```Rust
@@ -169,7 +174,7 @@ provide a command-line argument `--unwind X` where `X` is some bound
 (e.g. `3`).  This tells CBMC to _unroll_ the loop at most `X` times.
 In this case the maximum length of the array determines (roughly
 speaking) how much unrolling CBMC needs to be confident the proof
-holds
+holds.
 
 
 ## The Flip Side
@@ -230,5 +235,17 @@ proof is like.  We've only touched the tip of the iceberg here, but
 the post was already quite long!  You can learn more about using RMC
 from the [Getting Started
 Guide](https://model-checking.github.io/rmc/).  Also, I found [this
-paper](https://www.amazon.science/publications/model-checking-as-a-human-endeavor) provides good
-background on using tools like this in an industrial setting.
+paper](https://www.amazon.science/publications/model-checking-as-a-human-endeavor)
+provides good background on using tools like this in an industrial
+setting.
+
+Also, if you want to play around with RMC, here's a few suggestions of
+things you could try:
+   
+   * Implement `fill(items: &mut [u32], item: u32)` which fills a given
+     array `items` with a given value `item`.
+ 
+   * Implement `reverse(items: &mut [u32])` which reverses the
+     contents of `items`.
+
+   * Implement `index_of()` using `Vec<T>` instead of a slice.
