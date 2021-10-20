@@ -154,7 +154,8 @@ constrain <code>xs</code> to ensure <code>x</code> does not occur below <code>i<
 </span></code></pre></div><p>From this we see that RMC proofs can be made quite sophisticated using
 just the <code>__nondet&lt;T>()</code> and <code>__VERIFIER_assume()</code> statements. Also,
 its worth noting another way of achieving this is to do the check
-<em>after</em> calling <code>index_of()</code>:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#bbb>  </span>...<span style=color:#bbb>
+<em>after</em> calling <code>index_of()</code> (thanks to <code>@zhassan-aws</code> for pointing
+this out):</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#bbb>  </span>...<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>result<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>indexof(<span style=color:#555>&amp;</span>xs[..len],x);<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>// Check it matches
 </span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>assert<span style=color:#555>!</span>(xs[result]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>x);<span style=color:#bbb>
