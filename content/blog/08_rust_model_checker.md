@@ -62,7 +62,7 @@ __VERIFIER_assume(x < y);
 Here, we assigned arbitrary values to `x` and `y` and then constrained
 `x` so that its always below `y`.  Perhaps we had to do this to meet
 some requirement of the API we're testing.  This means RMC will never
-consider the values e.g. `x=10, y=10` or `x=0, y=255`.  But, it will
+consider the values e.g. `x=10, y=10` or `x=255, y=0`.  But, it will
 still consider _all_ values where `x < y`, such as `x=0,y=1`,
 `x=255,y=256`, etc.  We can visualise this as follows:
 
@@ -86,12 +86,13 @@ pub fn test_01() {
 }
 ```
 
-This tells RMC to test `index_of()` for all possible arrays of size `2`
-and, in doing so, RMC finds the `assert` can fail.  This makes sense
-as some arrays may contain `0` so `index_of()` will not always return
-`usize::MAX`.  This is the key difference between using RMC and an
-automated testing tool: _upto certain bounds, RMC checks all possible
-values_.
+This tells RMC to test `index_of()` for all possible arrays of size
+`2`.  We can run RMC using e.g. `rmc index_of.rs` (if that's the name
+of our file) and, in doing this, RMC will find the `assert` can fail.
+This makes sense as some arrays may contain `0` so `index_of()` will
+not always return `usize::MAX`.  This is the key difference between
+using RMC and an automated testing tool: _upto certain bounds, RMC
+checks all possible values_.
 
 **NOTE:** At the moment, RMC requires `#[cfg(rmc)]` to identify
 proofs.  However, [the
@@ -228,7 +229,21 @@ constrain `xs` to ensure `x` does not occur below `i` as follows:
 ```
 
 From this we see that RMC proofs can be made quite sophisticated using
-just the `__nondet<T>()` and `__VERIFIER_assume()` statements.
+just the `__nondet<T>()` and `__VERIFIER_assume()` statements.  Also,
+its worth noting another way of achieving this is to do the check
+_after_ calling `index_of()`:
+
+```Rust
+  ...
+  let result = indexof(&xs[..len],x);
+  // Check it matches
+  assert!(xs[result] == x);
+  // Check its first
+  for j in 0..result {
+     assert!(xs[j] != x);
+  }
+  ...
+```
 
 ## Conclusion
 
