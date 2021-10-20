@@ -41,7 +41,7 @@ might do something like this:</p><div class=highlight><pre style=background-colo
 </span></code></pre></div><p>Here, we assigned arbitrary values to <code>x</code> and <code>y</code> and then constrained
 <code>x</code> so that its always below <code>y</code>. Perhaps we had to do this to meet
 some requirement of the API we&rsquo;re testing. This means RMC will never
-consider the values e.g. <code>x=10, y=10</code> or <code>x=0, y=255</code>. But, it will
+consider the values e.g. <code>x=10, y=10</code> or <code>x=255, y=0</code>. But, it will
 still consider <em>all</em> values where <code>x &lt; y</code>, such as <code>x=0,y=1</code>,
 <code>x=255,y=256</code>, etc. We can visualise this as follows:</p><figure class=text-center><img height=300px alt="Illustrating a 2D plane showing which values of x and y meet the condition x < y." src=/images/2021/Fooling_Borrow_Checker_Plane.png></figure><h2 id=our-first-proof>Our First Proof</h2><p>We&rsquo;re now going to write our first &ldquo;test&rdquo; using RMC. Except that its
 not a test in the conventional sense, since we&rsquo;re using arbitrary
@@ -52,12 +52,13 @@ them as <em>proofs</em>.</p><p>So, let&rsquo;s write our first proof:</p><div cl
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>xs<span style=color:#bbb> </span>: [<span style=color:#078;font-weight:700>u32</span>;<span style=color:#bbb> </span><span style=color:#f60>2</span>]<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>__nondet();<span style=color:#bbb>
 </span><span style=color:#bbb>  </span>assert<span style=color:#555>!</span>(index_of(<span style=color:#555>&amp;</span>xs,<span style=color:#f60>0</span>)<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span><span style=color:#078;font-weight:700>usize</span>::MAX);<span style=color:#bbb>
 </span><span style=color:#bbb></span>}<span style=color:#bbb>
-</span></code></pre></div><p>This tells RMC to test <code>index_of()</code> for all possible arrays of size <code>2</code>
-and, in doing so, RMC finds the <code>assert</code> can fail. This makes sense
-as some arrays may contain <code>0</code> so <code>index_of()</code> will not always return
-<code>usize::MAX</code>. This is the key difference between using RMC and an
-automated testing tool: <em>upto certain bounds, RMC checks all possible
-values</em>.</p><p><strong>NOTE:</strong> At the moment, RMC requires <code>#[cfg(rmc)]</code> to identify
+</span></code></pre></div><p>This tells RMC to test <code>index_of()</code> for all possible arrays of size
+<code>2</code>. We can run RMC using e.g. <code>rmc index_of.rs</code> (if that&rsquo;s the name
+of our file) and, in doing this, RMC will find the <code>assert</code> can fail.
+This makes sense as some arrays may contain <code>0</code> so <code>index_of()</code> will
+not always return <code>usize::MAX</code>. This is the key difference between
+using RMC and an automated testing tool: <em>upto certain bounds, RMC
+checks all possible values</em>.</p><p><strong>NOTE:</strong> At the moment, RMC requires <code>#[cfg(rmc)]</code> to identify
 proofs. However, <a href=https://github.com/model-checking/rmc/issues/464>the
 plan</a> is eventually
 to use <code>#[proof]</code> in the same way <code>#[test]</code> is used.</p><p>Anyway, something isn&rsquo;t quite right yet. The <code>index_of()</code> method is
@@ -151,7 +152,18 @@ constrain <code>xs</code> to ensure <code>x</code> does not occur below <code>i<
 </span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>assert<span style=color:#555>!</span>(index_of(<span style=color:#555>&amp;</span>xs[..len],x)<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>i);<span style=color:#bbb>
 </span><span style=color:#bbb>  </span>...<span style=color:#bbb>
 </span></code></pre></div><p>From this we see that RMC proofs can be made quite sophisticated using
-just the <code>__nondet&lt;T>()</code> and <code>__VERIFIER_assume()</code> statements.</p><h2 id=conclusion>Conclusion</h2><p>Hopefully this has given you an insight into how RMC works, and what a
+just the <code>__nondet&lt;T>()</code> and <code>__VERIFIER_assume()</code> statements. Also,
+its worth noting another way of achieving this is to do the check
+<em>after</em> calling <code>index_of()</code>:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>result<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>indexof(<span style=color:#555>&amp;</span>xs[..len],x);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>// Check it matches
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>assert<span style=color:#555>!</span>(xs[result]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>x);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>// Check its first
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>for</span><span style=color:#bbb> </span>j<span style=color:#bbb> </span><span style=color:#069;font-weight:700>in</span><span style=color:#bbb> </span><span style=color:#f60>0</span>..result<span style=color:#bbb> </span>{<span style=color:#bbb>
+</span><span style=color:#bbb>     </span>assert<span style=color:#555>!</span>(xs[j]<span style=color:#bbb> </span><span style=color:#555>!=</span><span style=color:#bbb> </span>x);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>}<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span></code></pre></div><h2 id=conclusion>Conclusion</h2><p>Hopefully this has given you an insight into how RMC works, and what a
 proof is like. We&rsquo;ve only touched the tip of the iceberg here, but
 the post was already quite long! You can learn more about using RMC
 from the <a href=https://model-checking.github.io/rmc/>Getting Started
