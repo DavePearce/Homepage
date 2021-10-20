@@ -231,7 +231,8 @@ constrain `xs` to ensure `x` does not occur below `i` as follows:
 From this we see that RMC proofs can be made quite sophisticated using
 just the `__nondet<T>()` and `__VERIFIER_assume()` statements.  Also,
 its worth noting another way of achieving this is to do the check
-_after_ calling `index_of()`:
+_after_ calling `index_of()` (thanks to `@zhassan-aws` for pointing
+this out):
 
 ```Rust
   ...
