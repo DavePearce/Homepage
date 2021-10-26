@@ -1,6 +1,6 @@
 ---
-date: 2021-10-15
-title: "Testing out the Rust Model Checker (RMC)"
+date: 2021-10-26
+title: "Test-Driving the Rust Model Checker (RMC)"
 draft: false
 #twitter: ""
 #reddit: ""
