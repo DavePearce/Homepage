@@ -35,7 +35,9 @@ some nice post-conditions.  To get started we need to add some helper
 methods, the first of which is:
 
 ```Rust
-fn __nondet<T>() -> T { unimplemented!() }
+fn __nondet<T>() -> T { 
+   unimplemented!() 
+}
 ```
 
 This function is known to RMC and has special significance.  Here,
@@ -46,7 +48,9 @@ of `T`, we're testing _all possible values_ of `T`!  The second helper
 method we need is this:
 
 ```Rust
-fn __VERIFIER_assume(cond: bool) { unimplemented!() }
+fn __VERIFIER_assume(cond: bool) { 
+   unimplemented!() 
+}
 ```
 
 Again this has specifical significance to RMC and, as we'll see, it is
