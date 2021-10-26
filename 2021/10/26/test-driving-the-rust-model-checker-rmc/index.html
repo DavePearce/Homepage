@@ -26,13 +26,17 @@ following simple function:</p><div class=highlight><pre style=background-color:#
 </span><span style=color:#bbb></span>}<span style=color:#bbb>
 </span></code></pre></div><p>This is a good function for testing verification systems, since it has
 some nice post-conditions. To get started we need to add some helper
-methods, the first of which is:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>__nondet</span><span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>()<span style=color:#bbb> </span>-&gt; <span style=color:#0a8;font-weight:700>T</span><span style=color:#bbb> </span>{<span style=color:#bbb> </span>unimplemented<span style=color:#555>!</span>()<span style=color:#bbb> </span>}<span style=color:#bbb>
+methods, the first of which is:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>__nondet</span><span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>()<span style=color:#bbb> </span>-&gt; <span style=color:#0a8;font-weight:700>T</span><span style=color:#bbb> </span>{<span style=color:#bbb> 
+</span><span style=color:#bbb>   </span>unimplemented<span style=color:#555>!</span>()<span style=color:#bbb> 
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
 </span></code></pre></div><p>This function is known to RMC and has special significance. Here,
 <code>__nondet&lt;T>()</code> returns a <em>non-deterministic value</em>. We can think of
 this as an arbitrary value of the type <code>T</code> in question. This is where
 the power of RMC comes from as, instead of testing individual values
 of <code>T</code>, we&rsquo;re testing <em>all possible values</em> of <code>T</code>! The second helper
-method we need is this:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>__VERIFIER_assume</span>(cond: <span style=color:#078;font-weight:700>bool</span>)<span style=color:#bbb> </span>{<span style=color:#bbb> </span>unimplemented<span style=color:#555>!</span>()<span style=color:#bbb> </span>}<span style=color:#bbb>
+method we need is this:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>__VERIFIER_assume</span>(cond: <span style=color:#078;font-weight:700>bool</span>)<span style=color:#bbb> </span>{<span style=color:#bbb> 
+</span><span style=color:#bbb>   </span>unimplemented<span style=color:#555>!</span>()<span style=color:#bbb> 
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
 </span></code></pre></div><p>Again this has specifical significance to RMC and, as we&rsquo;ll see, it is
 used for <em>constraining</em> non-determinstic values. For example, we
 might do something like this:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span>: <span style=color:#078;font-weight:700>u32</span> <span style=color:#555>=</span><span style=color:#bbb> </span>__nondet();<span style=color:#bbb>
