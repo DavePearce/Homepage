@@ -5,7 +5,7 @@ draft: false
 metaimg: "images/2021/Test_Driving_Rust_Model_Checker_Preview.png"
 metatxt: "RMC allows Rust programs to be model checked using CBMC."
 twitter: "https://twitter.com/whileydave/status/1453196832784355332"
-#reddit: ""
+reddit: "https://www.reddit.com/r/rust/comments/qh238p/testdriving_the_rust_model_checker_rmc/"
 ---
 
 The [Rust Model Checker (RMC)](https://github.com/model-checking/rmc)
