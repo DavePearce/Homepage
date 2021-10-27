@@ -2,6 +2,8 @@
 date: 2021-10-26
 title: "Test-Driving the Rust Model Checker (RMC)"
 draft: false
+metaimg: "images/2021/Test_Driving_Rust_Model_Checker_Preview.png"
+metatxt: "RMC allows Rust programs to be model checked using CBMC."
 #twitter: ""
 #reddit: ""
 ---
