@@ -1,0 +1,145 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Verifying the Whiley Standard Library"><meta name=twitter:title content="Verifying the Whiley Standard Library"><meta property="og:url" content="https://whileydave.com/2021/10/27/verifying-the-whiley-standard-library/"><title>David J. Pearce
+(Verifying the Whiley Standard Library)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Verifying the Whiley Standard Library</h1><div class=post-date>Wednesday, October
+27th,
+2021</div><hr><p>For sometime now, its been possible to use
+<a href=https://github.com/boogie-org/boogie>Boogie</a> /
+<a href=https://github.com/Z3Prover/z3>Z3</a> as a backend for verifying Whiley
+programs. Initially that was pretty sketchy, but it&rsquo;s really starting
+to ramp up now. If you haven&rsquo;t heard of it before, Boogie is an
+<em>Intermediate Verification Language (IVL)</em> that provides a
+human-readable interface sitting on top of an <a href=https://en.wikipedia.org/wiki/Satisfiability_modulo_theories>SMT
+solver</a>.
+In this case, we use Z3 as the SMT solver &mdash; but it is possible to
+use others, such as <a href=https://cvc4.github.io/>CVC4</a>, etc. Boogie was
+initially developed at Microsoft, but is now maintained by a
+consortium that appears to include Facebook and Amazon, amongst
+others.</p><p>For example, here&rsquo;s a simple Whiley program:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>function<span style=color:#bbb> </span>abs(int<span style=color:#bbb> </span>x)<span style=color:#bbb> </span>-&gt; (int<span style=color:#bbb> </span>r)<span style=color:#bbb>
+</span><span style=color:#bbb></span>ensures<span style=color:#bbb> </span>r<span style=color:#bbb> </span><span style=color:#555>&gt;=</span><span style=color:#bbb> </span><span style=color:#f60>0</span><span style=color:#bbb>
+</span><span style=color:#bbb></span>ensures<span style=color:#bbb> </span>(r<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>x)<span style=color:#bbb> </span><span style=color:#555>||</span><span style=color:#bbb> </span>(r<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span><span style=color:#555>-</span>x):
+   <span style=color:#0a8;font-weight:700>if</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>&gt;=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>:
+      <span style=color:#0a8;font-weight:700>return</span><span style=color:#bbb> </span>x<span style=color:#bbb>
+</span><span style=color:#bbb>   </span><span style=color:#069;font-weight:700>else</span>:
+      <span style=color:#0a8;font-weight:700>return</span><span style=color:#bbb> </span><span style=color:#555>-</span>x<span style=color:#bbb>
+</span></code></pre></div><p>The <a href=https://github.com/Whiley/Whiley2Boogie>Whiley2Boogie</a> backend
+is responsible for translating the above program into Boogie. Here&rsquo;s
+a simplified version of how that looks:</p><pre><code class=language-Boogie data-lang=Boogie>procedure abs(x : int) returns (r : int)
+ensures r &gt;= 0;
+ensures (r == x) || (r == -x);
+{
+   if(x &gt;= 0) {
+      r := x;
+      return;
+   } else {
+      r := -x;
+      return;
+   }
+}
+</code></pre><p>Here we can see there are a few differences from the Whiley code but,
+in this example at least, the two look quite similar. In fact, Boogie
+implements a form of Dijkstra&rsquo;s <a href=https://en.wikipedia.org/wiki/Guarded_Command_Language>Guarded Command
+Language</a>
+which has been extended with syntax to bring it closer to a
+programming language. However, in some cases, it can end up looking
+quite different.</p><h2 id=stdwy>STD.wy</h2><p>The Whiley standard library,
+<a href=https://github.com/Whiley/STD.wy>STD.wy</a>, presents an interesting
+target for verification, as it is currently the largest single body of
+code written in Whiley. My goal is to verify the standard library
+and, from thereafter, ensure it is verified on every commit (using a
+<a href=https://github.com/Whiley/WhileyBuildAction>GitHub Action</a>). The
+library is still pretty small, but contains some of the things you
+would expect, such as collections (e.g. <code>std::vector</code>,
+<code>std::hash_map</code>), ASCII support (<code>std::ascii</code>), math functions
+(<code>std::math</code>) and various array manipulation functions (<code>std::array</code>).
+Yes, it is very much a work in progress &mldr; <em>and now is the time to get
+verification ingrained as part of the build process</em>.</p><p>As an example, here&rsquo;s a function from <code>std::array</code>:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#09f;font-style:italic>// find first index after a given start point in list which matches character.
+</span><span style=color:#09f;font-style:italic>// If no match, then return null.
+</span><span style=color:#09f;font-style:italic></span>function<span style=color:#bbb> </span>first_index_of<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>(T[]<span style=color:#bbb> </span>items,<span style=color:#bbb> </span>T<span style=color:#bbb> </span>item,<span style=color:#bbb> </span>uint<span style=color:#bbb> </span>start)<span style=color:#bbb> </span>-&gt; (uint<span style=color:#555>|</span>null<span style=color:#bbb> </span>index)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// Starting point cannot be beyond array
+</span><span style=color:#09f;font-style:italic></span>requires<span style=color:#bbb> </span>start<span style=color:#bbb> </span><span style=color:#555>&lt;=</span><span style=color:#bbb> </span><span style=color:#555>|</span>items<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// If int returned, element at this position matches item
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>index<span style=color:#bbb> </span>is<span style=color:#bbb> </span>uint<span style=color:#bbb> </span><span style=color:#555>==&gt;</span><span style=color:#bbb> </span>items[index]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>item<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// If int returned, element at this position is first match
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>index<span style=color:#bbb> </span>is<span style=color:#bbb> </span>uint<span style=color:#bbb> </span><span style=color:#555>==&gt;</span><span style=color:#bbb> </span><span style=color:#555>!</span>contains(items,item,start,index)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// If null returned, no element in items matches item
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>index<span style=color:#bbb> </span>is<span style=color:#bbb> </span>null<span style=color:#bbb> </span><span style=color:#555>==&gt;</span><span style=color:#bbb> </span><span style=color:#555>!</span>contains(items,item,start,<span style=color:#555>|</span>items<span style=color:#555>|</span>):
+    <span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>for</span><span style=color:#bbb> </span>i<span style=color:#bbb> </span><span style=color:#069;font-weight:700>in</span><span style=color:#bbb> </span>start<span style=color:#bbb> </span>..<span style=color:#bbb> </span><span style=color:#555>|</span>items<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>// No element seen so far matches item
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span><span style=color:#555>!</span>contains(items,item,start,i):
+        <span style=color:#0a8;font-weight:700>if</span><span style=color:#bbb> </span>items[i]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>item:
+            <span style=color:#0a8;font-weight:700>return</span><span style=color:#bbb> </span>(uint)<span style=color:#bbb> </span>i<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>return</span><span style=color:#bbb> </span>null<span style=color:#bbb>
+</span></code></pre></div><p>This searches forward in <code>items</code> from a given <code>start</code> index and
+returns either the first index matching <code>item</code> or (if none exists)
+returns <code>null</code>. The specification is reasonably involved, but
+essentially says this in logical form. To keep things a bit more
+intuitive we&rsquo;ve used <code>contains()</code> instead of raw quantifiers. Here,
+<code>constrains()</code> is a <code>property</code> defined in <code>std::array</code> as follows:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>property<span style=color:#bbb> </span>contains<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>(T[]<span style=color:#bbb> </span>lhs,<span style=color:#bbb> </span>T<span style=color:#bbb> </span>item,<span style=color:#bbb> </span>int<span style=color:#bbb> </span>start,<span style=color:#bbb> </span>int<span style=color:#bbb> </span>end)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// Some index in given range contains item
+</span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span>some<span style=color:#bbb> </span>{<span style=color:#bbb> </span>i<span style=color:#bbb> </span><span style=color:#069;font-weight:700>in</span><span style=color:#bbb> </span>start..end<span style=color:#bbb> </span><span style=color:#555>|</span><span style=color:#bbb> </span>lhs[i]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>item<span style=color:#bbb> </span>}<span style=color:#bbb>
+</span></code></pre></div><p>The module <code>std::array</code> contains several predefined properties like
+this which are helpful in specifying array manipulating functions.
+The great thing about <code>first_index_of()</code> above is that we can now
+<a href=https://en.wikipedia.org/wiki/Software_verification>statically
+verify</a> that its
+implementation meets its specification. No need to write lots of
+extensive tests checking all the edge cases!! This also means
+<code>first_index_of()</code> is guaranteed not to perform an out-of-bounds
+access or exhibit other undefined behaviour. That is something really
+quite powerful, and <a href=https://github.com/boogie-org/boogie>Boogie</a> /
+<a href=https://github.com/Z3Prover/z3>Z3</a> is key to making it work.</p><h2 id=challenges>Challenges</h2><p>At this point, the goal was fairly straightforward: <em>go through all
+the library functions adding specifications so they will now
+statically verify</em>. This was quite a laborious task since, initially,
+large chunks of the library had not been specified. Having largely
+completed that now, we can proceed incrementally by requiring that
+<em>all new code must be fully specified and pass verification</em>.</p><p>Still, there are some challenges. Most notably, we have at least
+one function which currently cannot be verified (due to limitations
+with Boogie / Z3). This is the following function:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>unsafe</span><span style=color:#bbb> </span>function<span style=color:#bbb> </span>copy<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>(T[]<span style=color:#bbb> </span>src,<span style=color:#bbb> </span>uint<span style=color:#bbb> </span>srcStart,<span style=color:#bbb> </span>T[]<span style=color:#bbb> </span>dest,<span style=color:#bbb> </span>uint<span style=color:#bbb> </span>destStart,<span style=color:#bbb> </span>uint<span style=color:#bbb> </span>length)<span style=color:#bbb> </span>-&gt; (T[]<span style=color:#bbb> </span>result)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// Source array must contain enough elements to be copied
+</span><span style=color:#09f;font-style:italic></span>requires<span style=color:#bbb> </span>(srcStart<span style=color:#bbb> </span><span style=color:#555>+</span><span style=color:#bbb> </span>length)<span style=color:#bbb> </span><span style=color:#555>&lt;=</span><span style=color:#bbb> </span><span style=color:#555>|</span>src<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// Destination array must have enough space for copied elements
+</span><span style=color:#09f;font-style:italic></span>requires<span style=color:#bbb> </span>(destStart<span style=color:#bbb> </span><span style=color:#555>+</span><span style=color:#bbb> </span>length)<span style=color:#bbb> </span><span style=color:#555>&lt;=</span><span style=color:#bbb> </span><span style=color:#555>|</span>dest<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// Result is same size as dest
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span><span style=color:#555>|</span>result<span style=color:#555>|</span><span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span><span style=color:#555>|</span>dest<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// All elements before copied region are same
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>equals(dest,<span style=color:#f60>0</span>,result,<span style=color:#f60>0</span>,destStart)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// All elements in copied region match src
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>equals(src,srcStart,result,destStart,length)<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#09f;font-style:italic>// All elements above copied region are same
+</span><span style=color:#09f;font-style:italic></span>ensures<span style=color:#bbb> </span>all<span style=color:#bbb> </span>{<span style=color:#bbb> </span>i<span style=color:#bbb> </span><span style=color:#069;font-weight:700>in</span><span style=color:#bbb> </span>(destStart<span style=color:#555>+</span>length)<span style=color:#bbb> </span>..<span style=color:#bbb> </span><span style=color:#555>|</span>dest<span style=color:#555>|</span><span style=color:#bbb> </span><span style=color:#555>|</span><span style=color:#bbb> </span>dest[i]<span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span>result[i]<span style=color:#bbb> </span>}:
+    <span style=color:#0a8;font-weight:700>T</span>[]<span style=color:#bbb> </span>_dest<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>dest<span style=color:#bbb> </span><span style=color:#09f;font-style:italic>// ghost
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>for</span><span style=color:#bbb> </span>i<span style=color:#bbb> </span><span style=color:#069;font-weight:700>in</span><span style=color:#bbb> </span><span style=color:#f60>0</span><span style=color:#bbb> </span>..<span style=color:#bbb> </span>length<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>// Size of dest unchanged
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span><span style=color:#555>|</span>dest<span style=color:#555>|</span><span style=color:#bbb> </span><span style=color:#555>==</span><span style=color:#bbb> </span><span style=color:#555>|</span>_dest<span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>// Everything below destStart unchanged
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span>equals(_dest,<span style=color:#f60>0</span>,dest,<span style=color:#f60>0</span>,destStart)<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>// Everything copied so far is equal
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span>equals(src,<span style=color:#bbb> </span>srcStart,<span style=color:#bbb> </span>dest,<span style=color:#bbb> </span>destStart,<span style=color:#bbb> </span>i)<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>// Everything above j is unchanged
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>where</span><span style=color:#bbb> </span>equals(_dest,dest,i<span style=color:#555>+</span>destStart,<span style=color:#555>|</span>dest<span style=color:#555>|</span>):
+        <span style=color:#0a8;font-weight:700>dest</span>[i<span style=color:#555>+</span>destStart]<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>src[i<span style=color:#555>+</span>srcStart]<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>    </span><span style=color:#069;font-weight:700>return</span><span style=color:#bbb> </span>dest<span style=color:#bbb>
+</span></code></pre></div><p>This is roughly equivalent to <code>System.arraycopy()</code> in Java, and its
+not very complicated. Unfortunately, Boogie / Z3 cannot verify this
+without additional help. Whilst this is potentially something we can
+fix in the <a href=https://github.com/Whiley/Whiley2Boogie>Whiley2Boogie</a>
+backend, for now we simply mark the <code>function</code> as <code>unsafe</code>. This
+means it will be ignored during verification. However, its
+specification is still used when verifying other functions not marked
+<code>unsafe</code>. Whilst this is not ideal, it is a pragmatic compromise for
+now.</p><h2 id=conclusion>Conclusion</h2><p>Using Boogie / Z3 though the
+<a href=https://github.com/Whiley/Whiley2Boogie>Whiley2Boogie</a> backend has
+significantly improved our ability to verify non-trivial Whiley
+programs. Work is ongoing here, and you can find a number of
+<a href=https://github.com/Whiley/WyBench/tree/main/src>interesting
+benchmarks</a> we are
+currently working through.</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
