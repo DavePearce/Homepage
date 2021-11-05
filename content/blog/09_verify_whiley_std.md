@@ -2,6 +2,8 @@
 date: 2021-10-27
 title: "Verifying the Whiley Standard Library"
 draft: false
+metaimg: "images/2021/Verifying_Whiley_Std.png"
+metatxt: "Using Boogie / Z3 it is possible verify a large number of Whiley programs."
 #twitter: ""
 #reddit: ""
 ---
