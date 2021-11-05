@@ -1,15 +1,15 @@
 ---
 date: 2021-10-27
 title: "Verifying the Whiley Standard Library"
-draft: true
+draft: false
 #twitter: ""
 #reddit: ""
 ---
 
 For sometime now, its been possible to use
 [Boogie](https://github.com/boogie-org/boogie) /
-[Z3](https://github.com/Z3Prover/z3) as a backend to verify Whiley
-programs.  Initially, that was pretty sketchy but it's really starting
+[Z3](https://github.com/Z3Prover/z3) as a backend for verifying Whiley
+programs.  Initially that was pretty sketchy, but it's really starting
 to ramp up now.  If you haven't heard of it before, Boogie is an
 _Intermediate Verification Language (IVL)_ that provides a
 human-readable interface sitting on top of an [SMT
@@ -20,11 +20,9 @@ initially developed at Microsoft, but is now maintained by a
 consortium that appears to include Facebook and Amazon, amongst
 others.
 
-Boogie implements an extended form of Dijkstra's [Guarded Command
-Language](https://en.wikipedia.org/wiki/Guarded_Command_Language).
 For example, here's a simple Whiley program:
 
-```Java
+```Rust
 function abs(int x) -> (int r)
 ensures r >= 0
 ensures (r == x) || (r == -x):
@@ -35,8 +33,8 @@ ensures (r == x) || (r == -x):
 ```
 
 The [Whiley2Boogie](https://github.com/Whiley/Whiley2Boogie) backend
-for Whiley translates the above program into Boogie.  Here's a
-simplified version of how that looks:
+ is responsible for translating the above program into Boogie.  Here's
+ a simplified version of how that looks:
 
 
 ```Boogie
@@ -55,23 +53,28 @@ ensures (r == x) || (r == -x);
 ```
 
 Here we can see there are a few differences from the Whiley code but,
-in this example at least, the two look quite similar.
+in this example at least, the two look quite similar.  In fact, Boogie
+implements a form of Dijkstra's [Guarded Command
+Language](https://en.wikipedia.org/wiki/Guarded_Command_Language)
+which has been extended with syntax to bring it closer to a
+programming language.  However, in some cases, it can end up looking
+quite different.
+
 
 ## STD.wy
 
 The Whiley standard library,
 [STD.wy](https://github.com/Whiley/STD.wy), presents an interesting
 target for verification, as it is currently the largest single body of
-code written in Whiley.  Furthermore, my goal is to verify the
-standard library and, from thereafter, ensure it is verified on every
-commit (using a [GitHub
-Action](https://github.com/Whiley/WhileyBuildAction)).  The library is
-still pretty small, but does contain a few of the things you would
-expect, such as collections (e.g. `std::vector`, `std::hash_map`),
-ASCII support (`std::ascii`), math functions (`std::math`) and various
-array manipulation functions (`std::array`).  Yes, it is very much a
-work in progress.  _But, now is the time to get verification ingrained
-as part of the build process_.
+code written in Whiley.  My goal is to verify the standard library
+and, from thereafter, ensure it is verified on every commit (using a
+[GitHub Action](https://github.com/Whiley/WhileyBuildAction)).  The
+library is still pretty small, but contains some of the things you
+would expect, such as collections (e.g. `std::vector`,
+`std::hash_map`), ASCII support (`std::ascii`), math functions
+(`std::math`) and various array manipulation functions (`std::array`).
+Yes, it is very much a work in progress ...  _and now is the time to get
+verification ingrained as part of the build process_.
 
 As an example, here's a function from `std::array`:
 
@@ -91,7 +94,6 @@ ensures index is null ==> !contains(items,item,start,|items|):
     for i in start .. |items|
     // No element seen so far matches item
     where !contains(items,item,start,i):
-        //
         if items[i] == item:
             return (uint) i
     //
@@ -102,8 +104,8 @@ This searches forward in `items` from a given `start` index and
 returns either the first index matching `item` or (if none exists)
 returns `null`.  The specification is reasonably involved, but
 essentially says this in logical form.  To keep things a bit more
-intuitive, instead of using raw quantifiers, we've used `contains()`.
-This is a `property` which is defined as follows:
+intuitive we've used `contains()` instead of raw quantifiers.  Here,
+`constrains()` is a `property` defined in `std::array` as follows:
 
 ```Rust
 property contains<T>(T[] lhs, T item, int start, int end)
@@ -113,27 +115,28 @@ where some { i in start..end | lhs[i] == item }
 
 The module `std::array` contains several predefined properties like
 this which are helpful in specifying array manipulating functions.
-The great thing about our `first_index_of` function above is that we
-can now _statically verify_ that its implementation meets the
-specification given.  No need to write lots of extensive tests to
-check all the edge cases!! This also means it is guaranteed not to
-perform an out-of-bounds access or exhibit other undefined behaviour.
-That is something really quite powerful, and
-[Boogie](https://github.com/boogie-org/boogie) /
+The great thing about `first_index_of()` above is that we can now
+[statically
+verify](https://en.wikipedia.org/wiki/Software_verification) that its
+implementation meets its specification.  No need to write lots of
+extensive tests checking all the edge cases!! This also means
+`first_index_of()` is guaranteed not to perform an out-of-bounds
+access or exhibit other undefined behaviour.  That is something really
+quite powerful, and [Boogie](https://github.com/boogie-org/boogie) /
 [Z3](https://github.com/Z3Prover/z3) is key to making it work.
 
 ## Challenges
 
-At this point, the goal is fairly straightforward: _go through all the
-library functions adding specifications so they will now statically
-verify_.  This was actually a laborious task since, initially, large
-chunks of the library had not been specified.  Having largely
+At this point, the goal was fairly straightforward: _go through all
+the library functions adding specifications so they will now
+statically verify_.  This was quite a laborious task since, initially,
+large chunks of the library had not been specified.  Having largely
 completed that now, we can proceed incrementally by requiring that
-_any_ new function must be fully specified and passes verification.
+_all new code must be fully specified and pass verification_.
 
-Still, there are some challenges here.  Most notably, we have at least
-one function which currently cannot be verified, due to limitations
-with Boogie / Z3.  This is the following function:
+Still, there are some challenges.  Most notably, we have at least
+one function which currently cannot be verified (due to limitations
+with Boogie / Z3).  This is the following function:
 
 ```Rust
 unsafe function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
@@ -167,11 +170,20 @@ ensures all { i in (destStart+length) .. |dest| | dest[i] == result[i] }:
 
 This is roughly equivalent to `System.arraycopy()` in Java, and its
 not very complicated.  Unfortunately, Boogie / Z3 cannot verify this
-without additional help.  Whilst this is potentially we can fix in the
-[Whiley2Boogie](https://github.com/Whiley/Whiley2Boogie) backend, for
-now we simply mark the `function` as `unsafe`.  This means it will be
-ignored during verification.  However, its specification is still used
-to check other functions which are not marked `unsafe`.  Whilst this
-is not ideal, it is a pragmatic compromise for now.
+without additional help.  Whilst this is potentially something we can
+fix in the [Whiley2Boogie](https://github.com/Whiley/Whiley2Boogie)
+backend, for now we simply mark the `function` as `unsafe`.  This
+means it will be ignored during verification.  However, its
+specification is still used when verifying other functions not marked
+`unsafe`.  Whilst this is not ideal, it is a pragmatic compromise for
+now.
 
 ## Conclusion
+
+Using Boogie / Z3 though the
+[Whiley2Boogie](https://github.com/Whiley/Whiley2Boogie) backend has
+significantly improved our ability to verify non-trivial Whiley
+programs.  Work is ongoing here, and you can find a number of
+[interesting
+benchmarks](https://github.com/Whiley/WyBench/tree/main/src) we are
+currently working through.
