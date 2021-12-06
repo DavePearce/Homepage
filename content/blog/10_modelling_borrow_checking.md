@@ -226,20 +226,19 @@ Rust](https://whileydave.com/blob/understanding-partial-moves-in-rust/):
 }
 ```
 
-_But, what does the environment look like before the assignment?_ The
-question is really: _how do we represent the absence of something?_.
-Well, a simple approach is to use `_` to representing something
-undefined.  That means the environment right before the final
-assignment would be:
+_But, what does the environment look like before the assignment?_
+Well, a simple approach is to use `_` for something undefined.  Then,
+the environment right before the final assignment is:
 
 ```
 { x: i32, y: i32, p: (&mut x, _), q: &{mut y} }
 ```
 
-Now we can explain why the program is rejected: _Rust doesn't allow us
-to move a type containing `_`_.  A follow up question is: _does Rust
-allow us to _copy_ a typing containing `_`_?  But, I'll leave that as
-an exercise for the reader.
+And now we can explain why the program is rejected: _Rust doesn't
+allow us to move a type containing `_`_.  
+
+A follow up question is: _does Rust allow us to _copy_ a typing
+containing `_`_?  But, I'll leave that as an exercise for the reader.
 
 ### Conclusion
 
