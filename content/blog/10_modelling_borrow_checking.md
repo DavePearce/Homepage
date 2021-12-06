@@ -1,17 +1,17 @@
 ---
 date: 2021-12-06
-title: "Modelling Rust Lifetimes"
+title: "Modelling Borrow Checking in Rust"
 draft: false
-metaimg: "images/2021/ModellingRustLifetimes_Preview.png"
+metaimg: "images/2021/ModellingBorrowChecking_Preview.png"
 metatxt: "We can use a simple model to think about borrow checking in Rust which is surprisingly effective"
 #twitter: ""
 #reddit: ""
 ---
 
-Recently, I've been working on a [formalisation of lifetimes in
+Recently, I've been working on a [formalisation of borrow checking in
 Rust](http://localhost:1313/publications/pea21_toplas/).  The idea is
-to help people think clearly about what lifetimes are and how they
-work (in someways perhaps similar to the [Stacked
+to help people think clearly about how borrow checking works (in
+someways perhaps similar to the [Stacked
 Borrows](https://plv.mpi-sws.org/rustbelt/stacked-borrows/) work but
 with a different perspective).  So, I thought it might be interesting
 to explore how this looks here.
@@ -20,7 +20,7 @@ to explore how this looks here.
 
 To get started we'll look at some simple programs which, for example,
 don't even consider functions.  Ignoring as much stuff as possible
-helps us focus on lifetimes.  Here's an example to illustrate:
+helps us focus.  Here's an example to illustrate:
 
 ```Rust
 {
