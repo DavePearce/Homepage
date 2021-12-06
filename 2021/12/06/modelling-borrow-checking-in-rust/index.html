@@ -15,13 +15,13 @@ Borrows</a> work but
 with a different perspective). So, I thought it might be interesting
 to explore how this looks here.</p><h2 id=overview>Overview</h2><p>To get started we&rsquo;ll look at some simple programs which, for example,
 don&rsquo;t even consider functions. Ignoring as much stuff as possible
-helps us focus. Here&rsquo;s an example to illustrate:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+helps us stay focused. Here&rsquo;s an example to illustrate:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>x;<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#366>Box</span>::new(<span style=color:#f60>1</span>);<span style=color:#bbb>
 </span><span style=color:#bbb>  </span>...<span style=color:#bbb>
 </span><span style=color:#bbb></span>}<span style=color:#bbb>
-</span></code></pre></div><p>Right after the three statements, we can view the borrow checker has
+</span></code></pre></div><p>Right after the three statements, we can view the borrow checker as
 having the following environment:</p><pre><code>{ x: i32, p: &amp;{x}, q: ☐i32 }
 </code></pre><p>This says that <code>x</code> has type <code>i32</code>, that <code>p</code> is an immutable borrow of
 <code>x</code> and that <code>q</code> is a boxed <code>i32</code>. Whilst this is a simplified view,
