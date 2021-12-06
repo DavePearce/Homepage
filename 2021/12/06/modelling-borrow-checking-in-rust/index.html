@@ -134,15 +134,12 @@ Rust</a>:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-s
 </span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>z<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>p;<span style=color:#bbb>
 </span><span style=color:#bbb>  </span>...<span style=color:#bbb>
 </span><span style=color:#bbb></span>}<span style=color:#bbb>
-</span></code></pre></div><p><em>But, what does the environment look like before the assignment?</em> The
-question is really: <em>how do we represent the absence of something?</em>.
-Well, a simple approach is to use <code>_</code> to representing something
-undefined. That means the environment right before the final
-assignment would be:</p><pre><code>{ x: i32, y: i32, p: (&amp;mut x, _), q: &amp;{mut y} }
-</code></pre><p>Now we can explain why the program is rejected: <em>Rust doesn&rsquo;t allow us
-to move a type containing <code>_</code></em>. A follow up question is: <em>does Rust
-allow us to <em>copy</em> a typing containing <code>_</code></em>? But, I&rsquo;ll leave that as
-an exercise for the reader.</p><h3 id=conclusion>Conclusion</h3><p>There are plenty of other things we haven&rsquo;t touched on here. For
+</span></code></pre></div><p><em>But, what does the environment look like before the assignment?</em>
+Well, a simple approach is to use <code>_</code> for something undefined. Then,
+the environment right before the final assignment is:</p><pre><code>{ x: i32, y: i32, p: (&amp;mut x, _), q: &amp;{mut y} }
+</code></pre><p>And now we can explain why the program is rejected: <em>Rust doesn&rsquo;t
+allow us to move a type containing <code>_</code></em>.</p><p>A follow up question is: <em>does Rust allow us to <em>copy</em> a typing
+containing <code>_</code></em>? But, I&rsquo;ll leave that as an exercise for the reader.</p><h3 id=conclusion>Conclusion</h3><p>There are plenty of other things we haven&rsquo;t touched on here. For
 example, the issue of <em>type compatibility</em> and, of course,
 <em>non-lexical lifetimes</em>. But, also, more complex issues around
 <em>function invocations</em>, <em>lifetime parameters</em>, <em>generic types</em>, etc.
