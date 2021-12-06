@@ -1,0 +1,153 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Modelling Rust Lifetimes"><meta name=twitter:title content="Modelling Rust Lifetimes"><meta property="og:description" content="We can use a simple model to think about borrow checking in Rust which is surprisingly effective"><meta name=twitter:description content="We can use a simple model to think about borrow checking in Rust which is surprisingly effective"><meta property="og:image" content="https://whileydave.com/images/2021/ModellingRustLifetimes_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2021/ModellingRustLifetimes_Preview.png"><meta property="og:url" content="https://whileydave.com/2021/12/06/modelling-rust-lifetimes/"><title>David J. Pearce
+(Modelling Rust Lifetimes)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Modelling Rust Lifetimes</h1><div class=post-date>Monday, December
+6th,
+2021</div><hr><p>Recently, I&rsquo;ve been working on a <a href=http://localhost:1313/publications/pea21_toplas/>formalisation of lifetimes in
+Rust</a>. The idea is
+to help people think clearly about what lifetimes are and how they
+work (in someways perhaps similar to the <a href=https://plv.mpi-sws.org/rustbelt/stacked-borrows/>Stacked
+Borrows</a> work but
+with a different perspective). So, I thought it might be interesting
+to explore how this looks here.</p><h2 id=overview>Overview</h2><p>To get started we&rsquo;ll look at some simple programs which, for example,
+don&rsquo;t even consider functions. Ignoring as much stuff as possible
+helps us focus on lifetimes. Here&rsquo;s an example to illustrate:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>x;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#366>Box</span>::new(<span style=color:#f60>1</span>);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>Right after the three statements, we can view the borrow checker has
+having the following environment:</p><pre><code>{ x: i32, p: &amp;{x}, q: ☐i32 }
+</code></pre><p>This says that <code>x</code> has type <code>i32</code>, that <code>p</code> is an immutable borrow of
+<code>x</code> and that <code>q</code> is a boxed <code>i32</code>. Whilst this is a simplified view,
+it still gives insight into how borrow checking works. For example,
+suppose the next statement is <code>x = 0;</code>. Then, the borrow checker can
+reject this because it sees <code>x</code> is already borrowed (ignoring
+<a href=https://stackoverflow.com/questions/50251487/what-are-non-lexical-lifetimes>non-lexical
+lifetimes</a>
+for now). <em>A simple rule is that we cannot assign or modify a
+variable which is borrowed in the environment</em>.</p><p>The idea is that the model is as easy as possible to understand.
+Let&rsquo;s look at a slightly more interesting example:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#366>Box</span>::new(<span style=color:#f60>0</span>);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;*</span>p;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#366>Box</span>::new(<span style=color:#f60>1</span>);<span style=color:#bbb> </span><span style=color:#09f;font-style:italic>// reject
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>Rust <a href="https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=cce4261e5615b380d1a3aa25d11d13fb">rejects this program</a> with the following error:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>error[E0506]: <span style=color:#0a8;font-weight:700>cannot</span><span style=color:#bbb> </span>assign<span style=color:#bbb> </span>to<span style=color:#bbb> </span><span style=color:#c30>&#39;p&#39;</span><span style=color:#bbb> </span>because<span style=color:#bbb> </span>it<span style=color:#bbb> </span>is<span style=color:#bbb> </span>borrowed<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#555>-</span>-&gt; <span style=color:#0a8;font-weight:700>src</span><span style=color:#555>/</span>main.rs:<span style=color:#f60>8</span>:<span style=color:#f60>5</span><span style=color:#bbb>
+</span><span style=color:#bbb>   </span><span style=color:#555>|</span><span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#f60>3</span><span style=color:#bbb>  </span><span style=color:#555>|</span><span style=color:#bbb>     </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;*</span>p;<span style=color:#bbb>
+</span><span style=color:#bbb>   </span><span style=color:#555>|</span><span style=color:#bbb>             </span><span style=color:#555>---</span><span style=color:#bbb> </span>borrow<span style=color:#bbb> </span>of<span style=color:#bbb> </span><span style=color:#c30>&#39;p&#39;</span><span style=color:#bbb> </span>occurs<span style=color:#bbb> </span>here<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:#f60>4</span><span style=color:#bbb>  </span><span style=color:#555>|</span><span style=color:#bbb>     </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#f60>5</span><span style=color:#bbb>  </span><span style=color:#555>|</span><span style=color:#bbb>     </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#366>Box</span>::new(<span style=color:#f60>1</span>);<span style=color:#bbb>
+</span><span style=color:#bbb>   </span><span style=color:#555>|</span><span style=color:#bbb>     </span><span style=color:#555>^</span><span style=color:#bbb> </span>assignment<span style=color:#bbb> </span>to<span style=color:#bbb> </span>borrowed<span style=color:#bbb> </span><span style=color:#c30>&#39;p&#39;</span><span style=color:#bbb> </span>occurs<span style=color:#bbb> </span>here<span style=color:#bbb>
+</span></code></pre></div><p>This might seem a bit strange, but it makes sense if we consider how
+the environment at the point of the assignment:</p><pre><code>{ p: ☐i32, q: &amp;{*p} }
+</code></pre><p>We see that <code>q</code> is borrowing through <code>p</code> and, hence, the borrow
+checker is unhappy as we are attempting to assign something which is
+borrowed in the environment.</p><h2 id=conditionals>Conditionals</h2><p>In our environments borrows are represented as e.g. <code>&{x}</code>, and this
+might seem strange &mdash; <em>why not just <code>&x</code></em>? There is a reason for
+this which we can see in the following:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>x;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>if</span><span style=color:#bbb> </span>...<span style=color:#bbb> </span>{<span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>y;<span style=color:#bbb> </span>}<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>Here, <code>if ...</code> just represents some sensible condition. Again, Rust
+<a href="https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=f15d989a58a533b073b49d6bc25a9ad2">rejects this
+program</a>
+because <code>x</code> may be borrowed at the point of the assignment. Looking
+at the environment right before the environment shows us why:</p><pre><code>{ x:i32, y:i32, p:&amp;{x,y} }
+</code></pre><p>Here, <code>&{x,y}</code> should be taken to represent a borrow of <em>either</em> <code>x</code>
+or <code>y</code> (but we don&rsquo;t know which one). In such cases, the borrow
+checker must be conservative and assume either borrow could hold and
+therefore reject the assignment.</p><p>In some cases, we might actually know better. For example:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>f</span>(a: <span style=color:#078;font-weight:700>i32</span>)<span style=color:#bbb> </span>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>z<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>2</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>x;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>if</span><span style=color:#bbb> </span>a<span style=color:#bbb> </span><span style=color:#555>&gt;</span><span style=color:#bbb> </span><span style=color:#f60>0</span><span style=color:#bbb> </span>{<span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>y;<span style=color:#bbb> </span>}<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>if</span><span style=color:#bbb> </span>a<span style=color:#bbb> </span><span style=color:#555>&lt;=</span><span style=color:#bbb> </span><span style=color:#f60>0</span><span style=color:#bbb> </span>{<span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>z;<span style=color:#bbb> </span>}<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>This program is safe as we know for certain that <code>&x</code> has expired at
+the point of the assignment. However, Rust still <a href="https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=e3d6fe0f77e95d40899e67b040044866">rejects this
+program</a>
+because all the borrow checker sees before the assignment is this:</p><pre><code>{ x:i32, y:i32, y:i32, p:&amp;{x,y,z} }
+</code></pre><p>That is, the borrower checker cannot reason about the conditionals
+themselves and must conservatively assume <code>x</code> is still borrowed.</p><h3 id=exploring-the-model>Exploring the Model</h3><p>At this point its important to highlight that this is just a model and
+is not a perfect representation of borrowing checking in Rust.
+Rather, its purpose is to give us some intuition into how borrow
+checking works. We can use it as a starting point for understanding
+the borrow checker.</p><p>For example, let&rsquo;s consider this program which is a variation on one
+from above:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>x;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;*</span>p;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span>y;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>Unlike our example above, this is not rejected by the borrow checker.
+The environment right before the final assignment might be:</p><pre><code>{ x: i32, y: i32, p: &amp;x, q: &amp;{*p} }
+</code></pre><p>This suggests the program should be rejected, since we&rsquo;re attempting
+to modify something which is borrowed (i.e. <code>p</code>). However, the borrow
+checker is quite sophisticated and (presumably) realises that <code>&*p</code> is
+equivalent to <code>&x</code>.</p><p>Now things start to get interesting! Consider the following small
+change:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>0</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#555>*</span>p;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p>This program is accepted by Rust today but was rejected by earlier
+versions of Rust (e.g. <code>v1.35.0</code>, edition <code>2015</code>). <em>Thus, we see how
+Rust&rsquo;s own internal model changes over time</em> (presumably, in this
+case, its related to the <a href=https://blog.rust-lang.org/2019/07/04/Rust-1.36.0.html>progressive roll-out of
+NLL</a>). The
+point is, the model can provide a concrete datapoint to reason about
+what Rust is doing.</p><h3 id=improving-the-model>Improving the Model</h3><p>There are still many aspects of Rust which are not captured in the
+model as described this far. For example, this <a href=https://whileydave.com/blob/understanding-partial-moves-in-rust/>program is rejected by
+Rust</a>:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust>{<span style=color:#bbb> 
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>123</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#f60>456</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>(<span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>x,<span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>y);<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span>q<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>p.<span style=color:#f60>1</span>;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:#09f;font-style:italic>//
+</span><span style=color:#09f;font-style:italic></span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>z<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>p;<span style=color:#bbb>
+</span><span style=color:#bbb>  </span>...<span style=color:#bbb>
+</span><span style=color:#bbb></span>}<span style=color:#bbb>
+</span></code></pre></div><p><em>But, what does the environment look like before the assignment?</em> The
+question is really: <em>how do we represent the absence of something?</em>.
+Well, a simple approach is to use <code>_</code> to representing something
+undefined. That means the environment right before the final
+assignment would be:</p><pre><code>{ x: i32, y: i32, p: (&amp;mut x, _), q: &amp;{mut y} }
+</code></pre><p>Now we can explain why the program is rejected: <em>Rust doesn&rsquo;t allow us
+to move a type containing <code>_</code></em>. A follow up question is: <em>does Rust
+allow us to <em>copy</em> a typing containing <code>_</code></em>? But, I&rsquo;ll leave that as
+an exercise for the reader.</p><h3 id=conclusion>Conclusion</h3><p>There are plenty of other things we haven&rsquo;t touched on here. For
+example, the issue of <em>type compatibility</em> and, of course,
+<em>non-lexical lifetimes</em>. But, also, more complex issues around
+<em>function invocations</em>, <em>lifetime parameters</em>, <em>generic types</em>, etc.
+Whilst it is possible to extend the model to handle these, things do
+get complicated quite quickly! If you&rsquo;re interested in seeing more
+about how to do that, check out my <a href=http://localhost:1313/publications/pea21_toplas/>recent
+paper</a> discussing
+it.</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
