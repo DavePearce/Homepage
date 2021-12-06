@@ -20,7 +20,7 @@ to explore how this looks here.
 
 To get started we'll look at some simple programs which, for example,
 don't even consider functions.  Ignoring as much stuff as possible
-helps us focus.  Here's an example to illustrate:
+helps us stay focused.  Here's an example to illustrate:
 
 ```Rust
 {
@@ -31,7 +31,7 @@ helps us focus.  Here's an example to illustrate:
 }
 ```
 
-Right after the three statements, we can view the borrow checker has
+Right after the three statements, we can view the borrow checker as
 having the following environment:
 
 
