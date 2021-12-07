@@ -9,7 +9,7 @@ metatxt: "We can use a simple model to think about borrow checking in Rust which
 ---
 
 Recently, I've been working on a [formalisation of borrow checking in
-Rust](http://localhost:1313/publications/pea21_toplas/).  The idea is
+Rust](https://whileydave.com/publications/pea21_toplas/).  The idea is
 to help people think clearly about how borrow checking works (in
 someways perhaps similar to the [Stacked
 Borrows](https://plv.mpi-sws.org/rustbelt/stacked-borrows/) work but
@@ -249,5 +249,5 @@ _function invocations_, _lifetime parameters_, _generic types_, etc.
 Whilst it is possible to extend the model to handle these, things do
 get complicated quite quickly!  If you're interested in seeing more
 about how to do that, check out my [recent
-paper](http://localhost:1313/publications/pea21_toplas/) discussing
+paper](https://whileydave.com/publications/pea21_toplas/) discussing
 it.
