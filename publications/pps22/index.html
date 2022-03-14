@@ -13,10 +13,11 @@ soon as they go out of scope, without relying on a garbage
 collector. At the same time, Rust lets programmers create references,
 called <em>borrows</em>, to data structures. A static borrow checker enforces
 that borrows can only be used in a controlled way, so that automatic
-deallocation does not introduce dangling references. Featherweight
-Rust provides a formalisation for a subset of Rust where borrow
-checking is encoded using flow typing. However, we have identified a
-source of non-termination within the calculus which arises when typing
+deallocation does not introduce dangling references. <a href=https://whileydave.com/publications/pea21_toplas/>Featherweight
+Rust</a> provides a
+formalisation for a subset of Rust where borrow checking is encoded
+using flow typing. However, we have identified a source of
+non-termination within the calculus which arises when typing
 environments contain cycles between variables. In fact, it turns out
 that well-typed programs cannot lead to such environments &mdash; but this
 was not immediately obvious from the presentation. This paper defines
