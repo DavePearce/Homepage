@@ -5,7 +5,6 @@ tags: ["whiley"]
 title: "Verifying Whiley Programs with Boogie"
 authors: "David J. Pearce, Mark Utting and Lindsay Groves"
 booktitle: "Journal of Automated Reasoning (JAR)"
-pages: "(to appear)"
 copyright: "Springer"
 DOI: "10.1007/s10817-022-09619-1"
 preprint: "PUG22_JAR_preprint.pdf"
