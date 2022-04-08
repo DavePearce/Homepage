@@ -1,6 +1,6 @@
 ---
 date: 2022-01-15
-kind: "conference"
+kind: "workshop"
 tags: []
 title: "AtmoVis: Web Based Visualization of Air Quality Data with Interconnected Windows"
 authors: "Benjamin Powley et al."
