@@ -3,10 +3,10 @@ date: 2022-01-15
 kind: "workshop"
 tags: []
 title: "AtmoVis: Web Based Visualization of Air Quality Data with Interconnected Windows"
-authors: "Benjamin Powley et al."
+authors: "Benjamin Powley, Craig Anslow and David J. Pearce"
 booktitle: "Proceedings of the Workshop on Visualization in Environmental Sciences (EnvirVis)"
 copyright: "Springer"
-preprint: "PPMRA22_EnvirVis_preprint.pdf"
+preprint: "PAP22_EnvirVis_preprint.pdf"
 
 ---
 
