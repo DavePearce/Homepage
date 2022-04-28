@@ -1,6 +1,6 @@
 ---
 date: 2022-04-27
-title: "Understanding Strong Updates in Rust"
+title: "Puzzling Strong Updates in Rust"
 draft: true
 #twitter: ""
 #reddit: ""
@@ -52,16 +52,15 @@ know which one.
 
 ## Strong Updates in Rust
 
-Alright, so that completes the intro on strong updates.  _But, what
-has this got to do with Rust?_ Well, the borrow checker performs
-strong updates in some situations _but not others_.  In fact, it
-doesn't always apply a strong update when it could.  Whilst you might
-think it is a somewhat academic exercise to consider edge cases like
-this, I find it helps me better understand the borrow checker.
-Furthermore, it could suggest ways in which the borrow checker might
-be improved.
+Alright, that completes the intro on strong updates.  _But, what has
+this got to do with Rust?_ Well, the borrow checker performs strong
+updates in some situations.  _But, it doesn't always apply them when
+it could_.  Whilst considering edge cases like this is a somewhat
+academic exercise, I find it useful for understanding the borrow
+checker.  And, perhaps, it could even suggest ways to improve the
+borrow checker.
 
-As a start, here's a simple example which is accepted by `rustc`:
+Here is a simple example accepted by `rustc`:
 
 ```Rust
 fn main() {
@@ -69,14 +68,14 @@ fn main() {
  let mut s = 2;
  let mut p = &mut r;
  p = &mut s;
- println!("r={:?}, *p={:?}",r,*p);
+ println!("r={}, *p={}",r,*p);
 } 
 ```
 
 As expected, this compiles and prints `r=1, *p=2`.  They key is that,
 since Rust knows `p` is overwritten in the assignment, it can
-relinquish the borrow `&mut r`.  However, if we change this in a
-seemingly simple way, it breaks:
+relinquish the borrow `&mut r`.  However, if we change this a bit, it
+breaks:
 
 ```Rust
 fn main() {
@@ -84,30 +83,29 @@ fn main() {
  let mut s = 2;
  let mut p = Box::new(&mut r);
  *p = &mut s;
- println!("r={:?},**p={:?}",r,**p);
+ println!("r={},**p={}",r,**p);
 }
 ```
 
 This is pretty much the same example as before.  The contents of `*p`
-must be overwritten in the assignment, and so the borrow should be
-relinquished.  Unfortunately, `rustc` rejects this program with the
-following error:
+must be overwritten in the assignment, and so the borrow `&mut r`
+should be relinquished as before.  Unfortunately, `rustc` rejects this
+program with the following error:
 
 ```
 let mut p = Box::new(&mut r);
                      ------ mutable borrow occurs here
 *p = &mut s;
-println!("r={:?},**p={:?}",r,**p);
+println!("r={},**p={}",r,**p);
                            ^ --- mutable borrow later used here
                            |
                            immutable borrow occurs here
 ```
 
-We can make a reasonable argument that this should be expected since
-`Box<T>` has no special status (i.e. it is just a regular user-defined
-type).  Hence, the borrow checker couldn't be expected to know about
-the invariants it maintains.  Ok, so let's just change up the example
-like this:
+One could argue this is expected since `Box<T>` has no special status
+in Rust (i.e. it is just a regular user-defined type).  Hence, the
+borrow checker cannot be expected to know about its invariants.  Ok,
+so let's just change up the example like this:
 
 ```Rust
 fn main() {
@@ -116,7 +114,7 @@ fn main() {
  let mut q = &mut r;
  let p = &mut q;
  *p = &mut s;
- println!("r={:?}, **p={:?}",r,**p);
+ println!("r={}, **p={}",r,**p);
 }
 ```
 
@@ -124,4 +122,31 @@ Now, instead of using `Box<T>`, we're using a mutable borrow.  Its
 roughly the same thing but, in this case, mutable borrows do have
 special status.  So, we could reasonably expect the borrow checker to
 know about the invariants they maintain (i.e. and allow a strong
-update here).
+update here).  _And yet this example is still rejected._
+
+## Is that it?
+
+Well, not quite.  The above suggests the borrow checker _doesn't_
+perform strong updates in some situations when it could.  Based on
+that, I was thinking the following would fail:
+
+```Rust
+fn f<'a>(p: &mut &'a mut i32, q: &'a mut i32) {
+  let r = &mut **p;
+  *p = q;
+  println!("r={}, **p={}",r,**p);
+}
+```
+
+This is somehow similar to before, in that it requires a strong update
+on `*p` to know that `p` and `r` do not interfere on the last
+statement.  _But, in fact, the above program is accepted!_ So, the
+borrow checker does perform strong updates sometimes...
+
+## Conclusion
+
+Well, I'm not sure what the conclusion is here.  Its not clear that
+these kinds of situations are likely to arise in practice.  Perhaps
+with some further refinement we could figure out a realistic example
+which could (in principle) be accepted, but currently is not.
+Eitherway, exploring the limits of the borrow checker is fun!
