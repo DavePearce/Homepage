@@ -94,12 +94,12 @@ program with the following error:
 
 ```
 let mut p = Box::new(&mut r);
-                     ------ mutable borrow occurs here
+ mutable borrow here ------
 *p = &mut s;
 println!("r={},**p={}",r,**p);
-                           ^ --- mutable borrow later used here
+  mutable borrow  here --- ^
                            |
-                           immutable borrow occurs here
+       immutable borrow here
 ```
 
 One could argue this is expected since `Box<T>` has no special status
@@ -131,7 +131,8 @@ perform strong updates in some situations when it could.  Based on
 that, I was thinking the following would fail:
 
 ```Rust
-fn f<'a>(p: &mut &'a mut i32, q: &'a mut i32) {
+fn f<'a>(p: &mut &'a mut i32, 
+         q: &'a mut i32) {
   let r = &mut **p;
   *p = q;
   println!("r={}, **p={}",r,**p);
