@@ -61,12 +61,12 @@ breaks:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-siz
 must be overwritten in the assignment, and so the borrow <code>&mut r</code>
 should be relinquished as before. Unfortunately, <code>rustc</code> rejects this
 program with the following error:</p><pre><code>let mut p = Box::new(&amp;mut r);
-                     ------ mutable borrow occurs here
+ mutable borrow here ------
 *p = &amp;mut s;
 println!(&quot;r={},**p={}&quot;,r,**p);
-                           ^ --- mutable borrow later used here
+  mutable borrow  here --- ^
                            |
-                           immutable borrow occurs here
+       immutable borrow here
 </code></pre><p>One could argue this is expected since <code>Box&lt;T></code> has no special status
 in Rust (i.e. it is just a regular user-defined type). Hence, the
 borrow checker cannot be expected to know about its invariants. Ok,
@@ -84,7 +84,8 @@ special status. So, we could reasonably expect the borrow checker to
 know about the invariants they maintain (i.e. and allow a strong
 update here). <em>And yet this example is still rejected.</em></p><h2 id=is-that-it>Is that it?</h2><p>Well, not quite. The above suggests the borrow checker <em>doesn&rsquo;t</em>
 perform strong updates in some situations when it could. Based on
-that, I was thinking the following would fail:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>f</span><span style=color:#555>&lt;</span><span style=color:#309>&#39;a</span><span style=color:#555>&gt;</span>(p: <span style=color:#069>&amp;</span><span style=color:#0a8;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#309>&#39;a</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#078;font-weight:700>i32</span>,<span style=color:#bbb> </span>q: <span style=color:#069>&amp;</span><span style=color:#309>&#39;a</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#078;font-weight:700>i32</span>)<span style=color:#bbb> </span>{<span style=color:#bbb>
+that, I was thinking the following would fail:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Rust data-lang=Rust><span style=color:#069;font-weight:700>fn</span> <span style=color:#c0f>f</span><span style=color:#555>&lt;</span><span style=color:#309>&#39;a</span><span style=color:#555>&gt;</span>(p: <span style=color:#069>&amp;</span><span style=color:#0a8;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#309>&#39;a</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#078;font-weight:700>i32</span>,<span style=color:#bbb> 
+</span><span style=color:#bbb>         </span>q: <span style=color:#069>&amp;</span><span style=color:#309>&#39;a</span><span style=color:#bbb> </span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#078;font-weight:700>i32</span>)<span style=color:#bbb> </span>{<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#069;font-weight:700>let</span><span style=color:#bbb> </span>r<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span><span style=color:#555>&amp;</span><span style=color:#069;font-weight:700>mut</span><span style=color:#bbb> </span><span style=color:#555>**</span>p;<span style=color:#bbb>
 </span><span style=color:#bbb>  </span><span style=color:#555>*</span>p<span style=color:#bbb> </span><span style=color:#555>=</span><span style=color:#bbb> </span>q;<span style=color:#bbb>
 </span><span style=color:#bbb>  </span>println<span style=color:#555>!</span>(<span style=color:#c30>&#34;r={}, **p={}&#34;</span>,r,<span style=color:#555>**</span>p);<span style=color:#bbb>
