@@ -1,7 +1,7 @@
 ---
 date: 2022-04-27
 title: "Puzzling Strong Updates in Rust"
-draft: true
+draft: false
 #twitter: ""
 #reddit: ""
 ---
