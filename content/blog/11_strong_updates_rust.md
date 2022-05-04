@@ -3,7 +3,7 @@ date: 2022-04-27
 title: "Puzzling Strong Updates in Rust"
 draft: false
 #twitter: ""
-#reddit: ""
+reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
 
 The idea of a _strong update_ comes from earlier work on static
