@@ -86,7 +86,7 @@ the entire address space (which effectively models how the EVM
 initialises storage).</p><p>We can see that when a new bid comes in now, the previous highest
 bidder has their funds recorded in <code>returns</code> so they can reclaim it
 later using <code>withdraw()</code>. <em>But, there are problems hidden here</em>. If
-try to verify this contract, Whiley immediately tells us:</p><pre><code>auction.whiley:13: type invariant may not be satisfied
+try to verify this contract, Whiley immediately tells us:</p><pre><code>type invariant may not be satisfied
    uint256 nret = self.returns[self.bidder] + self.bid
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 </code></pre><p>This tells us that an <em>integer overflow</em> can occur here which would
@@ -107,7 +107,7 @@ where (<span style=color:#069;font-weight:700>returns</span>[bidder] <span style
 </code></pre></div><p>Here, <code>MAX_UINT256</code> is the maximum value representable by a <code>uint256</code>
 (i.e. <code>2^256 - 1</code>). This says that, for every highest bidder, there
 must be space in <code>returns</code> for their bid in the event they get ousted.
-Verifying our contract now gives a new error:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>auction.whiley<span style=color:#555>:</span><span style=color:#f60>15</span><span style=color:#555>:</span> type invariant may not be satisfied
+Verifying our contract now gives a new error:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>type invariant may not be satisfied
    self.<span style=color:#069;font-weight:700>returns</span>[self.bidder] <span style=color:#555>=</span> nret
                                <span style=color:#555>^^^^</span>
 </code></pre></div><p>This makes sense because our invariant won&rsquo;t hold after this
@@ -117,7 +117,7 @@ option is to reset the bid:</p><div class=highlight><pre style=background-color:
    self.bid <span style=color:#555>=</span> <span style=color:#f60>0</span>
    self.<span style=color:#069;font-weight:700>returns</span>[self.bidder] <span style=color:#555>=</span> nret
 </code></pre></div><p>By reseting <code>self.bid</code>, the invariant on <code>returns</code> holds as we update
-it. Having done this, there is still another error:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>auction.whiley<span style=color:#555>:</span><span style=color:#f60>17</span><span style=color:#555>:</span> type invariant may not be satisfied
+it. Having done this, there is still another error:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>type invariant may not be satisfied
    self.bid <span style=color:#555>=</span> <span style=color:#366>msg</span><span style=color:#555>::</span><span style=color:#366>value</span>
               <span style=color:#555>^^^^^^^^^^</span>
 </code></pre></div><p>The issue is that we haven&rsquo;t restricted the new bidder based on their
@@ -126,7 +126,7 @@ requires <span style=color:#366>msg</span><span style=color:#555>::</span><span 
 <span style=color:#09f;font-style:italic>// Restrict bidder based on their history
 </span><span style=color:#09f;font-style:italic></span>requires self.<span style=color:#069;font-weight:700>returns</span>[<span style=color:#366>msg</span><span style=color:#555>::</span><span style=color:#366>sender</span>] <span style=color:#555>+</span> <span style=color:#366>msg</span><span style=color:#555>::</span><span style=color:#366>value</span> <span style=color:#555>&lt;=</span> MAX_UINT256
 </code></pre></div><p>We are close now, but amazingly we still have a problem! Here is the
-error being reported:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>auction.whiley<span style=color:#555>:</span><span style=color:#f60>32</span><span style=color:#555>:</span> type invariant may not be satisfied
+error being reported:</p><div class=highlight><pre style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Solidity data-lang=Solidity>type invariant may not be satisfied
    self.bid <span style=color:#555>=</span> <span style=color:#366>msg</span><span style=color:#555>::</span><span style=color:#366>value</span>
               <span style=color:#555>^^^^^^^^^^</span>
 </code></pre></div><p>At this point, I had to scratch my head for a moment <em>as I thought it
