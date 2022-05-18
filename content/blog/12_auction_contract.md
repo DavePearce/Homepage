@@ -2,6 +2,8 @@
 date: 2022-05-17
 title: "Verifying an Auction Contract in Whiley"
 draft: false
+metaimg: "images/2022/AuctionContract_Preview.png"
+metatxt: "Verifying a smart contract in Whiley finds lots of problems."
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
