@@ -120,7 +120,7 @@ later using `withdraw()`.  _But, there are problems hidden here_.  If
 try to verify this contract, Whiley immediately tells us:
 
 ```
-auction.whiley:13: type invariant may not be satisfied
+type invariant may not be satisfied
    uint256 nret = self.returns[self.bidder] + self.bid
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
@@ -154,7 +154,7 @@ must be space in `returns` for their bid in the event they get ousted.
 Verifying our contract now gives a new error:
 
 ```Solidity
-auction.whiley:15: type invariant may not be satisfied
+type invariant may not be satisfied
    self.returns[self.bidder] = nret
                                ^^^^
 ```
@@ -174,7 +174,7 @@ By reseting `self.bid`, the invariant on `returns` holds as we update
 it.  Having done this, there is still another error:
 
 ```Solidity
-auction.whiley:17: type invariant may not be satisfied
+type invariant may not be satisfied
    self.bid = msg::value
               ^^^^^^^^^^
 ```
@@ -193,7 +193,7 @@ We are close now, but amazingly we still have a problem!  Here is the
 error being reported:
 
 ```Solidity
-auction.whiley:32: type invariant may not be satisfied
+type invariant may not be satisfied
    self.bid = msg::value
               ^^^^^^^^^^
 ```
