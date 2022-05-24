@@ -12,6 +12,13 @@ pre code {
     border-radius: 0.5em;
     padding: 0.5em;
 }
+blockquote {
+    display: block;
+    border: 1px solid #e8e0c9;
+    padding: 1em;
+    background:  #f7f5ed;
+    border-radius: 0.5em;
+}
 hr {
     border: 1px solid #a28744;
 }
