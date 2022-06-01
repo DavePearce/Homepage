@@ -2,6 +2,8 @@
 date: 2022-05-31
 title: "Whiley gets Rusty!"
 draft: false
+metaimg: "images/2022/WhileyGetsRusty.png"
+metatxt: "Parts of the Whiley Compiler are being rewritten in Rust."
 #twitter: ""
 #reddit: ""
 ---
