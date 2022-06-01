@@ -1,0 +1,49 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Whiley gets Rusty!"><meta name=twitter:title content="Whiley gets Rusty!"><meta property="og:url" content="https://whileydave.com/2022/05/31/whiley-gets-rusty/"><title>David J. Pearce
+(Whiley gets Rusty!)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Whiley gets Rusty!</h1><div class=post-date>Tuesday, May
+31st,
+2022</div><hr><p>I&rsquo;ve been learning <a href=https://www.rust-lang.org/>Rust</a> for a while now
+but, at the same time, trying to continue developing
+<a href=https://whiley.org>Whiley</a>. Since Whiley was written entirely in
+Java, these activities were mutually exclusive and it was frustrating
+trying to balance things! One day I&rsquo;d had enough &mldr; so I decided to
+rewrite part of the Whiley compiler in Rust. This is not as dramatic
+as it sounds, and I&rsquo;m not planning to rewrite the whole compiler in
+Rust (yet). That would be a lot of work. However, bringing these
+things together means I can learn Rust and work on Whiley at the same
+time. <em>Its actually working out pretty well!</em></p><h3 id=distribution>Distribution</h3><p>An unexpected benefit of working with Rust is that it makes
+<em>distributing</em> Whiley quite easy. Installing Whiley through Cargo is
+really simple:</p><pre><code>cargo install whiley
+</code></pre><p>Assuming you have Java installed, you can just run <code>wy --help</code> and see
+the options for building Whiley programs. For example, we can
+initialise and then build a new project like so:</p><pre><code>&gt; wy init
+&gt; wy build
+&gt; wy run
+Hello World!
+</code></pre><p><em>This is pretty neat!</em></p><h3 id=architecture>Architecture</h3><p>An interesting question is how the compiler blends Rust with Java.
+The compiler has always been structured as a build tool with various
+plugins implementing core functionality. For example, the
+<a href=https://github.com/Whiley/WhileyCompiler>WhileyCompiler</a> is actually
+a plugin responsible for compiling Whiley into its intermediate
+language, whilst
+<a href=https://github.com/Whiley/Whiley2JavaScript>Whiley2JavaScript</a> is
+another plugin responsible for translating the intermediate language
+into JavaScript, etc. In principle, we can add plugins to provide
+more functionality (e.g. compiling to
+<a href=https://en.wikipedia.org/wiki/WebAssembly>Wasm</a> or <a href=https://en.wikipedia.org/wiki/Ethereum#Virtual_machine>EVM
+bytecode</a>).
+This is how it looks:</p><figure class=text-center><img height=300px alt="Architectural diagram of Whiley compiler." src=/images/2022/WhileyCompilerOverview.png></figure><p>What we see in the diagram is that the
+<a href=https://github.com/Whiley/WhileyBuildTool>WhileyBuildTool</a>
+orchestrates the plugins, and <em>it is this component that I have
+rewritten in Rust</em>. Roughly speaking, the build tool downloads the
+<code>jar</code> files representing the plugins from Maven central as needed and
+fires up a JVM instance to run them. Its pretty simple, and it works
+surprisingly well!</p><p>Another interesting opportunity here is that I can incrementally
+rewrite the compiler in Rust by rewriting the plugins one by one.
+Whilst none of the plugins is written in Rust yet, I plan to implement
+a simple one in the near future as a proof-of-concept.</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
