@@ -10,7 +10,7 @@ metatxt: "Parts of the Whiley Compiler are being rewritten in Rust."
 
 I've been learning [Rust](https://www.rust-lang.org/) for a while now
 but, at the same time, trying to continue developing
-[Whiley](https://whiley.org).  Since Whiley was written entirely in
+[Whiley](http://whiley.org).  Since Whiley was written entirely in
 Java, these activities were mutually exclusive and it was frustrating
 trying to balance things!  One day I'd had enough ... so I decided to
 rewrite part of the Whiley compiler in Rust.  This is not as dramatic
