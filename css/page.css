@@ -85,6 +85,31 @@ html, body {
     background: white;
 }
 
+.pagination {
+    display: block;
+    font-size: 2em;
+    margin: 0;
+    padding: 1em;
+    text-align: center;
+}
+
+.pagination a:link {
+    text-decoration: none;
+}
+
+.pagination ul {
+    display: inline;
+    width: 100%;
+    text-align: center;
+    margin: auto;
+}
+
+.pagination li {
+    display: inline;
+    list-style-type: none;
+    text-align: center;    
+}
+
 @media only screen and (max-width: 992px) {    
     .content { width: 90%; padding: 5%; font-size: 14pt; line-height: 130%; }
     .topbar { padding: 0em; margin: 0em; align-items: center; }
