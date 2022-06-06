@@ -88,3 +88,7 @@ specific to Whiley):
    nat[] xs = ys ++ [1,2,3]
    ```
    * Templates.
+
+   * See this
+     [post](https://www.haskellforall.com/2022/06/the-appeal-of-bidirectional-type.html)
+     for references.
