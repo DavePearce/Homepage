@@ -1,0 +1,84 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Verifying Bubble Sort in Whiley"><meta name=twitter:title content="Verifying Bubble Sort in Whiley"><meta property="og:url" content="https://whileydave.com/2017/12/19/verifying-bubble-sort-in-whiley/"><title>David J. Pearce
+(Verifying Bubble Sort in Whiley)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
+function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
+function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Verifying Bubble Sort in Whiley</h1><div class=post-date>Tuesday, December
+19th,
+2017</div><hr><p>Bubble sort is a classic sorting algorithm with lots of well-known issues. It&rsquo;s been a long time since I thought much about this algorithm. But, it turns out to be an interesting verification example for Whiley, as it has some interesting loop invariants. The algorithm is pretty simple: <em>it loops through an array swapping adjacent items which are incorrectly ordered, and repeats until nothing changes</em>. For example, in one iteration the following swaps would occur:</p><figure class=text-center><img width=25% src=/images/2017/BubbleSort.png></figure><p>We can see that, after this iteration, the resulting array is not yet in sorted order and, thus, we must repeat the process.</p><h2 id=specification>Specification</h2><p>Right, we want to try and verify the bubble sort algorithm.  <em>But, what does this mean?</em> Well, let&rsquo;s think about it in terms of types.  We want our <code>sort()</code> function to take a parameter of <em>array type</em> and return a result of <em>sorted array type</em>.  In Whiley we have a primitive integer array type already (i.e. <code>int[]</code>), but we need to define a sorted integer array type.  We do this as follows:</p><pre><code class=language-whiley data-lang=whiley>type sorted_ints is (int[] arr)
+where all { i in 1..|arr| | arr[i-1] &lt;= arr[i] }
+</code></pre><p>This roughly says that every element in the array must be larger than the one below it (if it exists). Using this, we can give the signature of our <code>sort()</code> function as follows:</p><pre><code class=language-whiley data-lang=whiley>function sort(int[] items) -&gt; (sorted_ints result)
+</code></pre><p>Whilst this is a pretty good start, it is definitely not a complete specification. For example, we haven&rsquo;t said that the resulting array must have the same size as the original. Or, for that matter, that it should contain the same elements as the original (though perhaps in a different order). Still, for now, that will do.</p><h2 id=implementation>Implementation</h2><p>Right, the next job is to actually implement the algorithm. My starting point is this:</p><pre><code class=language-whiley data-lang=whiley>function sort(int[] items) -&gt; (sorted_ints result):
+    //
+    bool clean
+    //
+    do:
+        // reset clean flag
+        clean = true
+        int i = 1
+        // look for unsorted pairs
+        while i &lt; |items|: 
+            if items[i-1] &gt; items[i]:
+               // found unsorted pair
+               clean = false
+               int tmp = items[i-1]
+               items[i-1] = items[i]
+               items[i] = tmp
+            i = i + 1
+    while !clean
+    // Done
+    return items
+</code></pre><p>This implementation is pretty straightforward using a do-while loop to ensure we go through at least one iteration, and then continue until we no longer find unsorted pairs. You can punch this into <a href=http://whileylabs.com>whileylabs.com</a> and you should find it compiles (though it won&rsquo;t verify).</p><h2 id=verification>Verification</h2><p>At this point, we&rsquo;ve specified and implemented our <code>sort()</code> function. Now, we want to <em>verify</em> that the implementation meets its specification. That is, get a compile-time guarantee that the resulting array is sorted. You can think of this is as being similar to type checking our program, though it&rsquo;s a bit more involved. If we try and compile the program on whileylabs.com with verification enabled, we&rsquo;ll see the following:</p><figure class=text-center><img width=50% src=/images/2017/BubbleSort_1.png></figure><p>This is telling us that the verifier believes the expression <code>i-1</code> could be negative at this point, thus potentially leading to an index-out-of-bounds error at runtime. As programmers we can deduce that, in fact, since <code>i</code> starts at <code>1</code> and is always incremented this can never happen (you also need to know that integers in Whiley are unbounded and don&rsquo;t wrap around). But, the verifier needs help here and, to give it the necessary clue, we need to provide a <em>loop invariant</em>:</p><pre><code class=language-whiley data-lang=whiley>        ...
+        while i &lt; |items| where i &gt;= 1: 
+            ...
+</code></pre><p>The loop invariant is necessary because the verifier <em>cannot reason about variables modified within a loop</em>. For such variables, the only information available to the verifier is that given in the loop condition or the loop invariant or the variable&rsquo;s type invariant.</p><p>Having resolved the verification problem around <code>items[i-1]</code>, the verifier now reports the error &ldquo;<code>type invariant not satisfied</code>&rdquo;:</p><figure class=text-center><img width=50% src=/images/2017/BubbleSort_2.png></figure><p>Again, this error is being reported because the verifier cannot reason precisely about loops. We need to provide another loop invariant, <em>but what should it be?</em> By the time control reaches the <code>return</code> statement, we need the array to be sorted. But, clearly, at an arbitrary point during the loop nest this is not necessarily true. What we can say is that, for a given index <code>i</code>, we know all elements below it are correctly sorted <em>when the <code>clean</code> flag holds</em>. We can update the code as follows:</p><pre><code class=language-whiley data-lang=whiley>property sorted(int[] arr, int n)
+where all { i in 1..n | arr[i-1] &lt;= arr[i] }
+
+...
+
+function sort(int[] items) -&gt; (sorted_ints result):
+    ...
+        while i &lt; |items| 
+        where i &gt;= 1
+        where clean ==&gt; sorted(items,i): 
+            ...
+    while !clean
+    clean ==&gt; sorted(items,|items|)
+    // Done
+    return items
+</code></pre><p>Here, we&rsquo;ve added a property <code>sorted(int[] arr, int n)</code> which describes the concept of an array <code>arr</code> being in sorted order up to (but not including) a bound <code>n</code>. Thus, when the entire array is sorted we have <code>n == |arr|</code>. In addition, we&rsquo;ve now split the loop invariant for the inner loop across two lines using repeated <code>where</code> clauses, and these are just conjuncted together by the verifier.</p><p>At this point, the <code>sort()</code> implementation now passes verification after a short while. The complete implementation looks like this:</p><pre><code class=language-whiley data-lang=whiley>// define the type of natural numbers
+type nat is (int n) where n &gt;= 0
+
+// define concept of partially sorted array
+property sorted(int[] arr, int n)
+where all { i in 1..n | arr[i-1] &lt;= arr[i] }
+
+// define type of sorted array
+type sorted_ints is (int[] arr) where sorted(arr,|arr|)
+
+function sort(int[] items) -&gt; (sorted_ints result):
+    //
+    bool clean
+    //
+    do:
+        // reset clean flag
+        clean = true
+        int i = 1
+        // look for unsorted pairs
+        while i &lt; |items|
+        where i &gt;= 1
+        where clean ==&gt; sorted(items,i): 
+            if items[i-1] &gt; items[i]:
+               // found unsorted pair
+               clean = false
+               int tmp = items[i-1]
+               items[i-1] = items[i]
+               items[i] = tmp
+            i = i + 1
+    while !clean
+    where clean ==&gt; sorted(items,|items|)
+    // Done
+    return items
+</code></pre><h2 id=conclusion>Conclusion</h2><p>We&rsquo;ve seen here how to verify an implementation of bubble sort in Whiley. Whilst there are some subtle details, the process is not really that painfull. Certainly, making good use of the various features provided in Whiley (e.g. type invariants, properties, etc) makes things easier. Also, we need to be careful in interpreting what &ldquo;verified&rdquo; means here. It does not mean, for example, that the program cannot run out of memory! Likewise, the Whiley verifier does not check termination of loops and, hence, a verified program may still go into an infinite loop (though, by manual inspection, we can see our implementation does not). Finally, our specification is not as complete as it could be since, for example, it does even not require that the resulting array is the same size as the original. But, despite these limitations, there is still a lot of value to be gained from verifying our code.</p><hr></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
