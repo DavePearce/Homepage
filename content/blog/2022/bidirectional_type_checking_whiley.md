@@ -23,7 +23,7 @@ tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and work
 upwards.  So, typing a statement like `xs[i] = ys[i] + 1` when `xs`
 and `ys` both have type `int[]` might look something like this:
 
-{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking.png" width="40%" alt="Illustrating the layout of an array in Java.">}}
+{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking.png" width="40%" alt="Illustrating types being pulled up the AST of an expresion.">}}
 
 They key here is that everything has to "line up" properly, otherwise
 we have a type error.
@@ -90,7 +90,10 @@ u8[] bytes = [1,2,3]
 We can type this in a *forwards direction* by pushing from the
 declared type `u8[]` of `bytes`.  This means we give `[1,2,3]` the
 type `u8[]` and then push `u8` into each of the subexpressions `1`,
-`2`, and `3`.
+`2`, and `3`, as follows:
+
+{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="25%" alt="Illustrating types being pushed down the AST of an expresion.">}}
+
 
 ## Notes
 
