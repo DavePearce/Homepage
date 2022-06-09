@@ -45,11 +45,12 @@ specific to Whiley):
       Under the backwards typing scheme, the constant `124` is given
       type `int`.  That means, under-the-hood when the constant is
       created, we'll allocate space for an arbitrary sized integer and
-      give it the value `124`.  Then, we'll immediately coerce from
-      that to `u8` causing a deallocation.  It would be much better if
-      we automatically determined the type of `124` was `u8`, and not
-      `int`.  To resolve this, many languages provide notation for
-      specifying the type of a constant (e.g. `124u8` in Rust).
+      give it the value `124`.  Then, we'll immediately coerce it to a
+      `u8` causing a deallocation.  It would be much better if we
+      automatically determined the type of `124` was `u8` rather than
+      `int`.  Note, one way to solve this is with specific notation
+      for constants (e.g. `124u8` in Rust) --- however, bidirectional
+      typing is more elegant.
 
    * *(Overloading)*.  Whiley, like many languages, provides the
       ability to
@@ -78,6 +79,18 @@ specific to Whiley):
    * *(Runtime Type Checking)*.
 
 ## Forwards Typing
+
+A key observation is that, in many situations, we have concrete type
+information available to use.  For example, consider this declaration:
+
+```whiley
+u8[] bytes = [1,2,3]
+```
+
+We can type this in a *forwards direction* by pushing from the
+declared type `u8[]` of `bytes`.  This means we give `[1,2,3]` the
+type `u8[]` and then push `u8` into each of the subexpressions `1`,
+`2`, and `3`.
 
 ## Notes
 
