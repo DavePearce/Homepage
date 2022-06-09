@@ -1,7 +1,7 @@
 ---
 date: 2018-04-23
 title: "Verifying leftPad() in Whiley"
-draft: true
+draft: false
 ---
 
 The `leftPad(string,int)` function simply pads a string up to a given size by inserted spaces at the beginning. For example, `leftPad("hello",8)` produces `"   hello"`. This little function [shot to fame in 2016](https://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) when a developer pulled all his modules from NPM, of which one provided the `leftPad()` functionality. There were two basic issues causing surprise here: firstly, a developer can suddenly and without warning pull all his libraries (including old versions), thereby breaking anything depending on them (which, in this case, was a lot). secondly, that someone was providing a module to offer this (pretty basic) functionality.
