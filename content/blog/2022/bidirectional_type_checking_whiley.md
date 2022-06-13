@@ -73,10 +73,34 @@ specific to Whiley):
       This is valid Whiley and the compiler will automatically
       select the right method based on context.
 
-   * *(Templates)*.  Example with unused template?  Or requires
-      complex subtyping based on an invariant?
+   * *(Templates)*.  Inferring template parameters can save some
+     tedious typing, and make the resulting code easier to look at.
+     In many cases, backwards typing can be used for inferring
+     parameters, but there cases where it doesn't work.  The following
+     is based on a real-world situation involving the
+     [Web.wy](https://github.com/DavePearce/Web.wy):
 
-   * *(Runtime Type Checking)*.
+     ```whiley
+     ...
+	 type Element<T> is { 
+		string name, 
+		Attribute<T>[] attributes,
+		Node<S>[] children
+     }
+	 type Node<T> is Element<T> | string
+	 
+	 function h1<T>(Node<T> child) -> Element<T>:
+	    ...
+	 ```
+	 
+	 The intention here is to allow an HTML heading to be created with
+     something like `h1("Title")`.  However, earlier versions of
+     Whiley (which only used backwards typing) could not infer a type
+     for `T`.  Instead, you had to explicitly provide the template
+     parameter, which was rather cumbersome.  The problem is that the
+     supplied parameter `"Title"` provides no suitable binding for
+     `T`. Fortunately, with bidirectional typing Whiley can now infer
+     the type of `T` based on what the result is being assigned to.
 
 ## Forwards Typing
 
@@ -88,22 +112,54 @@ u8[] bytes = [1,2,3]
 ```
 
 We can type this in a *forwards direction* by pushing from the
-declared type `u8[]` of `bytes`.  This means we give `[1,2,3]` the
+declared type `u8[]` of `bytes`.  This means we give `[1,2,x+1]` the
 type `u8[]` and then push `u8` into each of the subexpressions `1`,
-`2`, and `3`, as follows:
+`2`, and `x+1`, as follows:
 
 {{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="25%" alt="Illustrating types being pushed down the AST of an expresion.">}}
 
+## Bidirectional Typing
 
-## Notes
+Bidirectional typing, as the name suggests, means mixing forwards and
+backwards typing.  But, you might be wondering why we don't just use
+forwards typing all the time?  Well, the answer is pretty simple: _in
+some cases, you simply cannot use forward typing_.  Therefore, in such
+cases, we default back to backwards typing.  The following illustrates
+such an example:
 
-   * Type invariants.  It could be inefficient to check them at runtime.
-   * Corecions.  Low down or high up?
-   ```Whiley
-   nat[] ys = ...
-   nat[] xs = ys ++ [1,2,3]
-   ```
-   * Templates.
+```whiley
+function headerOf<T>(Node<T> n, Node<T> c) -> bool:
+  return n == h1(c)
+```
+
+The challenge here is that the type being pushed forward from the
+`return` statement into its expression is `bool`, but this provides no
+useful information about what the operand types for `==`.  In
+otherwords, when typing `n` we simply don't have a type to push down.
+What we could do instead, for example, is pull up the type from `n`
+and then push that down into `h1(c)`.
+
+In the example above, there simply wasn't a type we could push down
+the subexpression.  So, we didn't have any choice but to pull up
+instead.  However, there are also situations where we have a type we
+can push down, _but it is undesirable to do so_.  The following
+illustrates:
+
+```whiley
+u8[] items = [0,1,2]
+u16 item = items[0]
+```
+
+In the above, we can push `u16` into `items[0]` and, based on this,
+push `u16[]` into `items`.  However, this then forces a coercion of
+the entire `items` array from `u8[]` to `u16[]`, which is less than
+ideal since we only want to access (and, hence, coerce) _one_ element
+from `items`.  Therefore, when typing `items[0]` its preferable to
+pull the type of `items` up (as this corresponds to its natural
+representation).  This then forces a coercion from `u8` to `u16` at
+that point, rather than further down the tree.
+
+## References
 
    * See this
      [post](https://www.haskellforall.com/2022/06/the-appeal-of-bidirectional-type.html)
