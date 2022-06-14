@@ -29,7 +29,7 @@ ensures r >= -1 && r < |items|:
     return -
 ```
 
-This is one of my standard examples, as it covers of the main aspects of verification in Whiley. (Note, if you're not that familiar with verification or loop invariants in Whiley, I'd suggest first looking [here](http://whiley.org/2015/09/22/introductory-lecture-on-verification-in-whiley/) and/or [here](http://whiley.org/2013/01/29/understanding-loop-invariants-in-whiley/)).
+This is one of my standard examples, as it covers of the main aspects of verification in Whiley. (Note, if you're not that familiar with verification or loop invariants in Whiley, I'd suggest first looking [here](/2015/09/22/introductory-lecture-on-verification-in-whiley/) and/or [here](/2013/01/29/understanding-loop-invariants-in-whiley/)).
 
 One problem above is the verbosity of the specification and loop invariant, and there's even some repetition between them. So, we can now define a `property` to help:
 
