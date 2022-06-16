@@ -2,7 +2,7 @@
 date: 2022-06-15
 title: "Type Checking in Whiley goes Both Ways!"
 draft: false
-#metaimg: "images/2022/AuctionContract_Preview.png"
+metaimg: "images/2022/BidirectionalTypeChecking_Preview.png"
 metatxt: "Type Checking in Whiley goes Both Ways!"
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
