@@ -23,7 +23,7 @@ tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and work
 upwards.  Typing a statement like `xs[i] = ys[i] + 1` (when `xs` and
 `ys` have type `int[]`) might look something like this:
 
-{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking.png" width="40%" alt="Illustrating types being pulled up the AST of an expresion.">}}
+{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking.png" width="60%" alt="Illustrating types being pulled up the AST of an expresion.">}}
 
 They key here is that types have to agree (modulo subtyping),
 otherwise we have a type error.
@@ -117,7 +117,7 @@ down" from the declared type `u8[]` of `bytes`.  This means we give
 `[1,2,x+1]` the type `u8[]` and then push `u8` into each of the
 subexpressions `1`, `2`, and `x+1`, as follows:
 
-{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="25%" alt="Illustrating types being pushed down the AST of an expresion.">}}
+{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="60%" alt="Illustrating types being pushed down the AST of an expresion.">}}
 
 ## Bidirectional Typing
 
