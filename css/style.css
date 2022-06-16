@@ -171,3 +171,7 @@ a:visited {
     .download div { padding: 1em 1em; }
     .youtube { width: 560px; height: 315px; }
 }
+
+/* @media only screen and (min-width: 1200px) { */
+/*     figure > img { max-width: 30%; max-height: auto; } */
+/* } */

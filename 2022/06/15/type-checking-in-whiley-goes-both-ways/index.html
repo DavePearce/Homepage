@@ -72,7 +72,7 @@ declaration:</p><pre><code class=language-whiley data-lang=whiley>u8[] bytes = [
 </code></pre><p>We can type this in a <em>forwards</em> (or <em>top down</em>) direction by &ldquo;pushing
 down&rdquo; from the declared type <code>u8[]</code> of <code>bytes</code>. This means we give
 <code>[1,2,x+1]</code> the type <code>u8[]</code> and then push <code>u8</code> into each of the
-subexpressions <code>1</code>, <code>2</code>, and <code>x+1</code>, as follows:</p><figure class=text-center><img width=60% alt="Illustrating types being pushed down the AST of an expresion." src=/images/2022/BidirectionalTypeChecking_2.png></figure><h2 id=bidirectional-typing>Bidirectional Typing</h2><p>Bidirectional typing, as the name suggests, is about mixing forwards
+subexpressions <code>1</code>, <code>2</code>, and <code>x+1</code>, as follows:</p><figure class=text-center><img width=50% alt="Illustrating types being pushed down the AST of an expresion." src=/images/2022/BidirectionalTypeChecking_2.png></figure><h2 id=bidirectional-typing>Bidirectional Typing</h2><p>Bidirectional typing, as the name suggests, is about mixing forwards
 and backwards typing. But, you might wonder why we don&rsquo;t just use
 forwards typing all the time? Well, the answer is pretty simple: <em>in
 some cases, you simply cannot use forward typing</em>. Therefore, in such

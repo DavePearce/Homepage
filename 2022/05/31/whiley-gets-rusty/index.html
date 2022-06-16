@@ -37,7 +37,7 @@ into JavaScript, etc. In principle, we can add plugins to provide
 more functionality (e.g. compiling to
 <a href=https://en.wikipedia.org/wiki/WebAssembly>Wasm</a> or <a href=https://en.wikipedia.org/wiki/Ethereum#Virtual_machine>EVM
 bytecode</a>).
-This is how it looks:</p><figure class=text-center><img height=300px alt="Architectural diagram of Whiley compiler." src=/images/2022/WhileyCompilerOverview.png></figure><p>What we see in the diagram is that the
+This is how it looks:</p><figure class=text-center><img width=300px alt="Architectural diagram of Whiley compiler." src=/images/2022/WhileyCompilerOverview.png></figure><p>What we see in the diagram is that the
 <a href=https://github.com/Whiley/WhileyBuildTool>WhileyBuildTool</a>
 orchestrates the plugins, and <em>it is this component that I have
 rewritten in Rust</em>. Roughly speaking, the build tool downloads the
