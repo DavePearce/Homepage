@@ -58,7 +58,7 @@ more functionality (e.g. compiling to
 bytecode](https://en.wikipedia.org/wiki/Ethereum#Virtual_machine)).
 This is how it looks:
 
-{{<img class="text-center" src="/images/2022/WhileyCompilerOverview.png" height="300px" alt="Architectural diagram of Whiley compiler.">}}
+{{<img class="text-center" src="/images/2022/WhileyCompilerOverview.png" width="300px" alt="Architectural diagram of Whiley compiler.">}}
 
 What we see in the diagram is that the
 [WhileyBuildTool](https://github.com/Whiley/WhileyBuildTool)

@@ -117,7 +117,7 @@ down" from the declared type `u8[]` of `bytes`.  This means we give
 `[1,2,x+1]` the type `u8[]` and then push `u8` into each of the
 subexpressions `1`, `2`, and `x+1`, as follows:
 
-{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="60%" alt="Illustrating types being pushed down the AST of an expresion.">}}
+{{<img class="text-center" src="/images/2022/BidirectionalTypeChecking_2.png" width="50%" alt="Illustrating types being pushed down the AST of an expresion.">}}
 
 ## Bidirectional Typing
 
