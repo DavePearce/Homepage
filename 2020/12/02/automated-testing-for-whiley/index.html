@@ -1,22 +1,23 @@
 <!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Automated Testing for Whiley"><meta name=twitter:title content="Automated Testing for Whiley"><meta property="og:description" content="New functionality for automated testing is available on whileylabs.com.  This generates test inputs for functions and runs them through the code looking for problems (e.g. divide-by-zero, index-out-of-bounds, etc). In many ways, it is similar to the QuickCheck line of tools (with the added benefit that Whiley has first-class specifications)."><meta name=twitter:description content="New functionality for automated testing is available on whileylabs.com.  This generates test inputs for functions and runs them through the code looking for problems (e.g. divide-by-zero, index-out-of-bounds, etc). In many ways, it is similar to the QuickCheck line of tools (with the added benefit that Whiley has first-class specifications)."><meta property="og:image" content="https://whileydave.com/images/2020/QuickCheckDemo.jpg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2020/QuickCheckDemo.jpg"><meta name=twitter:image:alt content="https://whileydave.com/Image of Editing Code in WhileyLabs"><meta name=twitter:site content="@whileydave"><meta property="og:url" content="https://whileydave.com/2020/12/02/automated-testing-for-whiley/"><title>David J. Pearce
-(Automated Testing for Whiley)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");c.style.display='none';m.style.filter='';}}
-function toggleMenu(){var q=window.matchMedia("(max-width: 992px)");if(q.matches){var c=document.getElementById("menu-content");var m=document.getElementById("menu");if(c.style.display==='block'){c.style.display='none';m.style.filter='';}else{c.style.display='block';m.style.filter="brightness(0.8)";}}}
-function toggleList(element){element.style.display="none";var parent=element.parentNode;var items=parent.childNodes;for(var i=0;i<items.length;++i){var item=items[i];if(item.classList&&item.classList.contains("hidden")){if(item.style.display==='block'){item.style.display="none";}else{item.style.display="block";}}}}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a><a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a><a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a><a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+(Automated Testing for Whiley)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
 <a href=https://whileydave.com/projects/>Projects</a>
 <a href=https://whileydave.com/publications/>Publications</a>
 <a href=https://whileydave.com/talks/>Talks</a>
 <a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Automated Testing for Whiley</h1><div class=post-date>Wednesday, December
 2nd,
 2020</div><hr><p>Recently, the <a href=http://whileylabs.com>online editor for Whiley</a> was updated with some new features. Actually, the update represents a <em>complete rewrite of the front-end in Whiley</em>. Obviously, I am very excited about that! Previously it was written using raw (i.e. ugly) JavaScript, but now uses a framework for <a href="https://www.youtube.com/watch?v=yYGEcyCHiZk">Functional Reactive Programming</a> (called <a href=https://github.com/DavePearce/Web.wy>Web.wy</a>). That has made a huge difference to how the code looks. Still, I&rsquo;m not going to talk about that here. Rather, it is the new <em>check</em> feature (highlighted in red below) that I&rsquo;m interested in:</p><figure class=text-center><a href=http://whileylabs.com><img width=80% alt="Illustrating a screenshot of whileylabs.com with the check option highlighted." src=/images/2020/AutomatedTesting_WhileyLabs.png></a></figure><p><em>What is this new &ldquo;check&rdquo; feature then?</em> In a nutshell, it automatically generates test inputs for functions and runs them through the code looking for problems (e.g. <em>divide-by-zero</em>, <em>index-out-of-bounds</em>, etc). In many ways, it is similar to the <a href=https://en.wikipedia.org/wiki/QuickCheck>QuickCheck</a> line of tools (with the added benefit that Whiley has first-class specifications). We can think of it as a &ldquo;half-way&rdquo; step towards formal verification. The key is that it is easier to check a program than it is to statically verify it (more on this below). Some might think that having a check feature like this doesn&rsquo;t make sense when you also have static verification. But, I prefer to think of them as <em>complementary</em>. Thinking about a developer&rsquo;s workflow, we might imagine checking a function first as we develop it (since this is easier and quicker) before, finally, attempting to statically verify it (since this is harder and may force the specification to be further refined).</p><h2 id=example>Example</h2><p>As a simple example to illustrate how it works, consider the following
-signature for the <code>max(int[])</code> function:</p><pre><code class=language-whiley data-lang=whiley>function max(int[] items) -&gt; (int r)
-// items cannot be empty
-requires |items| &gt; 0
-// result not smaller than any in items
-ensures all { i in 0..|items| | r &gt;= items[i] }
-// result is element in items
-ensures some { i in 0..|items| | r == items[i] }:
-   ...
-</code></pre><p>We&rsquo;re not really concerned with the implementation here (and we can
+signature for the <code>max(int[])</code> function:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-whiley data-lang=whiley><span style=display:flex><span><span style=color:#069;font-weight:700>function</span> max(<span style=color:#078;font-weight:700>int</span>[] items) <span style=color:#555>-&gt;</span> (<span style=color:#078;font-weight:700>int</span> r)
+</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// items cannot be empty
+</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> <span style=color:#555>|</span>items<span style=color:#555>|</span> <span style=color:#555>&gt;</span> <span style=color:#f60>0</span>
+</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// result not smaller than any in items
+</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>ensures</span> <span style=color:#069;font-weight:700>all</span> { i <span style=color:#069;font-weight:700>in</span> <span style=color:#f60>0</span>..<span style=color:#555>|</span>items<span style=color:#555>|</span> <span style=color:#555>|</span> r <span style=color:#555>&gt;=</span> items[i] }
+</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// result is element in items
+</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>ensures</span> <span style=color:#069;font-weight:700>some</span> { i <span style=color:#069;font-weight:700>in</span> <span style=color:#f60>0</span>..<span style=color:#555>|</span>items<span style=color:#555>|</span> <span style=color:#555>|</span> r <span style=color:#555>==</span> items[i] }<span style=color:#555>:</span>
+</span></span><span style=display:flex><span>   ...
+</span></span></code></pre></div><p>We&rsquo;re not really concerned with the implementation here (and we can
 assume it might have bugs). To check this function, the tool will do
 the following:</p><ol><li><p><strong>(Generate)</strong> The tool generates some number of valid inputs.
 That is, input values which meet the precondition. For our example
@@ -63,13 +64,13 @@ with the same signature. Secondly, we can generate simple
 input/output mappings (e.g. <code>{-1=>-1, 0=>0, 1=>1}</code>). We can go
 beyond this by applying <em>rotations</em> (e.g. <code>{-1=>0, 0=>1, 1=>-1}</code>).</p></li></ul><p>Given the ability to generate arbitrary values for a type, the more
 difficult question is how to generate values which meet some
-constraint. For example, consider this data type:</p><pre><code class=language-whiley data-lang=whiley>type List&lt;T&gt; is {
-     int length,
-     T[] items
-}
-where 0 &lt;= length
-where length &lt;= |items|
-</code></pre><p>The current approach we take is rather simplistic here. We simply
+constraint. For example, consider this data type:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-whiley data-lang=whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> List<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> <span style=color:#069;font-weight:700>is</span> {
+</span></span><span style=display:flex><span>     <span style=color:#078;font-weight:700>int</span> length,
+</span></span><span style=display:flex><span>     T[] items
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>where</span> <span style=color:#f60>0</span> <span style=color:#555>&lt;=</span> length
+</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>where</span> length <span style=color:#555>&lt;=</span> <span style=color:#555>|</span>items<span style=color:#555>|</span>
+</span></span></code></pre></div><p>The current approach we take is rather simplistic here. We simply
 generate all values of the <em>underlying type</em> and discard those which
 don&rsquo;t satisfy the invariant. This works, but it has some problems:</p><ol><li><p><em>(Scale)</em>. Enumerating all values of a complex data type upto a
 given bound can be expensive. We might easily need to generate
@@ -81,14 +82,14 @@ of which only <em>1534</em> meet the invariant (55%). That&rsquo;s not too
 bad, but as we get more invariants this changes quite quickly.
 Consider this example taken from an implementation of <a href=https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm>Tarjan&rsquo;s
 algorithm</a>
-for computing <em>strongly connected compoenents</em>:</p><pre><code class=language-whiley data-lang=whiley>type Data is {
-  bool[] visited,
-  int[] lowlink,
-  int[] index
-}
-where |visited| == |lowlink|
-where |lowlink| == |index|
-</code></pre><p>In this case, there are
+for computing <em>strongly connected compoenents</em>:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-whiley data-lang=whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Data <span style=color:#069;font-weight:700>is</span> {
+</span></span><span style=display:flex><span>  <span style=color:#078;font-weight:700>bool</span>[] visited,
+</span></span><span style=display:flex><span>  <span style=color:#078;font-weight:700>int</span>[] lowlink,
+</span></span><span style=display:flex><span>  <span style=color:#078;font-weight:700>int</span>[] index
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>where</span> <span style=color:#555>|</span>visited<span style=color:#555>|</span> <span style=color:#555>==</span> <span style=color:#555>|</span>lowlink<span style=color:#555>|</span>
+</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>where</span> <span style=color:#555>|</span>lowlink<span style=color:#555>|</span> <span style=color:#555>==</span> <span style=color:#555>|</span>index<span style=color:#555>|</span>
+</span></span></code></pre></div><p>In this case, there are
 <em>2.4M</em> values of the underlying type, of which only <em>946K</em> match
 the invariant (39%). And, as we add more invariants (e.g. that
 no element in <code>lowlink</code> can be negative) this ratio continues a
@@ -135,4 +136,4 @@ a taste:</p><center><iframe class=youtube src=https://www.youtube.com/embed/d_li
 Whiley</a> and give it a go!</p><hr><i>Follow the discussion on
 <a href=https://twitter.com/whileydave/status/1341215592733274112>Twitter</a>
 or
-<a href=https://www.reddit.com/r/programming/comments/khwdyb/automated_testing_for_free/>Reddit</a></i></div></div><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-5582165-7','auto');ga('send','pageview');}</script></body></html>
+<a href=https://www.reddit.com/r/programming/comments/khwdyb/automated_testing_for_free/>Reddit</a></i></div></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-5582165-7","auto"),ga("send","pageview"))</script></body></html>
