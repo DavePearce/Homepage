@@ -26,7 +26,7 @@ than at some predefined point in time.
 Right, so let's begin.  Here's our first version (which has lots of
 problems):
 
-```Solidity
+```Whiley
 type Auction is {
    address seller,
    address bidder,
@@ -80,7 +80,7 @@ record how much can be reclaimed by a previous bidder.  This is done
 asynchronously to prevent previous bidders from causing chaos (such as
 trying to block new bids by forcing out-of-gas conditions):
 
-```Solidity
+```Whiley
 type Auction is {
    address seller,
    address bidder,
@@ -141,7 +141,7 @@ have to ensure that any new bid can be placed into `returns`.  We can
 do this using a contract invariant as follows:
 
 
-```Solidity
+```Whiley
 type Auction is {
    ...
 }
@@ -153,7 +153,7 @@ Here, `MAX_UINT256` is the maximum value representable by a `uint256`
 must be space in `returns` for their bid in the event they get ousted.
 Verifying our contract now gives a new error:
 
-```Solidity
+```
 type invariant may not be satisfied
    self.returns[self.bidder] = nret
                                ^^^^
@@ -164,7 +164,7 @@ assignment!  That is there wouldn't be space now to store `bid` again
 into `returns`.  There are different ways to solve this, but a simple
 option is to reset the bid:
 
-```Solidity
+```Whiley
    uint256 nret = self.returns[self.bidder] + self.bid
    self.bid = 0
    self.returns[self.bidder] = nret
@@ -173,7 +173,7 @@ option is to reset the bid:
 By reseting `self.bid`, the invariant on `returns` holds as we update
 it.  Having done this, there is still another error:
 
-```Solidity
+```
 type invariant may not be satisfied
    self.bid = msg::value
               ^^^^^^^^^^
@@ -182,7 +182,7 @@ type invariant may not be satisfied
 The issue is that we haven't restricted the new bidder based on their
 bidding history.  We can do this with another precondition:
 
-```Solidity
+```Whiley
 public export method bid()
 requires msg::value > self.bid
 // Restrict bidder based on their history
@@ -192,7 +192,7 @@ requires self.returns[msg::sender] + msg::value <= MAX_UINT256
 We are close now, but amazingly we still have a problem!  Here is the
 error being reported:
 
-```Solidity
+```
 type invariant may not be satisfied
    self.bid = msg::value
               ^^^^^^^^^^
@@ -204,7 +204,7 @@ problem occurs when the previous highest bidder and the new bidder
 _are the same person_.  Again, there are different ways to solve this
 but the simplest is to prevent a bidder from besting themselves:
 
-```Solidity
+```Whiley
 // Bidder cannot best themself
 requires msg::sender != self.bidder
 // Restrict bidder based on their history
@@ -223,7 +223,7 @@ want to double-check that `self.bid` actually _increases_ after
 The final issue is preventing multiple auction endings.  For this, we
 can use a flag to signal when it has ended:
 
-```Solidity
+```Whiley
 type Auction is {
    ...
    bool ended

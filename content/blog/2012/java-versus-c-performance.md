@@ -1,0 +1,23 @@
+---
+date: 2012-08-13
+title: "Java versus C++ Performance"
+draft: false
+---
+
+Recently, I came across an interesting [discussion of C++ versus Java performance over on Stack Exchange](http://programmers.stackexchange.com/q/159373/25936).  There was also some [good discussion of the article on Reddit](http://www.reddit.com/r/programming/comments/xo4my/what_backs_up_the_claim_that_c_can_be_faster_than/) which included a link to an [interesting article from Google](https://days2011.scala-lang.org/sites/days2011/files/ws3-1-Hundt.pdf).
+
+Understanding these languages from a performance perspective is important to me, as it impacts the design of Whiley.  So, I thought I'd highlight the main strands from that article and the subsequent discussions, and also add a few points I think were missed:
+   * **Memory Usage.** Accessing RAM has become relatively slow as CPU performance has increased and, hence, memory utilisation is extremely important in practice.  Java fairs quite badly on this front since: a) every object occupies [at least 8 bytes](http://www.javamex.com/tutorials/memory/object_memory_usage.shtml); b) you can't stack allocate objects; c) the commonly used collections library forces most things to be an object.  Also, arrays of objects in Java are really arrays of references and, hence, cannot be allocated contiguously --- which hurts cache performance.
+
+   * **Garbage Collection**.  This is a common complaint against Java performance.  With explicit explicit memory management in C++, you can tightly control the process of allocating and deallocating memory.  This means, for example, large chunks can be allocated up front and pooled.  And, also, that long-lived memory imposes minimal overhead.  However, there is one C++ performance problem I have encountered here: *memory fragmentation*.  The garbage collector is constantly compacting used memory into a contiguous block --- which can really help performance.  In contrast, for long running applications in C++, memory can become severely fragmented which affects both allocation time and cache performance.  Particularly if the amount of allocated memory at any one time fluctuates significantly.
+
+   * **Language Specification**.  The Java Language Specification is much more specific on the order in which Java programs are executed.  For example, that expressions are always executed in left-to-right fashion.  In C++, there is more flexibility in terms of implementation --- which makes things harder to debug, but also gives the compiler more freedom.  Personally, I think the Java Language Spec is really a step in the right direction to ensuring software quality (i.e. that there are no unexpected surprises), so I'd be happy to live with this cost.
+
+   * **Execution Model.** There are advantages to using a [Virtual Machine with Just-In-Time compilation](http://en.wikipedia.org/wiki/Just-in-time_compilation) (i.e. Java), compared with a static compilation model (i.e. C++).  In particular, a virtual machine can optimise according to the current workload of the program.  In contrast, a static compilation model has to guess ahead-of-time what the workload will be, and where optimisation should be focused.  This causes problems because some optimisations (e.g. inlining) negatively impact performance if used pervasively.  To combat this, modern C++ compilers now support *[profile guided optimisation](http://en.wikipedia.org/wiki/Profile-guided_optimization)* which helps mitigate this.  Nevertheless, on long running programs which have varying and unpredictable workload behaviour, the JIT should (in theory, at least) have an advantage.  Web applications might be one area where this holds true, although it's unclear to me how well current JIT's adapt to changing workloads (i.e. will they actually *undo* an optimisation when it no longer makes sense?).
+
+
+My general feeling is that performance remains a critical issue for language design.  Many people say "*machines are fast enough*" or that "*with a sufficiently smart compiler...*", etc.  In practice, these things never come to pass because the goalposts themselves are moving.  For example, web applications must routinely scale up to millions of hits a day (or more), compared with tens of thousands only a few years ago.  And, in the future, we'll demand even more.
+
+Finally, the focus on memory utilisation as a fundamental performance bottleneck makes me question the future of [pure object-oriented languages](http://www.javalobby.org/java/forums/t83631.html).  Today, these language appear to be back in vogue (e.g. Scala, Ruby, etc).  But, I just wonder whether these languages will be able to deliver the performance needed for the future ...
+
+*Thoughts?*

@@ -24,7 +24,7 @@ others.
 
 For example, here's a simple Whiley program:
 
-```Rust
+```Whiley
 function abs(int x) -> (int r)
 ensures r >= 0
 ensures (r == x) || (r == -x):
@@ -80,7 +80,7 @@ verification ingrained as part of the build process_.
 
 As an example, here's a function from `std::array`:
 
-```Rust
+```Whiley
 // find first index after a given start point in list which matches character.
 // If no match, then return null.
 function first_index_of<T>(T[] items, T item, uint start) -> (uint|null index)
@@ -109,7 +109,7 @@ essentially says this in logical form.  To keep things a bit more
 intuitive we've used `contains()` instead of raw quantifiers.  Here,
 `constrains()` is a `property` defined in `std::array` as follows:
 
-```Rust
+```Whiley
 property contains<T>(T[] lhs, T item, int start, int end)
 // Some index in given range contains item
 where some { i in start..end | lhs[i] == item }
@@ -140,7 +140,7 @@ Still, there are some challenges.  Most notably, we have at least
 one function which currently cannot be verified (due to limitations
 with Boogie / Z3).  This is the following function:
 
-```Rust
+```Whiley
 unsafe function copy<T>(T[] src, uint srcStart, T[] dest, uint destStart, uint length) -> (T[] result)
 // Source array must contain enough elements to be copied
 requires (srcStart + length) <= |src|
