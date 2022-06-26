@@ -1,7 +1,7 @@
 ---
 date: 2010-09-30
 title: "Thoughts on Loop Invariants"
-draft: true
+draft: false
 ---
 
 With the recent addition of for and while loops to Whiley, I've been able to fiddle around with [loop invariants](http://wikipedia.org/wiki/loop_invariants) and already I noticed a few things.  Consider this little program:

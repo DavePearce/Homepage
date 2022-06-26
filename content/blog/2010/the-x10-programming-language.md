@@ -1,7 +1,7 @@
 ---
 date: 2010-08-05
 title: "The X10 Programming Language"
-draft: true
+draft: false
 ---
 
 [X10](http://x10-lang.org/) is an interesting and relatively new language from IBM being developed as part of [DARPA](http://wikipedia.org/wiki/DARPA)'s [High Productivity Computing Systems](http://www.highproductivity.org/) program.  X10 is designed for high-performance parallel programming using a [partitioned global address space](http://wikipedia.org/wiki/partitioned_global_address_space) model.  To my mind, I see X10 as being a modern [Fortran](http://wikipedia.org/wiki/Fortran) ... but perhaps that's a bit disingenuous.  Anyway, what got me looking at this was the following paper:
@@ -29,7 +29,7 @@ An interesting design choice they've made with X10 is to rely on "pluggable cons
 Now, let's be clear: *i'm not a fan of this*.  The problem is really that the meaning of programs is no longer clearly defined, and relies on third-party plugins which may be poorly maintained, or subsequently become unavailable, etc.  I think the problem is compounded by the following:
 > If constraints cannot be solved, an error is reported
 
-To me, this all translates into the following scenario: ***"I download and compile an X10 program, but it fails telling me I need such and such plugin; but, it turns out, such and such author is not maintaining it any more and I can't find it anywhere*."
+To me, this all translates into the following scenario: *"I download and compile an X10 program, but it fails telling me I need such and such plugin; but, it turns out, such and such author is not maintaining it any more and I can't find it anywhere*."
 
 I'm assuming here *that it will be obvious which plugins you need to compile a given program*.  If not, then you're faced with a real challenge deciding which plugin(s) you need.
 

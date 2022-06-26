@@ -1,23 +1,15 @@
 ---
 date: 2010-09-08
 title: "James Bach on Software Testing"
-draft: true
+draft: false
 ---
 
-I've just been watching this YouTube presentation by [James Bach](http://www.satisfice.com/blog/):
+I've just been watching this YouTube presentation by [James Bach](http://www.satisfice.com/):
 
-
-[object]
-[param]
-[/param]
-[param]
-[/param]
-[embed]
-[/embed]
-[/object]
-
+{{<youtube id="3FTwaojNkXw" width="560" height="315">}}
 
 James has a very tongue-in-cheek style, which I rather like, and he's obviously not a great fan of the academic establishment:
+
 > "Testing is not part of Computer Science.  Computer Science likes to think that testing is part of Computer Science.  But, if you look at a Computer Science journal, and  you look at articles  on testing, it's like somebody treating cacti as the whole of vegetative live on the planet."
 
 Great stuff!  And he goes on, saying how the very narrow band of topics covered in such papers don't even scratch the surface.

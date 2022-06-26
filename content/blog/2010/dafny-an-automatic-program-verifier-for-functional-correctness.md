@@ -1,7 +1,7 @@
 ---
 date: 2010-06-07
 title: "Dafny: An Automatic Program Verifier for Functional Correctness"
-draft: true
+draft: false
 ---
 
 So, last week the pl reading group chose to read [this](http://research.microsoft.com/en-us/um/people/leino/papers/krml203.pdf) paper by Rustan Leino. Ignoring the fact that a number of people in our group are interested in this area, Rustan had recently given a presentation on Dafny here (his slides are [here](http://aswec2010.massey.ac.nz/Leino-ASWEC-2010.pdf)) and this was reason we chose this paper.  Unfortunately, I wasn't here to meet him and compare Whiley with Dafny, as I was in Germany at a Dagstuhl workshop on [Relationships, Objects, Roles and Queries](http://www.dagstuhl.de/de/programm/kalender/semhp/?semnr=10152) (which was great, btw) .  C'est la vie.

@@ -1,7 +1,7 @@
 ---
 date: 2010-09-22
 title: "On Flow-Sensitive Types in Whiley"
-draft: true
+draft: false
 ---
 
 In the ensuing months since the previous release of Whiley, I have been working away on a major rewrite of the compiler.  This is now almost ready, at last!  One of the "executive decisions" I made recently, was to move away from a declared variable model to a completely [flow-sensitive](http://wikipedia.org/wiki/Data-flow_analysis) typing model.  To understand this, consider the following program written in the old version of Whiley:

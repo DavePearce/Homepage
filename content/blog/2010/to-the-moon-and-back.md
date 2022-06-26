@@ -1,7 +1,7 @@
 ---
 date: 2010-06-10
 title: "Formal Methods: To the Moon and Back!"
-draft: true
+draft: false
 ---
 
 I recently came across a rather interesting presentation by [Gerard Holzmann](http://en.wikipedia.org/wiki/Gerard_J._Holzmann) (author of the [SPIN](http://spinroot.com/spin/whatispin.html) model checker) who's currently working for [NASA's Jet Propulsion Lab](http://www.jpl.nasa.gov/), and previously worked at [Bell Labs](http://www.alcatel-lucent.com/wps/portal/BellLabs):

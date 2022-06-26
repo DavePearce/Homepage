@@ -1,7 +1,7 @@
 ---
 date: 2010-06-15
 title: "Experimental Security Analysis of a Modern Automobile"
-draft: true
+draft: false
 ---
 
 Another good paper I found recently was the following:
@@ -19,5 +19,3 @@ What I found particularly interesting was the discussion of the computing setup 
 I think we're probably starting to get the picture now.  The essence of the paper is that author's took a fairly standard car and attacked in a variety of ways to determine what was possible.  They managed to do things like upgrading the firmware of the Engine Control Module whilst the car was running --- at which point the engine stops running immediately.  Other interesting things include the ability to pop the trunk whilst at speed, deactivating the brakes at speed, or instantly putting them on!  It's pretty scary stuff when you think about it; particularly, as you might install a seemingly innocent new CD-player .... which then decides to randomly take over your car when you least expect it.
 
 Anyway, worth a read ...
-
-http://www.google.co.nz/url?sa=t&source=web&cd=1&ved=0CB0QFjAA&url=http%3A%2F%2Fwww.autosec.org%2Fpubs%2Fcars-oakland2010.pdf&rct=j&q=experimental+security+analysis+of+modern+automobile&ei=4EUMTKLXL5qmNdew0dwB&usg=AFQjCNEy3Jxasa_TrcM_qWXmvPXfZaaxWA

@@ -1,7 +1,7 @@
 ---
 date: 2010-07-23
 title: "Thinking about Pre- and Post-Conditions in Whiley"
-draft: true
+draft: false
 ---
 
 The notion of [pre-](http://wikipedia.org/wiki/precondition) and [post-conditions](http://wikipedia.org/wiki/postcondition) is well understood in the context of software verification.  However, Whiley deviates from the norm by combining them into a single condition.  The following illustrates a simple Whiley function:

@@ -1,7 +1,7 @@
 ---
 date: 2010-07-22
 title: "Language Designers ... who wait?"
-draft: true
+draft: false
 ---
 
 Someone recently pointed me to the [Rust programming language](http://wiki.github.com/graydon/rust/) which has some very nice features, although it's still in early stage development.  In particular, the system statically prevents [null pointer errors](http://wikipedia.org/wiki/pointer_(computing)#null_pointer), and does not permit [dangling pointers](http://wikipedia.org/wiki/dangling_pointer).  The language FAQ also claims the "ability to define complex invariants that hold over data structures" ... which looks very promising, and I presume is related to the (relatively recent) research on this topic (see e.g. [this](http://doi.acm.org/10.1145/1081706.1081741), [this](http://doi.acm.org/10.1145/1348250.1348255) and [this](http://dx.doi.org/10.1016/j.scico.2005.02.004)).  However, I confess I haven't actually downloaded Rust and tried it yet ... but I will soon enough!

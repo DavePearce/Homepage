@@ -1,10 +1,10 @@
 ---
 date: 2010-10-18
 title: "Indentation Syntax in Whiley"
-draft: true
+draft: false
 ---
 
-Like Python, Whiley uses indentation syntax instead of curly braces for delimiting blocks.  When I started using indentation syntax with Python, I was pretty skeptical, but  it grew on me fast and now I really like it.  However, this wasn't the only reason I chose to use indentation syntax in Whiley.  The other is that* we’d have too many braces **otherwise*.  The thing is, sets and [set comprehensions ](http://en.wikipedia.org/wiki/List_comprehension)are  very important in Whiley, and their syntax uses curly braces (e.g. `{1,2,3}` and `{ x+1 | x in xs, x > 0 }`).  So, indentation syntax is one way to reduce the amount of curly (or other) braces.
+Like Python, Whiley uses indentation syntax instead of curly braces for delimiting blocks.  When I started using indentation syntax with Python, I was pretty skeptical, but  it grew on me fast and now I really like it.  However, this wasn't the only reason I chose to use indentation syntax in Whiley.  The other is that *we’d have too many braces otherwise*.  The thing is, sets and [set comprehensions ](http://en.wikipedia.org/wiki/List_comprehension)are  very important in Whiley, and their syntax uses curly braces (e.g. `{1,2,3}` and `{ x+1 | x in xs, x > 0 }`).  So, indentation syntax is one way to reduce the amount of curly (or other) braces.
 
 One of the challenges with indentation syntax is the treatment of [whitespace](http://wikipedia.org/wiki/whitespace_character).  In traditional languages, characters including newlines, tabs and spaces are dropped by the lexer.  With indentation syntax, this is not possible as newlines and tabs form part of the syntax.  By itself, this is straightforward to handle.  The main issue arises when we want to wrap lines.  For example, consider the following:
 

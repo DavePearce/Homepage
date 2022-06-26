@@ -1,7 +1,7 @@
 ---
 date: 2010-07-15
 title: "On Object-Oriented Programming"
-draft: true
+draft: false
 ---
 
 There's an interesting [interview](http://www.infoq.com/interviews/johnson-armstrong-oop) with [Ralph Johnson](http://wikipedia.org/wiki/Ralph_Johnson) and [Joe Armstrong](http://wikipedia.org/wiki/Joe_Armstrong_(programming)) over at QCon.  They're talking generally about whether OOP has been successful, and reflecting on the last few decades.

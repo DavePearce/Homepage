@@ -1,7 +1,7 @@
 ---
 date: 2010-10-04
 title: "Better Namespaces"
-draft: true
+draft: false
 ---
 
 An interesting problem I've encountered many times in Java is that of conflicting names.  For example,  suppose I have the following code:

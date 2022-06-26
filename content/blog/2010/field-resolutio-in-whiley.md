@@ -1,7 +1,7 @@
 ---
 date: 2010-10-05
 title: "Field Resolution in Whiley"
-draft: true
+draft: false
 ---
 
 An interesting issue has arisen as a result of my recent [decision](http://whiley.org/2010/09/22/on-flow-sensitive-types-in-whiley/) to move away from a declared-type model.  The issue is essentially about [scope resolution](http://wikipedia.org/wiki/Scope_(programming)) of fields and local variables.   For example, consider the following:
