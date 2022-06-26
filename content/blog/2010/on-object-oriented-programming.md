@@ -1,0 +1,21 @@
+---
+date: 2010-07-15
+title: "On Object-Oriented Programming"
+draft: true
+---
+
+There's an interesting [interview](http://www.infoq.com/interviews/johnson-armstrong-oop) with [Ralph Johnson](http://wikipedia.org/wiki/Ralph_Johnson) and [Joe Armstrong](http://wikipedia.org/wiki/Joe_Armstrong_(programming)) over at QCon.  They're talking generally about whether OOP has been successful, and reflecting on the last few decades.
+
+A few things from the interview caught my eye.  Ralph talks about a fundamental mistake made by the designers of [SmallTalk](http://wikipedia.org/wiki/SmallTalk).  In SmallTalk, you don't really compile objects and then run them like in, for example, Java.   Instead, you have one live image which contains everything.  Sure, there are classes in the image, and you can instantiate them.  But, the "program" never stops running, and so objects you create way back may still be live (for whatever reason).  You could modify an existing class by adding new "messages" (i.e. methods), but this means all existing instances of that class are updated.  The problem, as Ralph rightly points out, is that it becomes very difficult to know where you're at.  In Java, you'll be working on some particular version of your source code;  you might have this in an [svn](http://wikipedia.org/wiki/Apache_Subversion) or [git](http://wikipedia.org/wiki/git_(software)) repository and you can run that version whenever you like.  Furthermore, you can go back in time to an earlier version easily enough, or have multiple checkouts of different versions side-by-side.  This is not so in SmallTalk, as you're always working on a live image and any changes you make affect everything.
+
+The other interesting issue was raised by Joe (author of Erlang).   Joe argues that the three main things needed for  object-orientation are: *message passing*, *isolation* and *polymorphism*.  He claims that, in some sense, [Erlang](http://wikipedia.org/wiki/Erlang_(programming_language)) is the only true object-oriented programming language, since it provides strong isolation between "objects" (i.e. processes).
+> my program shouldn't crash your program, if the 2 things are isolated, then any mistakes I make in my program will not crash your program. This is certainly not true with Java. You cannot take 2 Java applications, bung them in the JVM and one of them still halts the machine and the other one will halt as well.
+
+Personally, I don't buy into this at all.  In Java, you certainly can put two programs together in one JVM and, if one crashes, there's no reason to think it will affect the other.  However, I do think Joe is on to something, and Ralph nicely leads us into it:
+> The thing about Erlang is that it's in some sense 2 languages, at least you program it 2 levels because one is the functional language that you use to write a single process and then there is what you think about all these processes and how do they interact, one process is sending messages to the other. At a higher level, that Erlang is object oriented, at the lowest level it's a pure functional language and that's how it got advertised for a long time.
+
+For me, the issue I think Joe is getting at is that, in languages like Java, object's can share state, which means executing a method on one can easily interfere with another.  In Erlang, it doesn't work like this.  One processes' state is completely isolated from every other --- there is no possible interference.  If one process goes down, this cannot in any way bring down another process (although I guess it can result in processes blocking trying to receive from it).  Of course, in Java, good design gives you the same effect ... but that means you have be a good designer!
+
+This is interesting from a Whiley point of view, since Whiley follows Erlang by providing truly isolated processes.  The key is that it's only through the inclusion of first-class sets, lists and tuples that you can get this strong isolation.  Without this, you end up with mutable collections, which leads you to shared state.
+
+Anyway, that's my 2c!
