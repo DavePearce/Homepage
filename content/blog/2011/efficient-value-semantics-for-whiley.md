@@ -1,7 +1,7 @@
 ---
 date: 2011-12-13
 title: "Efficient Value Semantics for Whiley"
-draft: true
+draft: false
 ---
 
 The latest release of the Whiley compiler (v0.3.12) includes an optimisation for passing compound structures (e.g. lists, sets and records) by value.  This is really important because all compound structures in Whiley have *value semantics*, meaning they are always passed by value.  In fact, Whiley does not support references or pointers as found in other languages (e.g. Java, C, etc).  This means Whiley is really more of a [functional programming language](http://wikipedia.org/wiki/Functional_programming) than an [imperative language](http://wikipedia.org/wiki/Imperative_programming).  As we'll see, compared to other functional languages, Whiley is a little unusual as it supports *imperative updates* to compound structures.
@@ -27,9 +27,14 @@ This function updates a list of real values in-place using a typical (imperative
 
 ## (In)efficiency?
 
-*Ok, but that all that copying must be crazily inefficient! *Well, not so.  This is because, whilst the semantics of Whiley dictate pass-by-value for compound structures, the underlying implementation actually passes them by reference.  Furthermore, it clones them lazily with reference counting being employed to reduce the situations where a clone is actually required.  Before explaining how the reference counting works, let's look at some actual data first:
+*Ok, but that all that copying must be crazily inefficient!* Well, not so.  This is because, whilst the semantics of Whiley dictate pass-by-value for compound structures, the underlying implementation actually passes them by reference.  Furthermore, it clones them lazily with reference counting being employed to reduce the situations where a clone is actually required.  Before explaining how the reference counting works, let's look at some actual data first:
 
-omitted tag "table"
+Name|Description|LOC|# Clones|%|Time
+----|-----------|---|--------|-|----
+Jasm|*A Java bytecode disassembler.*|2333|12878 / 29968|43.0%|2.1s
+Gunzip|*An implementation of DEFLATE.*|815|873 / 140561|0.62%|1.6s
+Chess|*Validates chess games in short algebraic notation.*|784|6438 / 416116|1.6%|1.4s
+Calculator|*An arithmetic expression evaluator.*|225|0 / 81527|0.0%|8.8s
 
 *What is this data showing us?* Well, "# Clones" shows the number of clones actually performed versus the number that a naive implementation of value semantics would have performed.   The naive version clones whenever an argument is passed or returned from a function, whenever a list element is assigned, etc.  It represents an upper bound on the number of clones required.  So, for example, looking at the Gunzip benchmark we see that only 873 clones were required out of a maximum of 140561.  This indicates that, in the vast majority of cases, value semantics does not actually result in many extra clones.
 
@@ -81,8 +86,10 @@ Here, the variable `xs` is dead after the assignment to `ys`.  Therefore, we do
 ```
 
 On Line 6,  Object #1 (which represents the constructed list) has an initial reference count of one.  This does not change when it is assigned to `x`.  Its reference count is then increased by one on Line 7, as `x` is used in the invocation expression and *remains live afterward*.  On entry to `f()`, parameter `z` refers to Object #1, which now has reference count two. Therefore, the list assignment on Line 2 creates an entirely new object before updating it.  It also decrements the reference count of Object #1.  On Line 8, `x` still refers to Object #1 (now with reference count one) and, hence, the append is performed in place without cloning.
+
 ## Conclusion
 Reference counting is a critical optimisation to improving the performance of Whiley programs.  The latest version of the compiler (finally) supports this, although there is still room for considerable improvement.  In fact, a good starting point is the following paper:
+
    * Staged Static Techniques to Efficiently Implement Array Copy Semantics in a MATLAB JIT Compiler, N. Lameed and L. Hendren.  In *Proceedings of the Conference on Compiler Construction*, 2011. [[PDF](http://www.sable.mcgill.ca/mclab/mcvm/mcvmcc2011.pdf)]
 
 
