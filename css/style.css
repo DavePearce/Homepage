@@ -19,6 +19,17 @@ blockquote {
     background:  #f7f5ed;
     border-radius: 0.5em;
 }
+table {
+    border: 1px solid #a28744;
+    border-collapse: collapse;    
+}
+th {
+    background:  #f7f5ed;
+}
+td {
+    border: 1px dashed #a28744;
+    padding: 0.25em;
+}
 hr {
     border: 1px solid #a28744;
 }
