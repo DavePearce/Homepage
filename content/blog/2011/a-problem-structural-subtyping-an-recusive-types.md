@@ -1,10 +1,10 @@
 ---
 date: 2011-02-15
 title: "A Problem with Structural Subtyping and Recusive Types"
-draft: true
+draft: false
 ---
 
-One problem causing me a headache is how to implement [structural subtyping](http://wikipedia.org/wiki/Structural_type_system) for [recursive types](http://wikipedia.org/wiki/recursive_data_type) (which I first blogged about [here](http://whiley.org/2010/09/19/normalising-recursive-data-types/)).  The following example illustrates the basic idea:
+One problem causing me a headache is how to implement [structural subtyping](http://wikipedia.org/wiki/Structural_type_system) for [recursive types](http://wikipedia.org/wiki/recursive_data_type) (which I first blogged about [here](/2010/09/19/normalising-recursive-data-types/)).  The following example illustrates the basic idea:
 
 ```whiley
 define Link as { int data, LinkedList next }
@@ -18,8 +18,9 @@ This is a fairly straightforward definition of a [linked list](http://wikipedia.
 
 Here's a pictorial representation of the problem:
 
-[{{<img class="text-center" src="http://whiley.org/wp-content/uploads/2011/02/RecursiveTypes.png">}}](http://whiley.org/wp-content/uploads/2011/02/RecursiveTypes.png)
-Now, the following illustrates my current (abbreviated) subtyping implementation, with each rule annotated with its corresponding name from the [technical report](http://www.ecs.vuw.ac.nz/~djp/files/ECSTR10-23.pdf):
+{{<img class="text-center" width="50%" src="/images/2011/RecursiveTypes.png">}}
+
+Now, the following illustrates my current (abbreviated) subtyping implementation, with each rule annotated with its corresponding name from the [technical report](/publications/ECSTR10-23.pdf):
 
 ```whiley
 define T_INT as 1
