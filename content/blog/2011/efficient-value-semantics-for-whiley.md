@@ -1,7 +1,7 @@
 ---
 date: 2011-12-13
 title: "Efficient Value Semantics for Whiley"
-draft: false
+draft: false 
 ---
 
 The latest release of the Whiley compiler (v0.3.12) includes an optimisation for passing compound structures (e.g. lists, sets and records) by value.  This is really important because all compound structures in Whiley have *value semantics*, meaning they are always passed by value.  In fact, Whiley does not support references or pointers as found in other languages (e.g. Java, C, etc).  This means Whiley is really more of a [functional programming language](http://wikipedia.org/wiki/Functional_programming) than an [imperative language](http://wikipedia.org/wiki/Imperative_programming).  As we'll see, compared to other functional languages, Whiley is a little unusual as it supports *imperative updates* to compound structures.
