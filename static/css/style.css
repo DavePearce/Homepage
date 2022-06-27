@@ -1,22 +1,36 @@
 h1,h2 { line-height: 100%; }
 code {
-    border: 1px solid #e8e0c9;
+    font-family: "American Typewriter",monospace;    
+    border: 1px solid #d0c095;
     border-radius: 0.25em;
-    padding: 0.1em; 
+    padding: 0.2em; 
     margin: 0;
-    background:  #f7f5ed;   
+    background: #f0eadb;
 }
 pre code {
-    display: block;    
-    border: 1px solid #e8e0c9;
-    border-radius: 0.5em;
-    padding: 0.5em;
+    font-family: "American Typewriter",monospace;    
+    display: block;
+    white-space: pre;
+    font-family: inherit;
+    background: inherit;    
+    border: none;
+    padding: none;
+    margin: none;
 }
+pre {
+    font-family: "American Typewriter",monospace;
+    white-space: pre;
+    border: 2px solid #d0c095; 
+    border-radius: 0.5em;
+    background: #f0eadb;
+    padding: 1em;
+    margin: 1em 0em;
+}    
 blockquote {
     display: block;
     border: 1px solid #e8e0c9;
     padding: 1em;
-    background:  #f7f5ed;
+    background: #f7f5ed;
     border-radius: 0.5em;
 }
 table {
