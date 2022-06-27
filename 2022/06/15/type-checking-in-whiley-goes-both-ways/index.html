@@ -1,5 +1,5 @@
 <!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Type Checking in Whiley goes Both Ways!"><meta name=twitter:title content="Type Checking in Whiley goes Both Ways!"><meta property="og:description" content="Type Checking in Whiley goes Both Ways!"><meta name=twitter:description content="Type Checking in Whiley goes Both Ways!"><meta property="og:image" content="https://whileydave.com/images/2022/BidirectionalTypeChecking_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2022/BidirectionalTypeChecking_Preview.png"><meta property="og:url" content="https://whileydave.com/2022/06/15/type-checking-in-whiley-goes-both-ways/"><title>David J. Pearce
-(Type Checking in Whiley goes Both Ways!)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+(Type Checking in Whiley goes Both Ways!)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
 <a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
 <a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
 <a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
@@ -21,7 +21,7 @@ upwards. Typing a statement like <code>xs[i] = ys[i] + 1</code> (when <code>xs</
 otherwise we have a type error.</p><h3 id=limitations>Limitations</h3><p>As a general approach, backwards typing works well in most cases.
 But, there are some limitations when applying this to Whiley:</p><ul><li><p><em>(Sizing)</em>. Variables of type <code>int</code> in Whiley can hold arbitrary
 sized integers and, because of this, backwards typing can lead
-to inefficiency. Consider this:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span>u8 x <span style=color:#555>=</span> <span style=color:#f60>124</span>
+to inefficiency. Consider this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=n>u8</span> <span class=n>x</span> <span class=o>=</span> <span class=mi>124</span>
 </span></span></code></pre></div><p>Under the backwards typing scheme, the constant <code>124</code> is given
 type <code>int</code>. That means, under-the-hood when the constant is
 created, we&rsquo;ll allocate space for an arbitrary sized integer and
@@ -38,11 +38,11 @@ but not on <em>return types</em>. Whilst it may seem esoteric, the
 ability to overload on return types can be useful. For example,
 you might want to do something analoguous to the <a href=https://doc.rust-lang.org/std/default/trait.Default.html>default
 trait</a>
-in Rust:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>function</span> <span style=color:#069;font-weight:700>default</span>() <span style=color:#555>-&gt;</span> <span style=color:#078;font-weight:700>int</span>[]<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   <span style=color:#069;font-weight:700>return</span> []
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>function</span> <span style=color:#069;font-weight:700>default</span>() <span style=color:#555>-&gt;</span> <span style=color:#078;font-weight:700>int</span><span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   <span style=color:#069;font-weight:700>return</span> <span style=color:#f60>0</span>
+in Rust:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>function</span> <span class=k>default</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=kt>int</span><span class=p>[]</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=k>return</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>function</span> <span class=k>default</span><span class=p>()</span> <span class=o>-&gt;</span> <span class=kt>int</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=k>return</span> <span class=mi>0</span>
 </span></span></code></pre></div><p>This is valid Whiley and, with bidirectional typing, the
 compiler can automatically select the right method based on
 context.</p></li><li><p><em>(Templates)</em>. Inferring template parameters saves tedious
@@ -50,16 +50,16 @@ effort writing them out, and results in more elegant code. In
 many cases, backwards typing can be used for inferring parameters
 &mdash; but there cases where it doesn&rsquo;t work. The following is
 based on a real-world situation involving the
-<a href=https://github.com/DavePearce/Web.wy>Web.wy</a> library:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-whiley data-lang=whiley><span style=display:flex><span>...
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Element<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> <span style=color:#069;font-weight:700>is</span> { 
-</span></span><span style=display:flex><span>   string name, 
-</span></span><span style=display:flex><span>   Attribute<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>[] attributes,
-</span></span><span style=display:flex><span>   Node<span style=color:#555>&lt;</span>S<span style=color:#555>&gt;</span>[] children
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Node<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> <span style=color:#069;font-weight:700>is</span> Element<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> <span style=color:#555>|</span> string
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>function</span> h1<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>(Node<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> child) <span style=color:#555>-&gt;</span> Element<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;:</span>
-</span></span><span style=display:flex><span>   ...
+<a href=https://github.com/DavePearce/Web.wy>Web.wy</a> library:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=n>Element</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=k>is</span> <span class=p>{</span> 
+</span></span><span class=line><span class=cl>   <span class=n>string</span> <span class=n>name</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>   <span class=n>Attribute</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=p>[]</span> <span class=n>attributes</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>Node</span><span class=o>&lt;</span><span class=n>S</span><span class=o>&gt;</span><span class=p>[]</span> <span class=n>children</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=n>Node</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=k>is</span> <span class=n>Element</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=o>|</span> <span class=n>string</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>function</span> <span class=n>h1</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=p>(</span><span class=n>Node</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=n>child</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>Element</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;:</span>
+</span></span><span class=line><span class=cl>   <span class=p>...</span>
 </span></span></code></pre></div><p>The intention here is to allow an HTML heading to be created with
 something like <code>h1("Title")</code>. Earlier versions of Whiley (which
 only used backwards typing) could not infer a type for <code>T</code> and,
@@ -69,7 +69,7 @@ cumbersome). The problem is that the supplied parameter
 bidirectional typing, Whiley can now infer the type of <code>T</code> based
 on what the result is being assigned to.</p></li></ul><h2 id=forwards-typing>Forwards Typing</h2><p>A key observation is that, in many situations, we already have
 concrete type information available. For example, consider this
-declaration:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-whiley data-lang=whiley><span style=display:flex><span>u8[] bytes <span style=color:#555>=</span> [<span style=color:#f60>1</span>,<span style=color:#f60>2</span>,<span style=color:#f60>3</span>]
+declaration:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=n>u8</span><span class=p>[]</span> <span class=n>bytes</span> <span class=o>=</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>]</span>
 </span></span></code></pre></div><p>We can type this in a <em>forwards</em> (or <em>top down</em>) direction by &ldquo;pushing
 down&rdquo; from the declared type <code>u8[]</code> of <code>bytes</code>. This means we give
 <code>[1,2,x+1]</code> the type <code>u8[]</code> and then push <code>u8</code> into each of the
@@ -78,8 +78,8 @@ and backwards typing. But, you might wonder why we don&rsquo;t just use
 forwards typing all the time? Well, the answer is pretty simple: <em>in
 some cases, you simply cannot use forward typing</em>. Therefore, in such
 cases, we default back to backwards typing. The following illustrates
-such an example:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>function</span> headerOf<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span>(Node<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> n, Node<span style=color:#555>&lt;</span>T<span style=color:#555>&gt;</span> c) <span style=color:#555>-&gt;</span> <span style=color:#078;font-weight:700>bool</span><span style=color:#555>:</span>
-</span></span><span style=display:flex><span>  <span style=color:#069;font-weight:700>return</span> n <span style=color:#555>==</span> h1(c)
+such an example:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>function</span> <span class=n>headerOf</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=p>(</span><span class=n>Node</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=n>n</span><span class=p>,</span> <span class=n>Node</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span> <span class=n>c</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=kt>bool</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>n</span> <span class=o>==</span> <span class=n>h1</span><span class=p>(</span><span class=n>c</span><span class=p>)</span>
 </span></span></code></pre></div><p>The issue is that the type being pushed down from the <code>return</code>
 statement into its expression is <code>bool</code>, but this provides no useful
 information about the operand types for <code>==</code>. In otherwords, when
@@ -88,8 +88,8 @@ instead, however, is &ldquo;pull up&rdquo; the type from <code>n</code> and then
 down into <code>h1(c)</code>.</p><p>In the example above, there wasn&rsquo;t a type we could push down into the
 subexpression. So, we didn&rsquo;t have any choice but to pull up instead.
 However, there are situations where we have a type to push down
-&mdash; <em>but it is undesirable to do so</em>. The following illustrates:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span>u8[] items <span style=color:#555>=</span> [<span style=color:#f60>0</span>,<span style=color:#f60>1</span>,<span style=color:#f60>2</span>]
-</span></span><span style=display:flex><span>u16 item <span style=color:#555>=</span> items[<span style=color:#f60>0</span>]
+&mdash; <em>but it is undesirable to do so</em>. The following illustrates:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=n>u8</span><span class=p>[]</span> <span class=n>items</span> <span class=o>=</span> <span class=p>[</span><span class=mi>0</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=n>u16</span> <span class=n>item</span> <span class=o>=</span> <span class=n>items</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
 </span></span></code></pre></div><p>In the above, we can push <code>u16</code> into <code>items[0]</code> and, based on this,
 push <code>u16[]</code> into down into the access of <code>items</code>. However, this then
 forces a coercion of the entire <code>items</code> array from <code>u8[]</code> to <code>u16[]</code>.

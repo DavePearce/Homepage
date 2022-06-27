@@ -1,5 +1,5 @@
 <!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Verifying an Auction Contract in Whiley"><meta name=twitter:title content="Verifying an Auction Contract in Whiley"><meta property="og:description" content="Verifying a smart contract in Whiley finds lots of problems."><meta name=twitter:description content="Verifying a smart contract in Whiley finds lots of problems."><meta property="og:image" content="https://whileydave.com/images/2022/AuctionContract_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2022/AuctionContract_Preview.png"><meta property="og:url" content="https://whileydave.com/2022/05/17/verifying-an-auction-contract-in-whiley/"><title>David J. Pearce
-(Verifying an Auction Contract in Whiley)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+(Verifying an Auction Contract in Whiley)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
 <a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
 <a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
 <a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
@@ -18,24 +18,24 @@ the real world, and trying to raise the highest price for it. My
 contract is intentionally simplified so its easier to work through.
 For example, the auction ends whenever the seller says it does rather
 than at some predefined point in time.</p><h3 id=version-1>Version 1</h3><p>Right, so let&rsquo;s begin. Here&rsquo;s our first version (which has lots of
-problems):</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Auction <span style=color:#069;font-weight:700>is</span> {
-</span></span><span style=display:flex><span>   address seller,
-</span></span><span style=display:flex><span>   address bidder,
-</span></span><span style=display:flex><span>   uint256 bid
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> Auction self <span style=color:#555>=</span> {seller<span style=color:#555>:</span> <span style=color:#f60>0</span>, bidder<span style=color:#555>:</span> <span style=color:#f60>0</span>, bid<span style=color:#555>:</span> <span style=color:#f60>0</span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> bid()
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// New bid must be higher!
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>value <span style=color:#555>&gt;</span> self.bid<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   self.bidder <span style=color:#555>=</span> msg<span style=color:#555>::</span>sender
-</span></span><span style=display:flex><span>   self.bid <span style=color:#555>=</span> msg<span style=color:#555>::</span>value
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> end()
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Only seller can end the auction!
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>sender <span style=color:#555>==</span> self.seller<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   evm<span style=color:#555>::</span>util<span style=color:#555>::</span>transfer(self.seller,self.bid)
+problems):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>type</span> <span class=n>Auction</span> <span class=k>is</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=n>address</span> <span class=n>seller</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>address</span> <span class=n>bidder</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>uint256</span> <span class=n>bid</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=n>Auction</span> <span class=n>self</span> <span class=o>=</span> <span class=p>{</span><span class=n>seller</span><span class=o>:</span> <span class=mi>0</span><span class=p>,</span> <span class=n>bidder</span><span class=o>:</span> <span class=mi>0</span><span class=p>,</span> <span class=n>bid</span><span class=o>:</span> <span class=mi>0</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>bid</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1>// New bid must be higher!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span> <span class=o>&gt;</span> <span class=n>self</span><span class=p>.</span><span class=n>bid</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>bidder</span> <span class=o>=</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>bid</span> <span class=o>=</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>end</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1>// Only seller can end the auction!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>==</span> <span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>evm</span><span class=o>::</span><span class=n>util</span><span class=o>::</span><span class=n>transfer</span><span class=p>(</span><span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=p>,</span><span class=n>self</span><span class=p>.</span><span class=n>bid</span><span class=p>)</span>
 </span></span></code></pre></div><p>Here, the seller is identifier by <code>self.seller</code> and the current
 highest bidder by <code>self.bidder</code>, along with their current highest bid.
 I&rsquo;ve provided a default initialiser for <code>self</code> to make Whiley happy
@@ -55,32 +55,32 @@ be able to claim more funds than are owed to them by calling
 Whiley as much as possible to catch problems</em>.</p><h3 id=version-2>Version 2</h3><p>Right, let&rsquo;s tackle the first problem above. To do this, we are going
 record how much can be reclaimed by a previous bidder. This is done
 asynchronously to prevent previous bidders from causing chaos (such as
-trying to block new bids by forcing out-of-gas conditions):</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Auction <span style=color:#069;font-weight:700>is</span> {
-</span></span><span style=display:flex><span>   address seller,
-</span></span><span style=display:flex><span>   address bidder,
-</span></span><span style=display:flex><span>   uint256 bid,
-</span></span><span style=display:flex><span>   map<span style=color:#555>&lt;</span>uint256<span style=color:#555>&gt;</span> returns
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> Auction self <span style=color:#555>=</span> { ..., returns<span style=color:#555>:</span> [<span style=color:#f60>0</span>; MAX_UINT160<span style=color:#555>+</span><span style=color:#f60>1</span>]}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> bid()
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>value <span style=color:#555>&gt;</span> self.bid<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   <span style=color:#09f;font-style:italic>// Calculate new return
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span>   uint256 nret <span style=color:#555>=</span> self.returns[self.bidder] <span style=color:#555>+</span> self.bid
-</span></span><span style=display:flex><span>   <span style=color:#09f;font-style:italic>// Update amount returnable to previous bidder
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span>   self.returns[self.bidder] <span style=color:#555>=</span> nret
-</span></span><span style=display:flex><span>   self.bidder <span style=color:#555>=</span> msg<span style=color:#555>::</span>sender
-</span></span><span style=display:flex><span>   self.bid <span style=color:#555>=</span> msg<span style=color:#555>::</span>value
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> withdraw()<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   uint256 amount <span style=color:#555>=</span> self.returns[msg<span style=color:#555>::</span>sender]
-</span></span><span style=display:flex><span>   self.returns[msg<span style=color:#555>::</span>sender] <span style=color:#555>=</span> <span style=color:#f60>0</span>
-</span></span><span style=display:flex><span>   evm<span style=color:#555>::</span>util<span style=color:#555>::</span>transfer(msg<span style=color:#555>::</span>sender,amount)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> end()
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>sender <span style=color:#555>==</span> self.seller<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   evm<span style=color:#555>::</span>util<span style=color:#555>::</span>transfer(self.seller,self.bid)
+trying to block new bids by forcing out-of-gas conditions):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>type</span> <span class=n>Auction</span> <span class=k>is</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=n>address</span> <span class=n>seller</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>address</span> <span class=n>bidder</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>uint256</span> <span class=n>bid</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>map</span><span class=o>&lt;</span><span class=n>uint256</span><span class=o>&gt;</span> <span class=n>returns</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=n>Auction</span> <span class=n>self</span> <span class=o>=</span> <span class=p>{</span> <span class=p>...,</span> <span class=n>returns</span><span class=o>:</span> <span class=p>[</span><span class=mi>0</span><span class=p>;</span> <span class=n>MAX_UINT160</span><span class=o>+</span><span class=mi>1</span><span class=p>]}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>bid</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span> <span class=o>&gt;</span> <span class=n>self</span><span class=p>.</span><span class=n>bid</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=c1>// Calculate new return
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=n>uint256</span> <span class=n>nret</span> <span class=o>=</span> <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>self</span><span class=p>.</span><span class=n>bidder</span><span class=p>]</span> <span class=o>+</span> <span class=n>self</span><span class=p>.</span><span class=n>bid</span>
+</span></span><span class=line><span class=cl>   <span class=c1>// Update amount returnable to previous bidder
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>self</span><span class=p>.</span><span class=n>bidder</span><span class=p>]</span> <span class=o>=</span> <span class=n>nret</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>bidder</span> <span class=o>=</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>bid</span> <span class=o>=</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>withdraw</span><span class=p>()</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>uint256</span> <span class=n>amount</span> <span class=o>=</span> <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>   <span class=n>evm</span><span class=o>::</span><span class=n>util</span><span class=o>::</span><span class=n>transfer</span><span class=p>(</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>,</span><span class=n>amount</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>end</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>==</span> <span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>evm</span><span class=o>::</span><span class=n>util</span><span class=o>::</span><span class=n>transfer</span><span class=p>(</span><span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=p>,</span><span class=n>self</span><span class=p>.</span><span class=n>bid</span><span class=p>)</span>
 </span></span></code></pre></div><p>Here, I&rsquo;ve used a <code>map&lt;uint256></code> to map addresses to balances. To
 make Whiley happy, I&rsquo;ve initialised it with an empty array covering
 the entire address space (which effectively models how the EVM
@@ -101,10 +101,10 @@ for this which automatically revert on overflow. This is nice, but it
 does cost some gas to do the check! Instead, we can use Whiley to
 check the contract for us.</p><p>The question is: <em>how can we prevent this overflow?</em> Well, we just
 have to ensure that any new bid can be placed into <code>returns</code>. We can
-do this using a contract invariant as follows:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Auction <span style=color:#069;font-weight:700>is</span> {
-</span></span><span style=display:flex><span>   ...
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>where</span> (returns[bidder] <span style=color:#555>+</span> bid) <span style=color:#555>&lt;=</span> MAX_UINT256
+do this using a contract invariant as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>type</span> <span class=n>Auction</span> <span class=k>is</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>where</span> <span class=p>(</span><span class=n>returns</span><span class=p>[</span><span class=n>bidder</span><span class=p>]</span> <span class=o>+</span> <span class=n>bid</span><span class=p>)</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
 </span></span></code></pre></div><p>Here, <code>MAX_UINT256</code> is the maximum value representable by a <code>uint256</code>
 (i.e. <code>2^256 - 1</code>). This says that, for every highest bidder, there
 must be space in <code>returns</code> for their bid in the event they get ousted.
@@ -114,18 +114,18 @@ Verifying our contract now gives a new error:</p><pre tabindex=0><code>type inva
 </code></pre><p>This makes sense because our invariant won&rsquo;t hold after this
 assignment! That is there wouldn&rsquo;t be space now to store <code>bid</code> again
 into <code>returns</code>. There are different ways to solve this, but a simple
-option is to reset the bid:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span>   uint256 nret <span style=color:#555>=</span> self.returns[self.bidder] <span style=color:#555>+</span> self.bid
-</span></span><span style=display:flex><span>   self.bid <span style=color:#555>=</span> <span style=color:#f60>0</span>
-</span></span><span style=display:flex><span>   self.returns[self.bidder] <span style=color:#555>=</span> nret
+option is to reset the bid:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl>   <span class=n>uint256</span> <span class=n>nret</span> <span class=o>=</span> <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>self</span><span class=p>.</span><span class=n>bidder</span><span class=p>]</span> <span class=o>+</span> <span class=n>self</span><span class=p>.</span><span class=n>bid</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>bid</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>   <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>self</span><span class=p>.</span><span class=n>bidder</span><span class=p>]</span> <span class=o>=</span> <span class=n>nret</span>
 </span></span></code></pre></div><p>By reseting <code>self.bid</code>, the invariant on <code>returns</code> holds as we update
 it. Having done this, there is still another error:</p><pre tabindex=0><code>type invariant may not be satisfied
    self.bid = msg::value
               ^^^^^^^^^^
 </code></pre><p>The issue is that we haven&rsquo;t restricted the new bidder based on their
-bidding history. We can do this with another precondition:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> bid()
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>value <span style=color:#555>&gt;</span> self.bid
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Restrict bidder based on their history
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> self.returns[msg<span style=color:#555>::</span>sender] <span style=color:#555>+</span> msg<span style=color:#555>::</span>value <span style=color:#555>&lt;=</span> MAX_UINT256
+bidding history. We can do this with another precondition:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>bid</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span> <span class=o>&gt;</span> <span class=n>self</span><span class=p>.</span><span class=n>bid</span>
+</span></span><span class=line><span class=cl><span class=c1>// Restrict bidder based on their history
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>+</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
 </span></span></code></pre></div><p>We are close now, but amazingly we still have a problem! Here is the
 error being reported:</p><pre tabindex=0><code>type invariant may not be satisfied
    self.bid = msg::value
@@ -134,35 +134,35 @@ error being reported:</p><pre tabindex=0><code>type invariant may not be satisfi
 should work</em>. But, no &mdash; there is still an overflow bug! The
 problem occurs when the previous highest bidder and the new bidder
 <em>are the same person</em>. Again, there are different ways to solve this
-but the simplest is to prevent a bidder from besting themselves:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#09f;font-style:italic>// Bidder cannot best themself
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>sender <span style=color:#555>!=</span> self.bidder
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Restrict bidder based on their history
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> self.returns[msg<span style=color:#555>::</span>sender] <span style=color:#555>+</span> msg<span style=color:#555>::</span>value <span style=color:#555>&lt;=</span> MAX_UINT256<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   ...
+but the simplest is to prevent a bidder from besting themselves:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// Bidder cannot best themself
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>!=</span> <span class=n>self</span><span class=p>.</span><span class=n>bidder</span>
+</span></span><span class=line><span class=cl><span class=c1>// Restrict bidder based on their history
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>self</span><span class=p>.</span><span class=n>returns</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>+</span> <span class=n>msg</span><span class=o>::</span><span class=n>value</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=p>...</span>
 </span></span></code></pre></div><p>And now it verifies! At this point, there is more we could do to
 tidy things up. For example, reseting the bid with <code>self.bid = 0</code> was
 quite ugly and, with care, we can get rid of that. Likewise, we might
 want to double-check that <code>self.bid</code> actually <em>increases</em> after
 <code>bid()</code> is called, etc.</p><h3 id=version-3>Version 3</h3><p>The final issue is preventing multiple auction endings. For this, we
-can use a flag to signal when it has ended:</p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Whiley data-lang=Whiley><span style=display:flex><span><span style=color:#069;font-weight:700>type</span> Auction <span style=color:#069;font-weight:700>is</span> {
-</span></span><span style=display:flex><span>   ...
-</span></span><span style=display:flex><span>   <span style=color:#078;font-weight:700>bool</span> ended
-</span></span><span style=display:flex><span>} <span style=color:#069;font-weight:700>where</span> (returns[bidder] <span style=color:#555>+</span> bid) <span style=color:#555>&lt;=</span> MAX_UINT256
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> bid()
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Cannot bid if auction over
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> <span style=color:#555>!</span>self.ended
-</span></span><span style=display:flex><span>  ...
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#069;font-weight:700>public</span> <span style=color:#069;font-weight:700>export</span> <span style=color:#069;font-weight:700>method</span> end()
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Cannot end auction more than once!
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> <span style=color:#555>!</span>self.ended
-</span></span><span style=display:flex><span><span style=color:#09f;font-style:italic>// Only seller can end the auction!
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span><span style=color:#069;font-weight:700>requires</span> msg<span style=color:#555>::</span>sender <span style=color:#555>==</span> self.seller<span style=color:#555>:</span>
-</span></span><span style=display:flex><span>   <span style=color:#09f;font-style:italic>// End the auction
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span>   self.ended <span style=color:#555>=</span> <span style=color:#069;font-weight:700>true</span>
-</span></span><span style=display:flex><span>   <span style=color:#09f;font-style:italic>// Transfer the winnings
-</span></span></span><span style=display:flex><span><span style=color:#09f;font-style:italic></span>   evm<span style=color:#555>::</span>util<span style=color:#555>::</span>transfer(self.seller,self.bid)
+can use a flag to signal when it has ended:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=kd>type</span> <span class=n>Auction</span> <span class=k>is</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=p>...</span>
+</span></span><span class=line><span class=cl>   <span class=kt>bool</span> <span class=n>ended</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=k>where</span> <span class=p>(</span><span class=n>returns</span><span class=p>[</span><span class=n>bidder</span><span class=p>]</span> <span class=o>+</span> <span class=n>bid</span><span class=p>)</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>bid</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1>// Cannot bid if auction over
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=o>!</span><span class=n>self</span><span class=p>.</span><span class=n>ended</span>
+</span></span><span class=line><span class=cl>  <span class=p>...</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>public</span> <span class=k>export</span> <span class=kd>method</span> <span class=n>end</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1>// Cannot end auction more than once!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=o>!</span><span class=n>self</span><span class=p>.</span><span class=n>ended</span>
+</span></span><span class=line><span class=cl><span class=c1>// Only seller can end the auction!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>==</span> <span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=c1>// End the auction
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=n>self</span><span class=p>.</span><span class=n>ended</span> <span class=o>=</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>   <span class=c1>// Transfer the winnings
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=n>evm</span><span class=o>::</span><span class=n>util</span><span class=o>::</span><span class=n>transfer</span><span class=p>(</span><span class=n>self</span><span class=p>.</span><span class=n>seller</span><span class=p>,</span><span class=n>self</span><span class=p>.</span><span class=n>bid</span><span class=p>)</span>
 </span></span></code></pre></div><p>What we can see here is that, once <code>ended</code> has been set it cannot be
 unset. Thus, no bids can be accepted after this point and, likewise,
 <code>end()</code> cannot be called again. Note, <code>withdraw()</code> remains untouched
