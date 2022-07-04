@@ -1,1 +1,7 @@
-<center><iframe class="youtube" src="https://www.youtube.com/embed/{{.Params.id}}" width="{{.Params.width}}" height="{{.Params.height}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center>
+{{if eq "" (.Get "center")}}
+<center>
+{{end}}  
+<iframe {{if (.Get "class")}}class="{{(.Get "class")}}"{{else}}class="youtube"{{end}} src="https://www.youtube.com/embed/{{.Params.id}}" {{if (.Get "width")}}width="{{.Params.width}}"{{end}} {{if (.Get "height")}}height="{{.Params.height}}"{{end}} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{{if eq "" (.Get "center")}}
+</center>
+{{end}}  
