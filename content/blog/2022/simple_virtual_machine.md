@@ -65,6 +65,113 @@ systems could easily be used as well,
 (e.g. [Dafny](https://dafny.org/), the [K
 framework](https://kframework.org/), etc).
 
+## Formalisation
+
+We begin the formalisation process by defining the notion of a machine
+state as follows:
+
+```whiley
+public type SVM is {
+   u16 pc,
+   u16 sp,
+   u16[] data,
+   u16[] stack,
+   u8[] code
+}
+where sp <= |stack| && |stack| < 65536 
+where pc <= |code| && |code| < 65536
+```
+
+This defines the essential components of our virtual machine.  For
+simplicity, the `code` sequence is an array of bytes separate from the
+`data` section (i.e. we're not following a {{<wikip
+page="Von_Neumann_architecture">}}Von Neumann
+Architecture{{</wikip>}}).  In addition, I'm imposed some constraints:
+**(1)** on `sp` and the maximum stack size; **(2)** on `pc` and the
+maximum code size.  In principle, we could limit the data size as well
+(though this is not really necessary).
+
+Now, before formalising the individual bytecodes, its useful to have a
+notion of the machine being *halted*.  This is just helpful to signal
+error states, and we can define it as follows:
+
+```whiley
+public property isHalted(SVM st) -> (bool r):
+    return st.pc == |st.code|
+```
+
+Basically, whenever the `pc` is passed the end of the `code` size,
+then we consider the machine to be "halted".  Once it reaches this
+state, then execution is finished.
+
+### Bytecodes
+
+We now need to formalise the *semantics* of each bytecode.  That is,
+specify how each bytecode should execute.  A simple example is the following:
+
+```whiley
+property evalPOP(SVM st) -> (SVM nst):
+    if st.sp >= 1:
+        return pop(st)
+    else:
+        return halt(st)
+```
+
+This specifies that evaluating a `POP` bytecode requires at least one
+element on the stack, otherwise the machine halts.  If there is one
+element, then its popped off.  This uses two helpers `halt` and `pop`
+defined as follows:
+
+```whiley
+public property pop(SVM st) -> SVM
+requires st.sp > 0:
+   return st{sp:=st.sp-1}
+
+property halt(SVM st) -> SVM:
+   return st{pc:=|st.code|}
+```
+
+Whilst these could have been written inline, I find it helpful to give
+them more descriptive names.  I typically refer to these low-level
+building blocks as _microcodes_ and, as for a physical machine, we'll
+see these are reused a lot in defining the semantics of our bytecodes.  
+
+Another example to illustrate is the following:
+
+```whiley
+property evalADD(SVM st) -> (SVM nst):
+    if st.sp >= 2:
+        // Read operands
+        u16 r = peek(st,1)
+        u16 l = peek(st,2)
+        u16 v = (l + r) % 65536
+        // done
+        return push(pop(pop(st)),v)
+    else:
+        return halt(st)
+```
+
+Here, the right-hand side `r` is taken from the first (i.e. topmost)
+stack item, whilst the left-hand side `l` is from the second stack
+item.  Furthermore, the addition itself must be modulo `65536` in
+order that the value assigned to `v` remains within bounds.  Indeed if
+the modulo operation was left out, then the verifier would highlight a
+potential integer overflow (and this is where tools like Whiley
+shine).  Again, our definition above uses some more microcodes:
+
+```whiley
+public property push(SVM st, u16 k) -> SVM
+requires st.sp < |st.stack|:
+    return st{stack:=st.stack[st.sp:=k]}{sp:=st.sp+1}
+
+public property peek(SVM st, int n) -> u16
+requires st.sp < |st.stack|
+requires 0 < n && n <= st.sp:
+    return st.stack[st.sp - n]
+```
+
+### Execution
+
 ## References
 
    * **KEVM: A Complete Semantics of the Ethereum Virtual Machine**,
