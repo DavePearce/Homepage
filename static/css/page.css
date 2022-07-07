@@ -135,7 +135,7 @@ html, body {
     .topbar { padding: 0em; margin: 0em; align-items: center; }
     .topbar-title { font-size: 1em; }
     .topbar-subtitle { font-size: 0.75em; }
-    .topbar-subtitle::before { content: "A/Prof Computer Science"; }
+    .topbar-subtitle::before { content: "Researcher in Formal Verification"; }
     .topbar-social { line-height: 1em; font-size: 1.4em; padding: 0.25em 0.25em 0.25em 0.5em; }
     .topbar-social a { padding: 0em 0.5em 0em 0em; }
 }
@@ -145,7 +145,7 @@ html, body {
     .topbar { padding: 0em 0.5em; align-items: flex-end; }
     .topbar-title { font-size: 2em; }
     .topbar-subtitle { font-size: 1.5em; }
-    .topbar-subtitle::before { content: "Associate Professor of Computer Science"; }
+    .topbar-subtitle::before { content: "Researcher in Formal Verification"; }
     .topbar-social { font-size: 1.5em; padding: 0em 0em 0.25em 1em; }
     .topbar-social a { padding: 0em 0.25em 0em 0em; }
     .topbar-menu { font-size: 14pt; }
