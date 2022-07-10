@@ -31,14 +31,24 @@ and a _stack pointer_ (`sp`), along with a sequence of bytecodes.  To
 illustrate, here are descriptions for a few example bytecodes:
 
 {{<center>}}
-|Bytecode | Description  | Stack | Memory |
-|:-------:|:-------------|:--|:-------|
-| `NOP`   | _No-operation_ | `... ⟹   ...`     ||
-| `PUSH w`  | _Push (immediate) word onto stack_ | `... ⟹   w ...`     ||
-| `POP`   | _Pop word from stack_ | `... w ⟹   ...` ||
-| `STORE` | _Store word in memory_ | `... a w ⟹   ...` | `data[a] = w` |
-| `LOAD`  | _Load word from memory_ | `... a ⟹   w ...` | `w = data[a]` |
-| `ADD`   | _Add words together_ | `... v w  ⟹   u ...` | `u = (v+w) % 0xffff` |
+|Bytecode | Description  | Stack | Memory | PC |
+|:-------:|:-------------|:--|:-------|:-------|
+| `NOP`   | _No-operation_ ||| `PC += 1` |
+| `PUSH w`  | _Push (immediate) word_ | `.. ⟹   w ..` || `PC += 2` |
+| `POP`   | _Pop word from stack_ | `.. w ⟹   ..` || `PC += 1` |
+| `STORE` | _Store word in memory_ | `.. a w ⟹   ..` | `data[a] = w` | `PC += 1` |
+| `LOAD`  | _Load word from memory_ | `.. a ⟹   w ..` | `w = data[a]` | `PC += 1` |
+| `ADD`   | _Add words_ | `.. v w  ⟹   u ..` || `PC += 1` |
+||| **where** `u = (v+w) % 0xFFFF`{{<br>}} |||
+| `SUB`   | _Subtract words_ | `.. v w  ⟹   u ..` || `PC += 1` |
+||| **where** `u = (v-w) % 0xFFFF`{{<br>}} |||
+| `MUL`   | _Multiply words_ | `.. v w  ⟹   u ..` || `PC += 1` |
+||| **where** `u = (v*w) % 0xFFFF`{{<br>}} |||
+| `DIV`   | _Divide words_ | `.. v w  ⟹   u ..` **if** `w != 0` || `PC += 1` |
+||| **where** `u = v/w` |||
+| `JMP w`   | _Unconditional Branch_ ||| `pc += 2+w` |
+| `JZ w`   | _Conditional Branch_ | `v ⟹   ..` || `pc += 2` **if** `v!=0`|
+||||| `pc += 2+w` **if** `v==0`|
 {{</center>}}
 
 This provides a fairly typical description for a bytecode machine
@@ -47,7 +57,7 @@ This provides a fairly typical description for a bytecode machine
 Each bytecode typically has an effect on the stack, and may also
 effect the memory.  The effect on the stack is described as a rewrite
 popping zero or more elements on the stack, and pushing zero or more
-elements on the stack.  For example, the effect `... w ⟹ ...` for
+elements on the stack.  For example, the effect `.. w ⟹ ..` for
 `POP` states that, for the bytecode to execute, there must be at least
 one word `w` on the stack and, afterwards, that word is removed (but
 everything else remains the same).  Likewise, the memory effect for
@@ -80,8 +90,8 @@ public type SVM is {
    u16[] stack,
    u8[] code
 }
-where sp <= |stack| && |stack| < 65536 
-where pc <= |code| && |code| < 65536
+where sp <= |stack| && |stack| < 0xFFFF 
+where pc <= |code| && |code| < 0xFFFF
 ```
 
 This defines the essential components of our virtual machine.  For
@@ -148,7 +158,7 @@ property evalADD(SVM st) -> (SVM nst):
         // Read operands
         u16 r = peek(st,1)
         u16 l = peek(st,2)
-        u16 v = (l + r) % 65536
+        u16 v = (l + r) % 0xFFFF
         // done
         return push(pop(pop(st)),v)
     else:
@@ -157,11 +167,12 @@ property evalADD(SVM st) -> (SVM nst):
 
 Here, the right-hand side `r` is taken from the first (i.e. topmost)
 stack item, whilst the left-hand side `l` is from the second stack
-item.  Furthermore, the addition itself must be modulo `65536` in
-order that the value assigned to `v` remains within bounds.  Indeed if
-the modulo operation was left out, then the verifier would highlight a
-potential integer overflow (and this is where tools like Whiley
-shine).  Again, our definition above uses some more microcodes:
+item.  Furthermore, the addition itself must be modulo `0xFFFF`
+(`65546`) in order that the value assigned to `v` remains within
+bounds.  Indeed if the modulo operation was left out, then the
+verifier would highlight a potential integer overflow (and this is
+where tools like Whiley shine).  Again, our definition above uses some
+more microcodes:
 
 ```whiley
 public property push(SVM st, u16 k) -> SVM
@@ -196,7 +207,7 @@ requires !isHalted(st):
       return evalNOP(nst)
    ...
    else if opcode == POP:
-      return stepPOP(nst)
+      return evalPOP(nst)
    ...
    else:
       // Force machine to halt
@@ -230,6 +241,13 @@ to illustrate.
 
 ## Conclusion
 
+## TODO
+
+   * Division and remainder are non-euclidean!
+   * Discuss precondition on div!
+   * Explain update syntax `vm{pc:=pc+1}`.
+   * SVM differs on `LOAD` and `STORE`.
+   
 ## References
 
    * **KEVM: A Complete Semantics of the Ethereum Virtual Machine**,
