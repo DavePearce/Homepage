@@ -1,123 +1,121 @@
 ---
 date: 2016-08-03
 title: "Flow Typing with Constrained Types"
-draft: true
+draft: false
 ---
 
-<a href="https://en.wikipedia.org/wiki/Flow-sensitive_typing">Flow-sensitive typing</a> (a.k.a. "Flow Typing") is definitely getting more popular these days. <a href="https://en.wikipedia.org/wiki/Ceylon_(programming_language)">Ceylon</a>, <a href="https://en.wikipedia.org/wiki/Kotlin_(programming_language)">Kotlin</a>, <a href="https://en.wikipedia.org/wiki/TypeScript">TypeScript</a>, <a href="https://en.wikipedia.org/wiki/Racket_(programming_language)">Racket</a>, <a href="https://en.wikipedia.org/wiki/Whiley_(programming_language)">Whiley</a> all support flow typing in some form. Then, of course, there's <a href="https://github.com/facebook/flow/wiki">Facebook Flow</a> and the list goes on!
+{{<wikip page="Flow-sensitive_typing">}}Flow-sensitive typing{{</wikip>}} (a.k.a. "Flow Typing") is definitely getting more popular these days. {{<wikip page="Ceylon_(programming_language)">}}Ceylon{{</wikip>}}, {{<wikip page="Kotlin_(programming_language)">}}Kotlin{{</wikip>}}, {{<wikip page="TypeScript">}}TypeScript{{</wikip>}}, {{<wikip page="Racket_(programming_language)">}}Racket{{</wikip>}}, {{<wikip page="Whiley_(programming_language)">}}Whiley{{</wikip>}} all support flow typing in some form. Then, of course, there's [Facebook Flow](https://flow.org) and the list goes on!
 
-Recently, I've made some fairly major updates to the internals of the Whiley compiler (basically, redesigning the intermediate language). In doing so, I came across an interesting problem which I wanted to get down on paper. The problem arises when flow typing meets constrained types (a.k.a. types with invariants). <em>What does a constrained type look like?</em> Here's an example in Whiley:
+Recently, I've made some fairly major updates to the internals of the Whiley compiler (basically, redesigning the intermediate language). In doing so, I came across an interesting problem which I wanted to get down on paper. The problem arises when flow typing meets constrained types (a.k.a. types with invariants). *What does a constrained type look like?* Here's an example in Whiley:
 
-[whiley]
-type nat is (int x) where x &gt;= 0
-[/whiley]
+```whiley
+type nat is (int x) where x >= 0
+```
 
-This defines a type <code>nat</code> which contain all integer values <code>x</code>, where <code>x &gt;= 0</code>. Constrained types are quite powerful and Whiley attempts to seamlessly integrate them with flow typing. Here's a simple program to illustrate:
+This defines a type `nat` which contain all integer values `x`, where `x >= 0`. Constrained types are quite powerful and Whiley attempts to seamlessly integrate them with flow typing. Here's a simple program to illustrate:
 
-[whiley]
-function abs(int x) -&gt; (nat r):
-    if x &gt;= 0:
+```whiley
+function abs(int x) -> (nat r):
+    if x >= 0:
         return x
     else:
         return -x
-[/whiley]
+```
 
-The type of <code>x</code> is initially <code>int</code>. On the true branch, we know <code>x &gt;= 0</code> and (roughly speaking) the compiler automatically promotes <code>x</code> to type <code>nat</code> as needed.
-<h2>The Problem</h2>
+The type of `x` is initially `int`. On the true branch, we know `x >= 0` and (roughly speaking) the compiler automatically promotes `x` to type `nat` as needed.
+## The Problem
 An interesting challenge arises within the compiler when reasoning about constrained types and flow typing. To understand, we need to consider how flow typing works in general. The following gives a rough outline:
 
-[whiley]
+```whiley
 S x = ...
 
 if x is T:
    ...
 else:
    ...
-[/whiley]
+```
 
-Here, <code>S</code> and <code>T</code> are some arbitrary types where <code>T</code> is a subtype of <code>S</code>. The compiler <em>retypes</em> variable <code>x</code> on the true branch to have type <code>S &amp; T</code> and, on the false branch, to type <code>S &amp; !T</code> (which you can think of as <code>S - T</code>). To make it concrete, consider the case for <code>int|null</code> and <code>int</code>:
+Here, `S` and `T` are some arbitrary types where `T` is a subtype of `S`. The compiler *retypes* variable `x` on the true branch to have type `S & T` and, on the false branch, to type `S & !T` (which you can think of as `S - T`). To make it concrete, consider the case for `int|null` and `int`:
 
-[whiley]
+```whiley
 int|null x = ...
 
 if x is int:
    ...
 else:
    ...
-[/whiley]
+```
 
-On the true branch, <code>x</code> has type <code>(int|null)&amp;int</code> (which reduces to <code>int</code>) and, on the false branch, it has type <code>(int|null)&amp;!int</code> (which reduces to <code>null</code>).
+On the true branch, `x` has type `(int|null)&int` (which reduces to `int`) and, on the false branch, it has type `(int|null)&!int` (which reduces to `null`).
 
-The basic plan outlined above works pretty well, but things get interesting with constrained types. For example, let's use <code>nat</code> for the type test instead of <code>int</code> above:
+The basic plan outlined above works pretty well, but things get interesting with constrained types. For example, let's use `nat` for the type test instead of `int` above:
 
-[whiley]
+```whiley
 int|null x = ...
 
 if x is nat:
    ...
 else:
    ...
-[/whiley]
+```
 
-The type of <code>x</code> on the true branch is <code>(int|null)&amp;nat</code>, <em>but what does this reduce to?</em> A simple idea is to replace <code>nat</code> with its <em>underlying type</em> (i.e. <code>int</code>). We know this works as it's exactly what we had before. <em>But, what about the false branch?</em> Reducing <code>(int|null)&amp;!nat</code> in this way gives us <code>null</code> as before which, unfortunately, is wrong. The problem is that, on the false branch, <code>x</code> can still hold values of <code>int</code> type (i.e. <em>negative</em> values).
+The type of `x` on the true branch is `(int|null)&nat`, *but what does this reduce to?* A simple idea is to replace `nat` with its *underlying type* (i.e. `int`). We know this works as it's exactly what we had before. *But, what about the false branch?* Reducing `(int|null)&!nat` in this way gives us `null` as before which, unfortunately, is wrong. The problem is that, on the false branch, `x` can still hold values of `int` type (i.e. *negative* values).
 
-<h2>Mitigating Factors</h2>
+## Mitigating Factors
 The Whiley compiler already reasons correctly about flow typing in the presence of arbitrary conditionals. For example, consider this variant on our example from before:
 
-[whiley]
+```whiley
 int|null x = ...
 
-if x is int &amp;&amp; x &gt;= 0:
+if x is int && x >= 0:
    ...
 else:
    ...
-[/whiley]
+```
 
-In this case, the Whiley compiler will correctly conclude that <code>x</code> has type <code>int|null</code> on the false branch. <em>Then why not just expand constrained types like this and be done?</em> That's a good question. The answer is that, if we expand types in this way, <em>we lose nominal information about them</em>. For example, we'd lose the connection between <code>x</code> and type <code>nat</code> above, as <code>x</code>'s type on the either branch would be in terms of <code>int</code> and <code>null</code> only.
+In this case, the Whiley compiler will correctly conclude that `x` has type `int|null` on the false branch. *Then why not just expand constrained types like this and be done?* That's a good question. The answer is that, if we expand types in this way, *we lose nominal information about them*. For example, we'd lose the connection between `x` and type `nat` above, as `x`'s type on the either branch would be in terms of `int` and `null` only.
 
-<em>So, do we really need this nominal information?</em> The answer is, technically speaking, no we don't.  Expanding types in this way is how the Whiley compiler currently works. But, nominal information helps with providing good error messages and, turns out, that's important!
+*So, do we really need this nominal information?* The answer is, technically speaking, no we don't.  Expanding types in this way is how the Whiley compiler currently works. But, nominal information helps with providing good error messages and, turns out, that's important!
 
-<h2>The Solution?</h2>
-My proposed solution stems from ideas currently being used in the Whiley compiler, namely the concept of <em>maximal</em> and <em>minimal</em> consumption of types. The idea is that the maximal consumption of a type is the largest set of values it could consume. For type <code>nat</code>, the maximal consumption is <code>int</code>. The minimal consumption is the exact oppostite --- the smallest set of values it must consume. For type <code>nat</code>, this is <code>void</code> because <code>nat</code> does not consume all possible integers. Note that the minimal consumption is not always <code>void</code>. For example, the minimal consumption for <code>null|nat</code> is <code>null</code> because <code>null</code> values are <em>always</em> consumed.
+## The Solution?
+My proposed solution stems from ideas currently being used in the Whiley compiler, namely the concept of *maximal* and *minimal* consumption of types. The idea is that the maximal consumption of a type is the largest set of values it could consume. For type `nat`, the maximal consumption is `int`. The minimal consumption is the exact oppostite --- the smallest set of values it must consume. For type `nat`, this is `void` because `nat` does not consume all possible integers. Note that the minimal consumption is not always `void`. For example, the minimal consumption for `null|nat` is `null` because `null` values are *always* consumed.
 
-This probably seems a little confusing right now, but it will start to make sense! The key idea behind my solution is the introduction of two new operators over types, namely <code>⌈T⌉</code> (ceiling) and <code>⌊T⌋</code> (floor) for representing maximal and minimal consumption for a type <code>T</code>. With these, we can now correctly type our program from before <em>without losing nominal information</em>:
+This probably seems a little confusing right now, but it will start to make sense! The key idea behind my solution is the introduction of two new operators over types, namely `⌈T⌉` (ceiling) and `⌊T⌋` (floor) for representing maximal and minimal consumption for a type `T`. With these, we can now correctly type our program from before *without losing nominal information*:
 
-[whiley]
+```whiley
 int|null x = ...
 
 if x is nat:
    ...
 else:
    ...
-[/whiley]
+```
 
-On the true branch, <code>x</code> is given the type <code>(int|null) &amp; ⌈nat⌉</code>, whilst on the false branch it's given the type <code>(int|null) &amp; !⌊nat⌋</code>. Here, the underlying type for <code>(int|null) &amp; ⌈nat⌉</code> is <code>int</code>, whilst for <code>(int|null) &amp; !⌊nat⌋</code> it's <code>int|null</code>.
+On the true branch, `x` is given the type `(int|null) & ⌈nat⌉`, whilst on the false branch it's given the type `(int|null) & !⌊nat⌋`. Here, the underlying type for `(int|null) & ⌈nat⌉` is `int`, whilst for `(int|null) & !⌊nat⌋` it's `int|null`.
 
-The point of these new operators is that they allow us to delay calculating the underlying type for <code>x</code> <em>until we need it</em>. In other words, they allow us to retain nominal information for as long as possible.
+The point of these new operators is that they allow us to delay calculating the underlying type for `x` *until we need it*. In other words, they allow us to retain nominal information for as long as possible.
 
-<h2>Observations</h2>
+## Observations
 
 These two operators are interesting and it turns out there are few observations we can make about them:
 
-<ul>
-	<li>For any <strong>primitive type</strong> <code>T</code>, we have that <code>T</code> is equivalent to both <code>⌊T⌋</code> and <code>⌈T⌉</code>.</li>
+   * For any **primitive type** `T`, we have that `T` is equivalent to both `⌊T⌋` and `⌈T⌉`.
 
-	<li>For any <strong>negation type</strong> <code>!T</code>, we have that <code>⌊!T⌋</code> is equivalent to  <code>!⌈T⌉</code> and <code>⌈!T⌉</code> is equivalent to  <code>!⌊T⌋</code>.</li>
+   * For any **negation type** `!T`, we have that `⌊!T⌋` is equivalent to  `!⌈T⌉` and `⌈!T⌉` is equivalent to  `!⌊T⌋`.
 
-        <li>For any <strong>union type</strong> <code>T1 || T2</code>, we have that <code>⌊T1 || T2⌋</code> is equivalent to <code>⌊T1⌋ || ⌊T2⌋</code>, whilst <code>⌈T1 || T2⌉</code> is equivalent to <code>⌈T1⌉ || ⌈T2⌉</code>.</li>
+   * For any **union type** `T1 || T2`, we have that `⌊T1 || T2⌋` is equivalent to `⌊T1⌋ || ⌊T2⌋`, whilst `⌈T1 || T2⌉` is equivalent to `⌈T1⌉ || ⌈T2⌉`.
 
-        <li>For any <strong>intersection type</strong> <code>T1 && T2</code>, we have that <code>⌊T1 && T2⌋</code> is equivalent to <code>⌊T1⌋ && ⌊T2⌋</code>, whilst <code>⌈T1 && T2⌉</code> is equivalent to <code>⌈T1⌉ || ⌈T2⌉</code>.</li>
+   * For any **intersection type** `T1 && T2`, we have that `⌊T1 && T2⌋` is equivalent to `⌊T1⌋ && ⌊T2⌋`, whilst `⌈T1 && T2⌉` is equivalent to `⌈T1⌉ || ⌈T2⌉`.
 
-        <li>For any <strong>nominal type</strong> <code>N</code> declared as <code>T where e</code>, we have that <code>⌊N⌋</code> is equivalent to <code>void</code> and <code>⌈T⌉</code> is equivalent to <code>T</code>.</li>
+   * For any **nominal type** `N` declared as `T where e`, we have that `⌊N⌋` is equivalent to `void` and `⌈T⌉` is equivalent to `T`.
 
-</ul>
 
-<h2>Conclusion</h2>
+## Conclusion
 
 Using these two new operators provides a simple way to reason about flow typing over constrained types.  The next job for me is to implement this within the Whiley compiler!
 
-<h2>References</h2>
+## References
+
 Here's an interesting paper on constrained types:
-<ul>
-	<li><b>Constrained types for object-oriented languages</b>, Nathaniel Nystrom, Vijay Saraswat, Jens Palsberg, Christian Grothoff. In <em>Proceedings of OOPSLA</em>, 2008. (<a href="http://dl.acm.org/citation.cfm?id=1449800">LINK</a>)</li>
-</ul>
+
+   * **Constrained types for object-oriented languages**, Nathaniel Nystrom, Vijay Saraswat, Jens Palsberg, Christian Grothoff. In *Proceedings of OOPSLA*, 2008. ([LINK](http://dl.acm.org/citation.cfm?id=1449800))
