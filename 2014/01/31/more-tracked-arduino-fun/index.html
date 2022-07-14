@@ -1,0 +1,144 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="More Tracked Arduino Fun!"><meta name=twitter:title content="More Tracked Arduino Fun!"><meta property="og:url" content="https://whileydave.com/2014/01/31/more-tracked-arduino-fun/"><title>David J. Pearce
+(More Tracked Arduino Fun!)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>More Tracked Arduino Fun!</h1><div class=post-date>Friday, January
+31st,
+2014</div><hr><p>Recently, I&rsquo;ve been upgrading my <a href=http://youtu.be/pk1uAHJIMXg>tracked arduino robot</a> with a few more sensors. Check out the video:</p><center><iframe class=youtube src=https://www.youtube.com/embed/Lonxtf0-WIk frameborder=0 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center><p>The robot has two medium range IR sensors (front and back), as well as a downward facing short-range IR sensor. When the front sensor detects something is very close, the robot backs up (provided the back sensor says there is space). Finally, when the downward sensor says there is nothing below, the robots stops and won&rsquo;t move any further!</p><p>For reference, here&rsquo;s the Arduino code for the robot:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Motor Code */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>pwmA</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>pwmB</span> <span class=o>=</span> <span class=mi>11</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>dirA</span> <span class=o>=</span> <span class=mi>12</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>dirB</span> <span class=o>=</span> <span class=mi>13</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>brakeA</span> <span class=o>=</span> <span class=mi>9</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>brakeB</span> <span class=o>=</span> <span class=mi>8</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>STOP</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>SLOW</span> <span class=o>=</span> <span class=mi>100</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>MEDIUM</span> <span class=o>=</span> <span class=mi>200</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>FAST</span> <span class=o>=</span> <span class=mi>255</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>setMotors</span><span class=p>(</span><span class=kt>int</span> <span class=n>left</span><span class=p>,</span> <span class=kt>int</span> <span class=n>right</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl> <span class=n>analogWrite</span><span class=p>(</span><span class=n>pwmA</span><span class=p>,</span> <span class=n>left</span><span class=p>);</span>   
+</span></span><span class=line><span class=cl> <span class=n>analogWrite</span><span class=p>(</span><span class=n>pwmB</span><span class=p>,</span> <span class=n>right</span><span class=p>);</span>   
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>setDirections</span><span class=p>(</span><span class=kt>int</span> <span class=n>left</span><span class=p>,</span> <span class=kt>int</span> <span class=n>right</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>digitalWrite</span><span class=p>(</span><span class=n>dirA</span><span class=p>,</span><span class=n>left</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>digitalWrite</span><span class=p>(</span><span class=n>dirB</span><span class=p>,</span><span class=n>right</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>brakesOff</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl> <span class=n>digitalWrite</span><span class=p>(</span><span class=n>brakeA</span><span class=p>,</span><span class=n>LOW</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> <span class=n>digitalWrite</span><span class=p>(</span><span class=n>brakeB</span><span class=p>,</span><span class=n>LOW</span><span class=p>);</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Sensor Code */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>FRONT_SENSOR_PIN</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>UNDERNEATH_SENSOR_PIN</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>BACK_SENSOR_PIN</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>VERY_CLOSE</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>CLOSE</span> <span class=o>=</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>FAR</span> <span class=o>=</span> <span class=mi>2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>frontSensor</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl> <span class=kt>int</span> <span class=n>x</span> <span class=o>=</span> <span class=n>analogRead</span><span class=p>(</span><span class=n>FRONT_SENSOR_PIN</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl> <span class=k>if</span><span class=p>(</span><span class=n>x</span> <span class=o>&amp;</span><span class=n>gt</span><span class=p>;</span> <span class=mi>400</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>VERY_CLOSE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> <span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=n>x</span> <span class=o>&amp;</span><span class=n>gt</span><span class=p>;</span> <span class=mi>300</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>CLOSE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>FAR</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>backSensor</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl> <span class=kt>int</span> <span class=n>x</span> <span class=o>=</span> <span class=n>analogRead</span><span class=p>(</span><span class=n>BACK_SENSOR_PIN</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl> <span class=k>if</span><span class=p>(</span><span class=n>x</span> <span class=o>&amp;</span><span class=n>gt</span><span class=p>;</span> <span class=mi>600</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>VERY_CLOSE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> <span class=k>else</span> <span class=k>if</span><span class=p>(</span><span class=n>x</span> <span class=o>&amp;</span><span class=n>gt</span><span class=p>;</span> <span class=mi>400</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>CLOSE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>FAR</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>underneathSensor</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl> <span class=kt>int</span> <span class=n>x</span> <span class=o>=</span> <span class=n>analogRead</span><span class=p>(</span><span class=n>UNDERNEATH_SENSOR_PIN</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl> <span class=k>if</span><span class=p>(</span><span class=n>x</span> <span class=o>&amp;</span><span class=n>lt</span><span class=p>;</span> <span class=mi>300</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>CLOSE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>FAR</span><span class=p>;</span>
+</span></span><span class=line><span class=cl> <span class=p>}</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Setup Code */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>setup</span><span class=p>()</span> <span class=p>{</span>   
+</span></span><span class=line><span class=cl> <span class=n>pinMode</span><span class=p>(</span><span class=n>pwmA</span><span class=p>,</span> <span class=n>OUTPUT</span><span class=p>);</span>  <span class=c1>//Set control pins to be outputs
+</span></span></span><span class=line><span class=cl><span class=c1></span> <span class=n>pinMode</span><span class=p>(</span><span class=n>pwmB</span><span class=p>,</span> <span class=n>OUTPUT</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> <span class=n>pinMode</span><span class=p>(</span><span class=n>dirA</span><span class=p>,</span> <span class=n>OUTPUT</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> <span class=n>pinMode</span><span class=p>(</span><span class=n>dirB</span><span class=p>,</span> <span class=n>OUTPUT</span><span class=p>);</span> 
+</span></span><span class=line><span class=cl> <span class=n>pinMode</span><span class=p>(</span><span class=n>FRONT_SENSOR_PIN</span><span class=p>,</span> <span class=n>INPUT</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> <span class=n>pinMode</span><span class=p>(</span><span class=n>UNDERNEATH_SENSOR_PIN</span><span class=p>,</span> <span class=n>INPUT</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl> <span class=n>analogWrite</span><span class=p>(</span><span class=n>pwmA</span><span class=p>,</span> <span class=n>STOP</span><span class=p>);</span>        
+</span></span><span class=line><span class=cl> <span class=n>analogWrite</span><span class=p>(</span><span class=n>pwmB</span><span class=p>,</span> <span class=n>STOP</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl> <span class=n>setDirections</span><span class=p>(</span><span class=n>HIGH</span><span class=p>,</span><span class=n>HIGH</span><span class=p>);</span>
+</span></span><span class=line><span class=cl> <span class=n>brakesOff</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl> <span class=n>delay</span><span class=p>(</span><span class=mi>3000</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Controller Code */</span>
+</span></span><span class=line><span class=cl><span class=cm>/* ============================================= */</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>loop</span><span class=p>()</span> <span class=p>{</span>  
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>front</span> <span class=o>=</span> <span class=n>frontSensor</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>back</span> <span class=o>=</span> <span class=n>backSensor</span><span class=p>();</span>  
+</span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>underneath</span> <span class=o>=</span> <span class=n>underneathSensor</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=k>if</span><span class=p>(</span><span class=n>underneath</span> <span class=o>==</span> <span class=n>CLOSE</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Something underneath, continue.
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>switch</span><span class=p>(</span><span class=n>front</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=k>case</span> <span class=nl>VERY_CLOSE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span><span class=p>(</span><span class=n>back</span> <span class=o>!=</span> <span class=n>VERY_CLOSE</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=c1>// Only continue going backwards if 
+</span></span></span><span class=line><span class=cl><span class=c1></span>          <span class=c1>// there&#39;s nothing behind us.
+</span></span></span><span class=line><span class=cl><span class=c1></span>          <span class=n>setDirections</span><span class=p>(</span><span class=n>LOW</span><span class=p>,</span><span class=n>LOW</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>          <span class=n>setMotors</span><span class=p>(</span><span class=n>FAST</span><span class=p>,</span><span class=n>FAST</span><span class=p>);</span>      
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>case</span> <span class=nl>CLOSE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>setDirections</span><span class=p>(</span><span class=n>HIGH</span><span class=p>,</span><span class=n>HIGH</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>setMotors</span><span class=p>(</span><span class=n>STOP</span><span class=p>,</span><span class=n>STOP</span><span class=p>);</span>     
+</span></span><span class=line><span class=cl>        <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>case</span> <span class=nl>FAR</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>setDirections</span><span class=p>(</span><span class=n>HIGH</span><span class=p>,</span><span class=n>HIGH</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>setMotors</span><span class=p>(</span><span class=n>FAST</span><span class=p>,</span><span class=n>FAST</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=c1>// Nothing underneath, all ahead stop. 
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>setDirections</span><span class=p>(</span><span class=n>HIGH</span><span class=p>,</span><span class=n>HIGH</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=n>setMotors</span><span class=p>(</span><span class=n>STOP</span><span class=p>,</span><span class=n>STOP</span><span class=p>);</span>           
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  
+</span></span><span class=line><span class=cl>  <span class=n>delay</span><span class=p>(</span><span class=mi>100</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><hr></div></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-5582165-7","auto"),ga("send","pageview"))</script></body></html>
