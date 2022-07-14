@@ -1,17 +1,18 @@
 ---
 date: 2014-01-31
 title: "More Tracked Arduino Fun!"
-draft: true
+draft: false
 ---
 
-Recently, I've been upgrading my <a href="http://youtu.be/pk1uAHJIMXg">tracked arduino robot</a> with a few more sensors.  Check out the video:
+Recently, I've been upgrading my [tracked arduino robot](http://youtu.be/pk1uAHJIMXg) with a few more sensors.  Check out the video:
 
-<center><iframe width="560" height="315" src="//www.youtube.com/embed/Lonxtf0-WIk" frameborder="0" allowfullscreen></iframe></center>
+{{<youtube id="Lonxtf0-WIk">}}
 
 The robot has two medium range IR sensors (front and back), as well as a downward facing short-range IR sensor.  When the front sensor detects something is very close, the robot backs up (provided the back sensor says there is space).  Finally, when the downward sensor says there is nothing below, the robots stops and won't move any further!
 
 For reference, here's the Arduino code for the robot:
-[c]
+
+```c
 /* ============================================= */
 /* Motor Code */
 /* ============================================= */
@@ -145,5 +146,4 @@ void loop() {
   
   delay(100);
 }
-
-[/c]
+```
