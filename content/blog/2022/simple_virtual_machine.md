@@ -252,8 +252,8 @@ As a first example to illustrate, consider the following:
 method test_add_01():
   SVM m1 = execute(
      [LDC,2,LDC,1,ADD], // code
-     [],                // data
-     1024)              // stack
+     [], // data
+     1024) // stack size
   // Check expected output.
   assert exitCode(m1) == OK
   assert peek(m1,1) == 3
@@ -270,9 +270,9 @@ value as follows:
 ```whiley
 method test_add_02(u16 x):
   SVM m1 = execute(
-    [LOAD,0,LDC,1,ADD], // code
-    [x],                // data
-    1024)               // stack
+    [LOAD,0,LDC,1,ADD],
+    [x],
+    1024)
   // Check expected output.
   assert exitCode(m1) == OK
   assert peek(m1,1) > x
@@ -309,9 +309,9 @@ As another example, lets consider the case for division.
 ```whiley
 method test_div_01(u16 x, u16 y):
   SVM m1 = execute(
-     [LOAD,0,LOAD,1,DIV], // code
-     [x,y],               // data
-     1024)                // stack
+     [LOAD,0,LOAD,1,DIV],
+     [x,y],
+     1024)
   // Check expected output.
   assert y == 0 || exitCode(m1) == OK
 ```
