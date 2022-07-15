@@ -250,10 +250,13 @@ As a first example to illustrate, consider the following:
 
 ```whiley
 method test_add_01():
-  SVM m1 = svm::execute([LDC,2,LDC,1,ADD],[],1024)
+  SVM m1 = execute(
+     [LDC,2,LDC,1,ADD], // code
+     [],                // data
+     1024)              // stack
   // Check expected output.
-  assert svm::exitCode(m1) == OK
-  assert svm::peek(m1,1) == 3
+  assert exitCode(m1) == OK
+  assert peek(m1,1) == 3
 ```
 
 This method is statically verified by Whiley.  However its pretty
@@ -266,10 +269,13 @@ value as follows:
 
 ```whiley
 method test_add_02(u16 x):
-  SVM m1 = svm::execute([LOAD,0,LDC,1,ADD],[x],1024)
+  SVM m1 = execute(
+    [LOAD,0,LDC,1,ADD], // code
+    [x],                // data
+    1024)               // stack
   // Check expected output.
-  assert svm::exitCode(m1) == OK
-  assert svm::peek(m1,1) > x
+  assert exitCode(m1) == OK
+  assert peek(m1,1) > x
 ```
 
 Here, `x` is an _arbitrary_ value and, essentially, we are computing
@@ -278,8 +284,8 @@ produces an error:
 
 ```
 src/main.whiley:5:assertion may not hold
-  assert svm::peek(m1,1) > x
-       ^^^^^^^^^^^^^^^^^^^
+  assert peek(m1,1) > x
+         ^^^^^^^^^^^^^^
 ```
 
 The problem is that the `ADD` may have overflowed and wrapped around
@@ -302,9 +308,12 @@ As another example, lets consider the case for division.
 
 ```whiley
 method test_div_01(u16 x, u16 y):
-  SVM m1 = svm::execute([LOAD,0,LOAD,1,DIV],[x,y],1024)
+  SVM m1 = execute(
+     [LOAD,0,LOAD,1,DIV], // code
+     [x,y],               // data
+     1024)                // stack
   // Check expected output.
-  assert y == 0 || svm::exitCode(m1) == OK
+  assert y == 0 || exitCode(m1) == OK
 ```
 
 This statically verifies only because our final assertion is quite
@@ -315,9 +324,12 @@ Here's one possible solution:
 
 ```whiley
 method test_div_02(u16 x, u16 y):
-  SVM m1 = svm::execute([LOAD,0,LOAD,1,JZ,3,LOAD,1,DIV],[x,y],1024)
+  SVM m1 = execute(
+    [LOAD,0,LOAD,1,JZ,3,LOAD,1,DIV],
+    [x,y],
+    1024)
   // Check expected output.
-  assert svm::exitCode(m1) == OK
+  assert exitCode(m1) == OK
 ```
 
 This introduces the conditional check using the conditional branch
