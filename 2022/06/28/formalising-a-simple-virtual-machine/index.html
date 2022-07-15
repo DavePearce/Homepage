@@ -153,8 +153,8 @@ For example, we can prove <em>safety properties</em> of bytecode sequences
 optimisations</em> are sound, etc.</p><h3 id=example-1>Example 1</h3><p>As a first example to illustrate, consider the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_add_01</span><span class=p>()</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=n>SVM</span> <span class=n>m1</span> <span class=o>=</span> <span class=n>execute</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>     <span class=p>[</span><span class=n>LDC</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=n>LDC</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>ADD</span><span class=p>],</span> <span class=c1>// code
-</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=p>[],</span>                <span class=c1>// data
-</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=mi>1024</span><span class=p>)</span>              <span class=c1>// stack
+</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=p>[],</span> <span class=c1>// data
+</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=mi>1024</span><span class=p>)</span> <span class=c1>// stack size
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
 </span></span><span class=line><span class=cl>  <span class=k>assert</span> <span class=n>peek</span><span class=p>(</span><span class=n>m1</span><span class=p>,</span><span class=mi>1</span><span class=p>)</span> <span class=o>==</span> <span class=mi>3</span>
@@ -164,10 +164,10 @@ simplistic since (in this case) it does not depend on any unknown
 verification over just executing the test.</p><p>We can make our example more interesting by introducing an <em>unknown</em>
 value as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_add_02</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=n>SVM</span> <span class=n>m1</span> <span class=o>=</span> <span class=n>execute</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>    <span class=p>[</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=n>LDC</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>ADD</span><span class=p>],</span> <span class=c1>// code
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>[</span><span class=n>x</span><span class=p>],</span>                <span class=c1>// data
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=mi>1024</span><span class=p>)</span>               <span class=c1>// stack
-</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=c1>// Check expected output.
+</span></span><span class=line><span class=cl>    <span class=p>[</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=n>LDC</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>ADD</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>    <span class=p>[</span><span class=n>x</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>    <span class=mi>1024</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
 </span></span><span class=line><span class=cl>  <span class=k>assert</span> <span class=n>peek</span><span class=p>(</span><span class=n>m1</span><span class=p>,</span><span class=mi>1</span><span class=p>)</span> <span class=o>&gt;</span> <span class=n>x</span>
 </span></span></code></pre></div><p>Here, <code>x</code> is an <em>arbitrary</em> value and, essentially, we are computing
@@ -184,10 +184,10 @@ value as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code cla
 </span></span></code></pre></div><p>This essentially prevents the overflow case and, with that, the
 assertion will now statically verify.</p><h3 id=example-2>Example 2</h3><p>As another example, lets consider the case for division.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_div_01</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>,</span> <span class=n>u16</span> <span class=n>y</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=n>SVM</span> <span class=n>m1</span> <span class=o>=</span> <span class=n>execute</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>     <span class=p>[</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>DIV</span><span class=p>],</span> <span class=c1>// code
-</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=p>[</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>],</span>               <span class=c1>// data
-</span></span></span><span class=line><span class=cl><span class=c1></span>     <span class=mi>1024</span><span class=p>)</span>                <span class=c1>// stack
-</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=c1>// Check expected output.
+</span></span><span class=line><span class=cl>     <span class=p>[</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>DIV</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>     <span class=p>[</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>     <span class=mi>1024</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>y</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
 </span></span></code></pre></div><p>This statically verifies only because our final assertion is quite
 weak. Let&rsquo;s assume we wanted a code sequence which would execute
