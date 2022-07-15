@@ -86,7 +86,7 @@ We begin the formalisation process by defining the notion of a machine
 state as follows:
 
 ```whiley
-public type SVM is {
+type SVM is {
    u16 pc,
    u16 sp,
    u16[] data,
@@ -111,12 +111,12 @@ notion of the machine being *halted*.  This is just helpful to signal
 error states, and we can define it as follows:
 
 ```whiley
-public property isHalted(SVM st) -> (bool r):
-    return st.pc >= |st.code|
+property isHalted(SVM st) -> (bool r):
+  return st.pc >= |st.code|
     
-public property exitCode(SVM st) -> (u8 r)
+property exitCode(SVM st) -> (u8 r)
 requires isHalted(st):
-    return |st.code| - st.pc
+  return |st.code| - st.pc
 ```
 
 Basically, whenever the `pc` is passed the end of the `code` size,
@@ -132,10 +132,10 @@ specify how each bytecode should execute.  A simple example is the following:
 
 ```whiley
 property evalPOP(SVM st) -> (SVM nst):
-    if st.sp < 1:
-        return halt(st, STACK_OVERFLOW)
-    else:
-        return pop(st)
+  if st.sp < 1:
+    return halt(st, STACK_OVERFLOW)
+  else:
+    return pop(st)
 ```
 
 This specifies that evaluating a `POP` bytecode requires at least one
@@ -144,7 +144,7 @@ element on the stack, otherwise the machine halts (with exit code
 uses two helpers `halt` and `pop` defined as follows:
 
 ```whiley
-public property pop(SVM st) -> SVM
+property pop(SVM st) -> SVM
 requires st.sp > 0:
    return st{sp:=st.sp-1}
 
@@ -164,15 +164,15 @@ Another example to illustrate is the following:
 
 ```whiley
 property evalADD(SVM st) -> (SVM nst):
-    if st.sp < 2:
-        return halt(st, STACK_UNDERFLOW)
-    else:
-        // Read operands
-        u16 r = peek(st,1)
-        u16 l = peek(st,2)
-        u16 v = (l + r) % 0x10000
-        // done
-        return push(pop(pop(st)),v)
+  if st.sp < 2:
+    return halt(st, STACK_UNDERFLOW)
+  else:
+    // Read operands
+    u16 r = peek(st,1)
+    u16 l = peek(st,2)
+    u16 v = (l + r) % 0x10000
+    // done
+    return push(pop(pop(st)),v)
 ```
 
 Here, the right-hand side `r` is taken from the first (i.e. topmost)
@@ -185,13 +185,13 @@ where tools like Whiley shine).  Again, our definition above uses some
 more microcodes:
 
 ```whiley
-public property push(SVM st, u16 k) -> SVM
+property push(SVM st, u16 k) -> SVM
 requires st.sp < |st.stack|:
-    return st{stack:=st.stack[st.sp:=k]}{sp:=st.sp+1}
+  return st{stack:=st.stack[st.sp:=k]}{sp:=st.sp+1}
 
-public property peek(SVM st, int n) -> u16
+property peek(SVM st, int n) -> u16
 requires 0 < n && n <= st.sp:
-    return st.stack[st.sp - n]
+  return st.stack[st.sp - n]
 ```
 
 This time, the precondition for `push()` requires that _the stack cannot be full_.  Likewise, for `peek()`, we must have enough items on the stack to cover the one we're after.
@@ -209,19 +209,19 @@ the next bytecode.  For this, we have `eval()`:
 // Execute a "single step" of the machine.
 property eval(SVM st) -> (SVM res)
 requires !isHalted(st):
-   u8 opcode = st.code[st.pc]
-   // increment pc
-   SVM nst = st{pc:=st.pc+1}
-   // Decode opcode
-   if opcode == NOP:
-      return evalNOP(nst)
-   ...
-   else if opcode == POP:
-      return evalPOP(nst)
-   ...
-   else:
-      // Force machine to halt
-      return halt(nst)
+  u8 opcode = st.code[st.pc]
+  // increment pc
+  SVM nst = st{pc:=st.pc+1}
+  // Decode opcode
+  if opcode == NOP:
+    return evalNOP(nst)
+  ...
+  else if opcode == POP:
+    return evalPOP(nst)
+  ...
+  else:
+    // Force machine to halt
+    return halt(nst)
 ```
 
 There are a few things to note about this: **Firstly**, it is rather
@@ -249,11 +249,11 @@ optimisations* are sound, etc.
 As a first example to illustrate, consider the following:
 
 ```whiley
-public method test_add_01():
-    SVM m1 = svm::execute([LDC,2,LDC,1,ADD],[],1024)
-    // Check expected output.
-    assert svm::exitCode(m1) == OK
-    assert svm::peek(m1,1) == 3
+method test_add_01():
+  SVM m1 = svm::execute([LDC,2,LDC,1,ADD],[],1024)
+  // Check expected output.
+  assert svm::exitCode(m1) == OK
+  assert svm::peek(m1,1) == 3
 ```
 
 This method is statically verified by Whiley.  However its pretty
@@ -266,10 +266,10 @@ value as follows:
 
 ```whiley
 method test_add_02(u16 x):
-    SVM m1 = svm::execute([LOAD,0,LDC,1,ADD],[x],1024)
-    // Check expected output.
-    assert svm::exitCode(m1) == OK
-    assert svm::peek(m1,1) > x
+  SVM m1 = svm::execute([LOAD,0,LDC,1,ADD],[x],1024)
+  // Check expected output.
+  assert svm::exitCode(m1) == OK
+  assert svm::peek(m1,1) > x
 ```
 
 Here, `x` is an _arbitrary_ value and, essentially, we are computing
@@ -278,8 +278,8 @@ produces an error:
 
 ```
 src/main.whiley:5:assertion may not hold
-    assert svm::peek(m1,1) > x
-           ^^^^^^^^^^^^^^^^^^^
+  assert svm::peek(m1,1) > x
+       ^^^^^^^^^^^^^^^^^^^
 ```
 
 The problem is that the `ADD` may have overflowed and wrapped around
@@ -302,9 +302,9 @@ As another example, lets consider the case for division.
 
 ```whiley
 method test_div_01(u16 x, u16 y):
-    SVM m1 = svm::execute([LOAD,0,LOAD,1,DIV],[x,y],1024)
-    // Check expected output.
-    assert y == 0 || svm::exitCode(m1) == OK
+  SVM m1 = svm::execute([LOAD,0,LOAD,1,DIV],[x,y],1024)
+  // Check expected output.
+  assert y == 0 || svm::exitCode(m1) == OK
 ```
 
 This statically verifies only because our final assertion is quite
@@ -315,9 +315,9 @@ Here's one possible solution:
 
 ```whiley
 method test_div_02(u16 x, u16 y):
-    SVM m1 = svm::execute([LOAD,0,LOAD,1,JZ,3,LOAD,1,DIV],[x,y],1024)
-    // Check expected output.
-    assert svm::exitCode(m1) == OK
+  SVM m1 = svm::execute([LOAD,0,LOAD,1,JZ,3,LOAD,1,DIV],[x,y],1024)
+  // Check expected output.
+  assert svm::exitCode(m1) == OK
 ```
 
 This introduces the conditional check using the conditional branch
