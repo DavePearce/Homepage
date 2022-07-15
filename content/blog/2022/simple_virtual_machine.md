@@ -1,7 +1,7 @@
 ---
 date: 2022-06-28
 title: "Formalising a Simple Virtual Machine"
-draft: true
+draft: false
 # metaimg: "images/2022/AuctionContract_Preview.png"
 # metatxt: "Verifying a smart contract in Whiley finds lots of problems."
 #twitter: ""
@@ -36,14 +36,14 @@ illustrate, here are descriptions for a few example bytecodes:
 | `NOP`   | _No-operation_ ||| `PC += 1` |
 | `PUSH w`  | _Push (immediate) word_ | `.. ⟹   w ..` || `PC += 2` |
 | `POP`   | _Pop word from stack_ | `.. w ⟹   ..` || `PC += 1` |
-| `STORE` | _Store word in memory_ | `.. a w ⟹   ..` | `data[a] = w` | `PC += 1` |
-| `LOAD`  | _Load word from memory_ | `.. a ⟹   w ..` | `w = data[a]` | `PC += 1` |
+| `STORE k`| _Store word in memory_ | `.. w ⟹   ..` | `data[k] = w` | `PC += 1` |
+| `LOAD k` | _Load word from memory_ | `.. ⟹   w ..` | `w = data[k]` | `PC += 1` |
 | `ADD`   | _Add words_ | `.. v w  ⟹   u ..` || `PC += 1` |
-||| **where** `u = (v+w) % 0xFFFF`{{<br>}} |||
+||| **where** `u = (v+w) % 0x10000`{{<br>}} |||
 | `SUB`   | _Subtract words_ | `.. v w  ⟹   u ..` || `PC += 1` |
-||| **where** `u = (v-w) % 0xFFFF`{{<br>}} |||
+||| **where** `u = (v-w) % 0x10000`{{<br>}} |||
 | `MUL`   | _Multiply words_ | `.. v w  ⟹   u ..` || `PC += 1` |
-||| **where** `u = (v*w) % 0xFFFF`{{<br>}} |||
+||| **where** `u = (v*w) % 0x10000`{{<br>}} |||
 | `DIV`   | _Divide words_ | `.. v w  ⟹   u ..` **if** `w != 0` || `PC += 1` |
 ||| **where** `u = v/w` |||
 | `JMP w`   | _Unconditional Branch_ ||| `pc += 2+w` |
@@ -57,15 +57,18 @@ This provides a fairly typical description for a bytecode machine
 Each bytecode typically has an effect on the stack, and may also
 effect the memory.  The effect on the stack is described as a rewrite
 popping zero or more elements on the stack, and pushing zero or more
-elements on the stack.  For example, the effect `.. w ⟹ ..` for
-`POP` states that, for the bytecode to execute, there must be at least
-one word `w` on the stack and, afterwards, that word is removed (but
+elements on the stack.  For example, the effect `.. w ⟹ ..` for `POP`
+states that, for the bytecode to execute, there must be at least one
+word `w` on the stack and, afterwards, that word is removed (but
 everything else remains the same).  Likewise, the memory effect for
-`STORE` is that the word `w` is written to address `a` in the `data`
-memory.
+`STORE` is that the word `w` is written to address `k` in the `data`
+memory.  Finally, for completeness, note that (like most programming
+languages) integer division is {{<wikip
+page="Euclidean_division">}}non-Euclidean{{</wikip>}} (i.e. rounds
+_towards_ zero).
 
 Whilst the above description is fairly clear and easy to follow, there
-are still some questions.  For example, what happens if an address `a`
+are still some questions.  For example, what happens if an address `k`
 is _out of bounds_ for the `data` store?  Likewise, can the stack ever
 be full?  We might also be interested in checking whether an
 optimisation _preserves_ the program's semantics (e.g. that `PUSH 0;
@@ -91,7 +94,7 @@ public type SVM is {
    u8[] code
 }
 where sp <= |stack| && |stack| < 0xFFFF 
-where pc <= |code| && |code| < 0xFFFF
+where |code| <= 0xFF00
 ```
 
 This defines the essential components of our virtual machine.  For
@@ -109,12 +112,18 @@ error states, and we can define it as follows:
 
 ```whiley
 public property isHalted(SVM st) -> (bool r):
-    return st.pc == |st.code|
+    return st.pc >= |st.code|
+    
+public property exitCode(SVM st) -> (u8 r)
+requires isHalted(st):
+    return |st.code| - st.pc
 ```
 
 Basically, whenever the `pc` is passed the end of the `code` size,
 then we consider the machine to be "halted".  Once it reaches this
-state, then execution is finished.
+state, then execution is finished.  Furthermore, we'll exploit the
+final `pc` value to determine an exit code, such that `exitCode(vm) ==
+0` indicates execution completed normally (more on this later).
 
 ### Bytecodes
 
@@ -123,16 +132,16 @@ specify how each bytecode should execute.  A simple example is the following:
 
 ```whiley
 property evalPOP(SVM st) -> (SVM nst):
-    if st.sp >= 1:
-        return pop(st)
+    if st.sp < 1:
+        return halt(st, STACK_OVERFLOW)
     else:
-        return halt(st)
+        return pop(st)
 ```
 
 This specifies that evaluating a `POP` bytecode requires at least one
-element on the stack, otherwise the machine halts.  If there is one
-element, then its popped off.  This uses two helpers `halt` and `pop`
-defined as follows:
+element on the stack, otherwise the machine halts (with exit code
+`STACK_OVERFLOW`).  If there is one element, then its popped off.  This
+uses two helpers `halt` and `pop` defined as follows:
 
 ```whiley
 public property pop(SVM st) -> SVM
@@ -148,27 +157,28 @@ them more descriptive names.  I typically refer to these low-level
 building blocks as _microcodes_ and, as for a physical machine, we'll
 see these are reused a lot in defining the semantics of our bytecodes.
 Observe the precondition for `pop()` is that the stack cannot be
-empty.
+empty.  Also, `st{sp:=st.sp-1}` returns `st` with field `sp` updated
+to `sp-1` and all others unchanged.
 
 Another example to illustrate is the following:
 
 ```whiley
 property evalADD(SVM st) -> (SVM nst):
-    if st.sp >= 2:
+    if st.sp < 2:
+        return halt(st, STACK_UNDERFLOW)
+    else:
         // Read operands
         u16 r = peek(st,1)
         u16 l = peek(st,2)
-        u16 v = (l + r) % 0xFFFF
+        u16 v = (l + r) % 0x10000
         // done
         return push(pop(pop(st)),v)
-    else:
-        return halt(st)
 ```
 
 Here, the right-hand side `r` is taken from the first (i.e. topmost)
 stack item, whilst the left-hand side `l` is from the second stack
-item.  Furthermore, the addition itself must be modulo `0xFFFF`
-(`65546`) in order that the value assigned to `v` remains within
+item.  Furthermore, the addition itself must be modulo `0x10000`
+(i.e. `65536`) in order that the value assigned to `v` remains within
 bounds.  Indeed if the modulo operation was left out, then the
 verifier would highlight a potential integer overflow (and this is
 where tools like Whiley shine).  Again, our definition above uses some
@@ -232,22 +242,101 @@ would be to generate code from it to give us a reference
 implementation.  But, there are some other things we can do as well.
 For example, we can prove *safety properties* of bytecode sequences
 (e.g. that they don't unexpectedly halt), or that certain *compiler
-optimisations* are sound, etc.  So, let's have a look at two examples
-to illustrate.
+optimisations* are sound, etc. 
 
-### Safety Property
+### Example 1
 
-### Compiler Optimisation
+As a first example to illustrate, consider the following:
+
+```whiley
+public method test_add_01():
+    SVM m1 = svm::execute([LDC,2,LDC,1,ADD],[],1024)
+    // Check expected output.
+    assert svm::exitCode(m1) == OK
+    assert svm::peek(m1,1) == 3
+```
+
+This method is statically verified by Whiley.  However its pretty
+simplistic since (in this case) it does not depend on any unknown
+(i.e. symbolic values).  So, there isn't any benefit to static
+verification over just executing the test.
+
+We can make our example more interesting by introducing an _unknown_
+value as follows:
+
+```whiley
+method test_add_02(u16 x):
+    SVM m1 = svm::execute([LOAD,0,LDC,1,ADD],[x],1024)
+    // Check expected output.
+    assert svm::exitCode(m1) == OK
+    assert svm::peek(m1,1) > x
+```
+
+Here, `x` is an _arbitrary_ value and, essentially, we are computing
+`x + 1`.  However, attempting to statically verify this with Whiley
+produces an error:
+
+```
+src/main.whiley:5:assertion may not hold
+    assert svm::peek(m1,1) > x
+           ^^^^^^^^^^^^^^^^^^^
+```
+
+The problem is that the `ADD` may have overflowed and wrapped around
+to `0`.  That's right!  Our assertion doesn't hold for those
+instructions.  We can test this hypothesis by restricting our unknown
+value as follows:
+
+```whiley
+method test_add_02(u16 x):
+requires x < 65535:
+   ...
+```
+
+This essentially prevents the overflow case and, with that, the
+assertion will now statically verify.
+
+### Example 2
+
+As another example, lets consider the case for division.  
+
+```whiley
+method test_div_01(u16 x, u16 y):
+    SVM m1 = svm::execute([LOAD,0,LOAD,1,DIV],[x,y],1024)
+    // Check expected output.
+    assert y == 0 || svm::exitCode(m1) == OK
+```
+
+This statically verifies only because our final assertion is quite
+weak.  Let's assume we wanted a code sequence which would execute
+division safely for all values of `x` and `y`.  Clearly, the above is
+not there yet.  We need a check against `y` to handle when `y == 0`.
+Here's one possible solution:
+
+```whiley
+method test_div_02(u16 x, u16 y):
+    SVM m1 = svm::execute([LOAD,0,LOAD,1,JZ,3,LOAD,1,DIV],[x,y],1024)
+    // Check expected output.
+    assert svm::exitCode(m1) == OK
+```
+
+This introduces the conditional check using the conditional branch
+instruction, `JZ`.  To keep the example short, the above just returns
+`x` when `y == 0` (but in principle it can do whatever we want).  The
+above now statically verifies with Whiley.  _Just think about that for
+a second_.  It means we've **proved** (for all input values `x` and
+`y`) that the above code sequence _always executes to completion_ on
+our simple virtual machine!
 
 ## Conclusion
 
-## TODO
+We've formalised a very [simple virtual
+machine](https://github.com/DavePearce/SimpleVirtualMachine.wy/blob/main/src/svm.whiley)
+in Whiley, and then proved some useful properties about (albeit small)
+bytecode sequences.  In fact, there's a lot more we could do with this
+tool, such as proving optimisations preserve a program's meaning, etc.
+But, we can save those discussions for another day!
 
-   * Division and remainder are non-euclidean!
-   * Discuss precondition on div!
-   * Explain update syntax `vm{pc:=pc+1}`.
-   * SVM differs on `LOAD` and `STORE`.
-   
 ## References
 
    * **KEVM: A Complete Semantics of the Ethereum Virtual Machine**,
