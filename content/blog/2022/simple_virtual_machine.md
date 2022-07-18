@@ -20,10 +20,11 @@ would be interesting to explore VM formalisation in a tool like Whiley
 
 ## Overview
 
-In this post, I'm going to formalise a *[Simple Virtual Machine (SVM)](https://github.com/DavePearce/SimpleVirtualMachine.wy/)*
-which has only a few instructions.  The goal is just to illustrate the
-technique and to show that, using the formalisation, we can prove
-interesting properties (e.g. that certain optimisations are safe).
+In this post, I'm going to formalise a *[Simple Virtual Machine
+(SVM)](https://github.com/DavePearce/SimpleVirtualMachine.wy/)* which
+has only a few instructions.  The goal is just to illustrate the
+technique and show that, using the formalisation, we can prove
+interesting properties.
 
 The machine state includes a _stack_ of `u16` words and a _memory_
 store of `u16` words.  In addition, we have a _program counter_ (`pc`)
@@ -55,15 +56,15 @@ This provides a fairly typical description for a bytecode machine
 (e.g. similar in style to that for the
 [JVM](https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5)).
 Each bytecode typically has an effect on the stack, and may also
-effect the memory.  The effect on the stack is described as a rewrite
+update memory.  The effect on the stack is described as a rewrite
 popping zero or more elements on the stack, and pushing zero or more
 elements on the stack.  For example, the effect `.. w ⟹ ..` for `POP`
 states that, for the bytecode to execute, there must be at least one
-word `w` on the stack and, afterwards, that word is removed (but
+word `w` on the stack and, afterwards, that word is removed (and
 everything else remains the same).  Likewise, the memory effect for
-`STORE` is that the word `w` is written to address `k` in the `data`
-memory.  Finally, for completeness, note that (like most programming
-languages) integer division is {{<wikip
+`STORE` is that the word `w` is written to address `k` in `data`.
+Finally, for completeness, note that (like most programming languages)
+integer division is {{<wikip
 page="Euclidean_division">}}non-Euclidean{{</wikip>}} (i.e. rounds
 _towards_ zero).
 
@@ -101,14 +102,14 @@ This defines the essential components of our virtual machine.  For
 simplicity, the `code` sequence is an array of bytes separate from the
 `data` section (i.e. we're not following a {{<wikip
 page="Von_Neumann_architecture">}}Von Neumann
-Architecture{{</wikip>}}).  In addition, I'm imposed some constraints:
-**(1)** on `sp` and the maximum stack size; **(2)** on `pc` and the
-maximum code size.  In principle, we could limit the data size as well
-(though this is not really necessary).
+Architecture{{</wikip>}}).  I've also imposed some additional
+constraints: **(1)** on `sp` and the maximum stack size; **(2)** on
+the maximum code size.  In principle, we could limit the data size as
+well.
 
-Now, before formalising the individual bytecodes, its useful to have a
-notion of the machine being *halted*.  This is just helpful to signal
-error states, and we can define it as follows:
+Before formalising individual bytecodes, its useful to have a notion
+of the machine being *halted*.  This is just helpful to signal error
+states, and we can define it as follows:
 
 ```whiley
 property isHalted(SVM st) -> (bool r):
@@ -120,15 +121,15 @@ requires isHalted(st):
 ```
 
 Basically, whenever the `pc` is passed the end of the `code` size,
-then we consider the machine to be "halted".  Once it reaches this
-state, then execution is finished.  Furthermore, we'll exploit the
-final `pc` value to determine an exit code, such that `exitCode(vm) ==
-0` indicates execution completed normally (more on this later).
+then the machine has "halted".  Once it reaches this state execution
+is finished.  Furthermore, we'll exploit the final `pc` value to
+determine an exit code, such that `exitCode(vm) == 0` indicates
+execution completed normally (more on this later).
 
 ### Bytecodes
 
-We now need to formalise the *semantics* of each bytecode.  That is,
-specify how each bytecode should execute.  A simple example is the following:
+We now formalise the *semantics* of each bytecode.  That is, specify
+how each bytecode should execute.  A simple example is the following:
 
 ```whiley
 property evalPOP(SVM st) -> (SVM nst):
@@ -140,8 +141,8 @@ property evalPOP(SVM st) -> (SVM nst):
 
 This specifies that evaluating a `POP` bytecode requires at least one
 element on the stack, otherwise the machine halts (with exit code
-`STACK_OVERFLOW`).  If there is one element, then its popped off.  This
-uses two helpers `halt` and `pop` defined as follows:
+`STACK_OVERFLOW`).  If there is one element, then it is popped off.
+This uses two helpers `halt` and `pop`, defined as follows:
 
 ```whiley
 property pop(SVM st) -> SVM
@@ -152,13 +153,13 @@ property halt(SVM st) -> SVM:
    return st{pc:=|st.code|}
 ```
 
-Whilst these could have been written inline, I find it helpful to give
-them more descriptive names.  I typically refer to these low-level
-building blocks as _microcodes_ and, as for a physical machine, we'll
-see these are reused a lot in defining the semantics of our bytecodes.
-Observe the precondition for `pop()` is that the stack cannot be
-empty.  Also, `st{sp:=st.sp-1}` returns `st` with field `sp` updated
-to `sp-1` and all others unchanged.
+Whilst these could have been written inline, I find it helpful to have
+descriptive names for the operations.  I typically refer to these
+low-level building blocks as _microcodes_ and, as for a physical
+machine, we'll see these are reused a lot in defining the semantics of
+our bytecodes.  Observe the precondition for `pop()` is that the stack
+cannot be empty.  Also, the expression `st{sp:=st.sp-1}` returns `st`
+with field `sp` updated to `sp-1` and all others unchanged.
 
 Another example to illustrate is the following:
 
@@ -181,8 +182,8 @@ item.  Furthermore, the addition itself must be modulo `0x10000`
 (i.e. `65536`) in order that the value assigned to `v` remains within
 bounds.  Indeed if the modulo operation was left out, then the
 verifier would highlight a potential integer overflow (and this is
-where tools like Whiley shine).  Again, our definition above uses some
-more microcodes:
+where tools like Whiley really help).  Again, our definition above
+uses some more microcodes:
 
 ```whiley
 property push(SVM st, u16 k) -> SVM
@@ -198,13 +199,13 @@ requires 0 < n && n <= st.sp:
 This time, the precondition for `push()` requires that _the stack cannot be full_.  Likewise, for `peek()`, we must have enough items on the stack to cover the one we're after.
 
 Finally, whilst I've only illustrated the semantics for a few example
-bytecodes above you can see them all in [the repo](https://github.com/DavePearce/SimpleVirtualMachine.wy/blob/main/src/svm.whiley).
+bytecodes above, you can see them all in [the repo](https://github.com/DavePearce/SimpleVirtualMachine.wy/blob/main/src/svm.whiley).
 
 ### Execution
 
-The next piece of the jigsaw is to bring the semantics of all the
-bytecodes together into one method which is responsible for executing
-the next bytecode.  For this, we have `eval()`:
+The next piece of the jigsaw is bringing the semantics of all
+bytecodes together into one method responsible for executing the next
+bytecode.  For this, we have `eval()`:
 
 ```whiley
 // Execute a "single step" of the machine.
@@ -231,19 +232,17 @@ would be better if we could at least use a `switch` statement.
 Unfortunately, at the moment, Whiley does not support this (though in
 the future it should).  **Secondly**, the machine is set to `halt()`
 whenever an unknown instruction is encountered.  **Finally**, a
-precondition for `eval()` is that the machine as not already halted.
-Whilst there are different ways we could have done this, I've just
-chosen something simple here.
+precondition for `eval()` is that the machine has not already halted.
 
 ## Something Useful!
 
-Right, having now specified our simple virtual machine the question
-is: *what can we do with it?*  Well, the first and most obvious thing
+Right, having specified our simple virtual machine the question is:
+*what can we do with it?*  Well, the first and most obvious thing
 would be to generate code from it to give us a reference
 implementation.  But, there are some other things we can do as well.
 For example, we can prove *safety properties* of bytecode sequences
 (e.g. that they don't unexpectedly halt), or that certain *compiler
-optimisations* are sound, etc. 
+optimisations* are sound, etc.
 
 ### Example 1
 
@@ -279,9 +278,9 @@ method test_add_02(u16 x):
   assert peek(m1,1) > x
 ```
 
-Here, `x` is an _arbitrary_ value and, essentially, we are computing
-`x + 1`.  However, attempting to statically verify this with Whiley
-produces an error:
+Here, `x` is an _arbitrary_ value and we initialise our memory with
+`x` at address `0`.  Thus, the above computes `x + 1`.  However,
+attempting to statically verify this with Whiley produces an error:
 
 ```
 main.whiley:5:assertion may not hold
@@ -289,10 +288,10 @@ main.whiley:5:assertion may not hold
          ^^^^^^^^^^^^^^
 ```
 
-The problem is that the `ADD` may have overflowed and wrapped around
-to `0`.  That's right!  Our assertion doesn't hold for those
-instructions.  We can test this hypothesis by restricting our unknown
-value as follows:
+The problem is that the `ADD` may overflow around to `0`.  That's
+right!  Our assertion doesn't hold for the instruction sequence above.
+We can test this hypothesis by restricting our unknown value as
+follows:
 
 ```whiley
 method test_add_02(u16 x):
@@ -317,11 +316,11 @@ method test_div_01(u16 x, u16 y):
   assert y == 0 || exitCode(m1) == OK
 ```
 
-This statically verifies only because our final assertion is quite
-weak.  Let's assume we wanted a code sequence which would execute
-division safely for all values of `x` and `y`.  Clearly, the above is
-not there yet.  We need a check against `y` to handle when `y == 0`.
-Here's one possible solution:
+This statically verifies because our final assertion is quite weak.
+Let's assume we wanted something stronger.  That is, a code sequence
+which would execute division safely for all values of `x` and `y`.
+Clearly, the above is not there yet.  We need a check against `y` to
+handle when `y == 0`.  Here's one solution:
 
 ```whiley
 method test_div_02(u16 x, u16 y):
@@ -333,7 +332,7 @@ method test_div_02(u16 x, u16 y):
   assert exitCode(m1) == OK
 ```
 
-This introduces the conditional check using the conditional branch
+This introduces a conditional check using the conditional branch
 instruction, `JZ`.  To keep the example short, the above just returns
 `x` when `y == 0` (but in principle it can do whatever we want).  The
 above now statically verifies with Whiley.  _Just think about that for
