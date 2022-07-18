@@ -16,25 +16,26 @@ Machine</a> (e.g. in
 <a href=https://github.com/pirapira/eth-isabelle>Lem</a>,
 <a href=https://github.com/ivan71kmayshan27/coq-evm>Coq</a>). So, I figured it
 would be interesting to explore VM formalisation in a tool like Whiley
-(or similarly Dafny).</p><h2 id=overview>Overview</h2><p>In this post, I&rsquo;m going to formalise a <em><a href=https://github.com/DavePearce/SimpleVirtualMachine.wy/>Simple Virtual Machine (SVM)</a></em>
-which has only a few instructions. The goal is just to illustrate the
-technique and to show that, using the formalisation, we can prove
-interesting properties (e.g. that certain optimisations are safe).</p><p>The machine state includes a <em>stack</em> of <code>u16</code> words and a <em>memory</em>
+(or similarly Dafny).</p><h2 id=overview>Overview</h2><p>In this post, I&rsquo;m going to formalise a <em><a href=https://github.com/DavePearce/SimpleVirtualMachine.wy/>Simple Virtual Machine
+(SVM)</a></em> which
+has only a few instructions. The goal is just to illustrate the
+technique and show that, using the formalisation, we can prove
+interesting properties.</p><p>The machine state includes a <em>stack</em> of <code>u16</code> words and a <em>memory</em>
 store of <code>u16</code> words. In addition, we have a <em>program counter</em> (<code>pc</code>)
 and a <em>stack pointer</em> (<code>sp</code>), along with a sequence of bytecodes. To
 illustrate, here are descriptions for a few example bytecodes:</p><center><table><thead><tr><th style=text-align:center>Bytecode</th><th style=text-align:left>Description</th><th style=text-align:left>Stack</th><th style=text-align:left>Memory</th><th style=text-align:left>PC</th></tr></thead><tbody><tr><td style=text-align:center><code>NOP</code></td><td style=text-align:left><em>No-operation</em></td><td style=text-align:left></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center><code>PUSH w</code></td><td style=text-align:left><em>Push (immediate) word</em></td><td style=text-align:left><code>.. ⟹ w ..</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 2</code></td></tr><tr><td style=text-align:center><code>POP</code></td><td style=text-align:left><em>Pop word from stack</em></td><td style=text-align:left><code>.. w ⟹ ..</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center><code>STORE k</code></td><td style=text-align:left><em>Store word in memory</em></td><td style=text-align:left><code>.. w ⟹ ..</code></td><td style=text-align:left><code>data[k] = w</code></td><td style=text-align:left><code>PC += 2</code></td></tr><tr><td style=text-align:center><code>LOAD k</code></td><td style=text-align:left><em>Load word from memory</em></td><td style=text-align:left><code>.. ⟹ w ..</code></td><td style=text-align:left><code>w = data[k]</code></td><td style=text-align:left><code>PC += 2</code></td></tr><tr><td style=text-align:center><code>ADD</code></td><td style=text-align:left><em>Add words</em></td><td style=text-align:left><code>.. v w ⟹ u ..</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center></td><td style=text-align:left></td><td style=text-align:left><strong>where</strong> <code>u = (v+w) % 0x10000</code></td><td style=text-align:left></td><td></td></tr><tr><td style=text-align:center><code>SUB</code></td><td style=text-align:left><em>Subtract words</em></td><td style=text-align:left><code>.. v w ⟹ u ..</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center></td><td style=text-align:left></td><td style=text-align:left><strong>where</strong> <code>u = (v-w) % 0x10000</code></td><td style=text-align:left></td><td></td></tr><tr><td style=text-align:center><code>MUL</code></td><td style=text-align:left><em>Multiply words</em></td><td style=text-align:left><code>.. v w ⟹ u ..</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center></td><td style=text-align:left></td><td style=text-align:left><strong>where</strong> <code>u = (v*w) % 0x10000</code></td><td style=text-align:left></td><td></td></tr><tr><td style=text-align:center><code>DIV</code></td><td style=text-align:left><em>Divide words</em></td><td style=text-align:left><code>.. v w ⟹ u ..</code> <strong>if</strong> <code>w != 0</code></td><td style=text-align:left></td><td style=text-align:left><code>PC += 1</code></td></tr><tr><td style=text-align:center></td><td style=text-align:left></td><td style=text-align:left><strong>where</strong> <code>u = v/w</code></td><td style=text-align:left></td><td></td></tr><tr><td style=text-align:center><code>JMP k</code></td><td style=text-align:left><em>Unconditional Branch</em></td><td style=text-align:left></td><td style=text-align:left></td><td style=text-align:left><code>pc += 2+k</code></td></tr><tr><td style=text-align:center><code>JZ k</code></td><td style=text-align:left><em>Conditional Branch</em></td><td style=text-align:left><code>v ⟹ ..</code></td><td style=text-align:left></td><td style=text-align:left><code>pc += 2</code> <strong>if</strong> <code>v!=0</code></td></tr><tr><td style=text-align:center></td><td style=text-align:left></td><td style=text-align:left></td><td style=text-align:left></td><td style=text-align:left><code>pc += 2+k</code> <strong>if</strong> <code>v==0</code></td></tr></tbody></table></center><p>This provides a fairly typical description for a bytecode machine
 (e.g. similar in style to that for the
 <a href=https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-6.html#jvms-6.5>JVM</a>).
 Each bytecode typically has an effect on the stack, and may also
-effect the memory. The effect on the stack is described as a rewrite
+update memory. The effect on the stack is described as a rewrite
 popping zero or more elements on the stack, and pushing zero or more
 elements on the stack. For example, the effect <code>.. w ⟹ ..</code> for <code>POP</code>
 states that, for the bytecode to execute, there must be at least one
-word <code>w</code> on the stack and, afterwards, that word is removed (but
+word <code>w</code> on the stack and, afterwards, that word is removed (and
 everything else remains the same). Likewise, the memory effect for
-<code>STORE</code> is that the word <code>w</code> is written to address <code>k</code> in the <code>data</code>
-memory. Finally, for completeness, note that (like most programming
-languages) integer division is <a href=https://en.wikipedia.org/wiki/Euclidean_division>non-Euclidean</a> (i.e. rounds
+<code>STORE</code> is that the word <code>w</code> is written to address <code>k</code> in <code>data</code>.
+Finally, for completeness, note that (like most programming languages)
+integer division is <a href=https://en.wikipedia.org/wiki/Euclidean_division>non-Euclidean</a> (i.e. rounds
 <em>towards</em> zero).</p><p>Whilst the above description is fairly clear and easy to follow, there
 are still some questions. For example, what happens if an address <code>k</code>
 is <em>out of bounds</em> for the <code>data</code> store? Likewise, can the stack ever
@@ -58,42 +59,43 @@ state as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code cla
 </span></span></code></pre></div><p>This defines the essential components of our virtual machine. For
 simplicity, the <code>code</code> sequence is an array of bytes separate from the
 <code>data</code> section (i.e. we&rsquo;re not following a <a href=https://en.wikipedia.org/wiki/Von_Neumann_architecture>Von Neumann
-Architecture</a>). In addition, I&rsquo;m imposed some constraints:
-<strong>(1)</strong> on <code>sp</code> and the maximum stack size; <strong>(2)</strong> on <code>pc</code> and the
-maximum code size. In principle, we could limit the data size as well
-(though this is not really necessary).</p><p>Now, before formalising the individual bytecodes, its useful to have a
-notion of the machine being <em>halted</em>. This is just helpful to signal
-error states, and we can define it as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>isHalted</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=kt>bool</span> <span class=n>r</span><span class=p>)</span><span class=o>:</span>
+Architecture</a>). I&rsquo;ve also imposed some additional
+constraints: <strong>(1)</strong> on <code>sp</code> and the maximum stack size; <strong>(2)</strong> on
+the maximum code size. In principle, we could limit the data size as
+well.</p><p>Before formalising individual bytecodes, its useful to have a notion
+of the machine being <em>halted</em>. This is just helpful to signal error
+states, and we can define it as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>isHalted</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=kt>bool</span> <span class=n>r</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>st</span><span class=p>.</span><span class=n>pc</span> <span class=o>&gt;=</span> <span class=o>|</span><span class=n>st</span><span class=p>.</span><span class=n>code</span><span class=o>|</span>
 </span></span><span class=line><span class=cl>    
 </span></span><span class=line><span class=cl><span class=kd>property</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>u8</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>isHalted</span><span class=p>(</span><span class=n>st</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=o>|</span><span class=n>st</span><span class=p>.</span><span class=n>code</span><span class=o>|</span> <span class=o>-</span> <span class=n>st</span><span class=p>.</span><span class=n>pc</span>
 </span></span></code></pre></div><p>Basically, whenever the <code>pc</code> is passed the end of the <code>code</code> size,
-then we consider the machine to be &ldquo;halted&rdquo;. Once it reaches this
-state, then execution is finished. Furthermore, we&rsquo;ll exploit the
-final <code>pc</code> value to determine an exit code, such that <code>exitCode(vm) == 0</code> indicates execution completed normally (more on this later).</p><h3 id=bytecodes>Bytecodes</h3><p>We now need to formalise the <em>semantics</em> of each bytecode. That is,
-specify how each bytecode should execute. A simple example is the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>evalPOP</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>SVM</span> <span class=n>nst</span><span class=p>)</span><span class=o>:</span>
+then the machine has &ldquo;halted&rdquo;. Once it reaches this state execution
+is finished. Furthermore, we&rsquo;ll exploit the final <code>pc</code> value to
+determine an exit code, such that <code>exitCode(vm) == 0</code> indicates
+execution completed normally (more on this later).</p><h3 id=bytecodes>Bytecodes</h3><p>We now formalise the <em>semantics</em> of each bytecode. That is, specify
+how each bytecode should execute. A simple example is the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>evalPOP</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>SVM</span> <span class=n>nst</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=n>st</span><span class=p>.</span><span class=n>sp</span> <span class=o>&lt;</span> <span class=mi>1</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>halt</span><span class=p>(</span><span class=n>st</span><span class=p>,</span> <span class=n>STACK_OVERFLOW</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>  <span class=k>else</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>pop</span><span class=p>(</span><span class=n>st</span><span class=p>)</span>
 </span></span></code></pre></div><p>This specifies that evaluating a <code>POP</code> bytecode requires at least one
 element on the stack, otherwise the machine halts (with exit code
-<code>STACK_OVERFLOW</code>). If there is one element, then its popped off. This
-uses two helpers <code>halt</code> and <code>pop</code> defined as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>pop</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SVM</span>
+<code>STACK_OVERFLOW</code>). If there is one element, then it is popped off.
+This uses two helpers <code>halt</code> and <code>pop</code>, defined as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>pop</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SVM</span>
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>st</span><span class=p>.</span><span class=n>sp</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>   <span class=k>return</span> <span class=n>st</span><span class=p>{</span><span class=n>sp</span><span class=o>:=</span><span class=n>st</span><span class=p>.</span><span class=n>sp</span><span class=o>-</span><span class=mi>1</span><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kd>property</span> <span class=n>halt</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SVM</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>   <span class=k>return</span> <span class=n>st</span><span class=p>{</span><span class=n>pc</span><span class=o>:=|</span><span class=n>st</span><span class=p>.</span><span class=n>code</span><span class=o>|</span><span class=p>}</span>
-</span></span></code></pre></div><p>Whilst these could have been written inline, I find it helpful to give
-them more descriptive names. I typically refer to these low-level
-building blocks as <em>microcodes</em> and, as for a physical machine, we&rsquo;ll
-see these are reused a lot in defining the semantics of our bytecodes.
-Observe the precondition for <code>pop()</code> is that the stack cannot be
-empty. Also, <code>st{sp:=st.sp-1}</code> returns <code>st</code> with field <code>sp</code> updated
-to <code>sp-1</code> and all others unchanged.</p><p>Another example to illustrate is the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>evalADD</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>SVM</span> <span class=n>nst</span><span class=p>)</span><span class=o>:</span>
+</span></span></code></pre></div><p>Whilst these could have been written inline, I find it helpful to have
+descriptive names for the operations. I typically refer to these
+low-level building blocks as <em>microcodes</em> and, as for a physical
+machine, we&rsquo;ll see these are reused a lot in defining the semantics of
+our bytecodes. Observe the precondition for <code>pop()</code> is that the stack
+cannot be empty. Also, the expression <code>st{sp:=st.sp-1}</code> returns <code>st</code>
+with field <code>sp</code> updated to <code>sp-1</code> and all others unchanged.</p><p>Another example to illustrate is the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>evalADD</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>SVM</span> <span class=n>nst</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=n>st</span><span class=p>.</span><span class=n>sp</span> <span class=o>&lt;</span> <span class=mi>2</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>halt</span><span class=p>(</span><span class=n>st</span><span class=p>,</span> <span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>  <span class=k>else</span><span class=o>:</span>
@@ -109,8 +111,8 @@ item. Furthermore, the addition itself must be modulo <code>0x10000</code>
 (i.e. <code>65536</code>) in order that the value assigned to <code>v</code> remains within
 bounds. Indeed if the modulo operation was left out, then the
 verifier would highlight a potential integer overflow (and this is
-where tools like Whiley shine). Again, our definition above uses some
-more microcodes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>push</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>,</span> <span class=n>u16</span> <span class=n>k</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SVM</span>
+where tools like Whiley really help). Again, our definition above
+uses some more microcodes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>property</span> <span class=n>push</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>,</span> <span class=n>u16</span> <span class=n>k</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=n>SVM</span>
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>st</span><span class=p>.</span><span class=n>sp</span> <span class=o>&lt;</span> <span class=o>|</span><span class=n>st</span><span class=p>.</span><span class=n>stack</span><span class=o>|:</span>
 </span></span><span class=line><span class=cl>  <span class=n>SVM</span> <span class=n>nst</span> <span class=o>=</span> <span class=n>st</span><span class=p>{</span><span class=n>stack</span><span class=o>:=</span><span class=n>st</span><span class=p>.</span><span class=n>stack</span><span class=p>[</span><span class=n>st</span><span class=p>.</span><span class=n>sp</span><span class=o>:=</span><span class=n>k</span><span class=p>]}</span>
 </span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>nst</span><span class=p>{</span><span class=n>sp</span><span class=o>:=</span><span class=n>st</span><span class=p>.</span><span class=n>sp</span><span class=o>+</span><span class=mi>1</span><span class=p>}</span>
@@ -119,9 +121,9 @@ more microcodes:</p><div class=highlight><pre tabindex=0 class=chroma><code clas
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=mi>0</span> <span class=o>&lt;</span> <span class=n>n</span> <span class=o>&amp;&amp;</span> <span class=n>n</span> <span class=o>&lt;=</span> <span class=n>st</span><span class=p>.</span><span class=n>sp</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>st</span><span class=p>.</span><span class=n>stack</span><span class=p>[</span><span class=n>st</span><span class=p>.</span><span class=n>sp</span> <span class=o>-</span> <span class=n>n</span><span class=p>]</span>
 </span></span></code></pre></div><p>This time, the precondition for <code>push()</code> requires that <em>the stack cannot be full</em>. Likewise, for <code>peek()</code>, we must have enough items on the stack to cover the one we&rsquo;re after.</p><p>Finally, whilst I&rsquo;ve only illustrated the semantics for a few example
-bytecodes above you can see them all in <a href=https://github.com/DavePearce/SimpleVirtualMachine.wy/blob/main/src/svm.whiley>the repo</a>.</p><h3 id=execution>Execution</h3><p>The next piece of the jigsaw is to bring the semantics of all the
-bytecodes together into one method which is responsible for executing
-the next bytecode. For this, we have <code>eval()</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=c1>// Execute a &#34;single step&#34; of the machine.
+bytecodes above, you can see them all in <a href=https://github.com/DavePearce/SimpleVirtualMachine.wy/blob/main/src/svm.whiley>the repo</a>.</p><h3 id=execution>Execution</h3><p>The next piece of the jigsaw is bringing the semantics of all
+bytecodes together into one method responsible for executing the next
+bytecode. For this, we have <code>eval()</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=c1>// Execute a &#34;single step&#34; of the machine.
 </span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>property</span> <span class=n>eval</span><span class=p>(</span><span class=n>SVM</span> <span class=n>st</span><span class=p>)</span> <span class=o>-&gt;</span> <span class=p>(</span><span class=n>SVM</span> <span class=n>res</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=o>!</span><span class=n>isHalted</span><span class=p>(</span><span class=n>st</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=n>u8</span> <span class=n>opcode</span> <span class=o>=</span> <span class=n>st</span><span class=p>.</span><span class=n>code</span><span class=p>[</span><span class=n>st</span><span class=p>.</span><span class=n>pc</span><span class=p>]</span>
@@ -143,10 +145,8 @@ would be better if we could at least use a <code>switch</code> statement.
 Unfortunately, at the moment, Whiley does not support this (though in
 the future it should). <strong>Secondly</strong>, the machine is set to <code>halt()</code>
 whenever an unknown instruction is encountered. <strong>Finally</strong>, a
-precondition for <code>eval()</code> is that the machine as not already halted.
-Whilst there are different ways we could have done this, I&rsquo;ve just
-chosen something simple here.</p><h2 id=something-useful>Something Useful!</h2><p>Right, having now specified our simple virtual machine the question
-is: <em>what can we do with it?</em> Well, the first and most obvious thing
+precondition for <code>eval()</code> is that the machine has not already halted.</p><h2 id=something-useful>Something Useful!</h2><p>Right, having specified our simple virtual machine the question is:
+<em>what can we do with it?</em> Well, the first and most obvious thing
 would be to generate code from it to give us a reference
 implementation. But, there are some other things we can do as well.
 For example, we can prove <em>safety properties</em> of bytecode sequences
@@ -171,15 +171,15 @@ value as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code cla
 </span></span><span class=line><span class=cl>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
 </span></span><span class=line><span class=cl>  <span class=k>assert</span> <span class=n>peek</span><span class=p>(</span><span class=n>m1</span><span class=p>,</span><span class=mi>1</span><span class=p>)</span> <span class=o>&gt;</span> <span class=n>x</span>
-</span></span></code></pre></div><p>Here, <code>x</code> is an <em>arbitrary</em> value and, essentially, we are computing
-<code>x + 1</code>. However, attempting to statically verify this with Whiley
-produces an error:</p><pre tabindex=0><code>main.whiley:5:assertion may not hold
+</span></span></code></pre></div><p>Here, <code>x</code> is an <em>arbitrary</em> value and we initialise our memory with
+<code>x</code> at address <code>0</code>. Thus, the above computes <code>x + 1</code>. However,
+attempting to statically verify this with Whiley produces an error:</p><pre tabindex=0><code>main.whiley:5:assertion may not hold
   assert peek(m1,1) &gt; x
          ^^^^^^^^^^^^^^
-</code></pre><p>The problem is that the <code>ADD</code> may have overflowed and wrapped around
-to <code>0</code>. That&rsquo;s right! Our assertion doesn&rsquo;t hold for those
-instructions. We can test this hypothesis by restricting our unknown
-value as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_add_02</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>)</span><span class=o>:</span>
+</code></pre><p>The problem is that the <code>ADD</code> may overflow around to <code>0</code>. That&rsquo;s
+right! Our assertion doesn&rsquo;t hold for the instruction sequence above.
+We can test this hypothesis by restricting our unknown value as
+follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_add_02</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl><span class=k>requires</span> <span class=n>x</span> <span class=o>&lt;</span> <span class=mi>65535</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>   <span class=p>...</span>
 </span></span></code></pre></div><p>This essentially prevents the overflow case and, with that, the
@@ -190,18 +190,18 @@ assertion will now statically verify.</p><h3 id=example-2>Example 2</h3><p>As an
 </span></span><span class=line><span class=cl>     <span class=mi>1024</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>y</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
-</span></span></code></pre></div><p>This statically verifies only because our final assertion is quite
-weak. Let&rsquo;s assume we wanted a code sequence which would execute
-division safely for all values of <code>x</code> and <code>y</code>. Clearly, the above is
-not there yet. We need a check against <code>y</code> to handle when <code>y == 0</code>.
-Here&rsquo;s one possible solution:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_div_02</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>,</span> <span class=n>u16</span> <span class=n>y</span><span class=p>)</span><span class=o>:</span>
+</span></span></code></pre></div><p>This statically verifies because our final assertion is quite weak.
+Let&rsquo;s assume we wanted something stronger. That is, a code sequence
+which would execute division safely for all values of <code>x</code> and <code>y</code>.
+Clearly, the above is not there yet. We need a check against <code>y</code> to
+handle when <code>y == 0</code>. Here&rsquo;s one solution:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>method</span> <span class=n>test_div_02</span><span class=p>(</span><span class=n>u16</span> <span class=n>x</span><span class=p>,</span> <span class=n>u16</span> <span class=n>y</span><span class=p>)</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>  <span class=n>SVM</span> <span class=n>m1</span> <span class=o>=</span> <span class=n>execute</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>    <span class=p>[</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>0</span><span class=p>,</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>JZ</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=n>LOAD</span><span class=p>,</span><span class=mi>1</span><span class=p>,</span><span class=n>DIV</span><span class=p>],</span>
 </span></span><span class=line><span class=cl>    <span class=p>[</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>],</span>
 </span></span><span class=line><span class=cl>    <span class=mi>1024</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>  <span class=c1>// Check expected output.
 </span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>assert</span> <span class=n>exitCode</span><span class=p>(</span><span class=n>m1</span><span class=p>)</span> <span class=o>==</span> <span class=n>OK</span>
-</span></span></code></pre></div><p>This introduces the conditional check using the conditional branch
+</span></span></code></pre></div><p>This introduces a conditional check using the conditional branch
 instruction, <code>JZ</code>. To keep the example short, the above just returns
 <code>x</code> when <code>y == 0</code> (but in principle it can do whatever we want). The
 above now statically verifies with Whiley. <em>Just think about that for
