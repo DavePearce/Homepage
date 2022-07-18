@@ -2,9 +2,9 @@
 date: 2022-06-28
 title: "Formalising a Simple Virtual Machine"
 draft: false
-# metaimg: "images/2022/AuctionContract_Preview.png"
-# metatxt: "Verifying a smart contract in Whiley finds lots of problems."
-#twitter: ""
+metaimg: "images/2022/SimpleVirtualMachine_Preview.png"
+metatxt: "Formalising a simple virtual machine in Whiley."
+# twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
 
@@ -20,7 +20,7 @@ would be interesting to explore VM formalisation in a tool like Whiley
 
 ## Overview
 
-In this post, I'm going to formalise a *Simple Virtual Machine (SVM)*
+In this post, I'm going to formalise a *[Simple Virtual Machine (SVM)](https://github.com/DavePearce/SimpleVirtualMachine.wy/)*
 which has only a few instructions.  The goal is just to illustrate the
 technique and to show that, using the formalisation, we can prove
 interesting properties (e.g. that certain optimisations are safe).
@@ -36,8 +36,8 @@ illustrate, here are descriptions for a few example bytecodes:
 | `NOP`   | _No-operation_ ||| `PC += 1` |
 | `PUSH w`  | _Push (immediate) word_ | `.. ⟹   w ..` || `PC += 2` |
 | `POP`   | _Pop word from stack_ | `.. w ⟹   ..` || `PC += 1` |
-| `STORE k`| _Store word in memory_ | `.. w ⟹   ..` | `data[k] = w` | `PC += 1` |
-| `LOAD k` | _Load word from memory_ | `.. ⟹   w ..` | `w = data[k]` | `PC += 1` |
+| `STORE k`| _Store word in memory_ | `.. w ⟹   ..` | `data[k] = w` | `PC += 2` |
+| `LOAD k` | _Load word from memory_ | `.. ⟹   w ..` | `w = data[k]` | `PC += 2` |
 | `ADD`   | _Add words_ | `.. v w  ⟹   u ..` || `PC += 1` |
 ||| **where** `u = (v+w) % 0x10000`{{<br>}} |||
 | `SUB`   | _Subtract words_ | `.. v w  ⟹   u ..` || `PC += 1` |
@@ -46,9 +46,9 @@ illustrate, here are descriptions for a few example bytecodes:
 ||| **where** `u = (v*w) % 0x10000`{{<br>}} |||
 | `DIV`   | _Divide words_ | `.. v w  ⟹   u ..` **if** `w != 0` || `PC += 1` |
 ||| **where** `u = v/w` |||
-| `JMP w`   | _Unconditional Branch_ ||| `pc += 2+w` |
-| `JZ w`   | _Conditional Branch_ | `v ⟹   ..` || `pc += 2` **if** `v!=0`|
-||||| `pc += 2+w` **if** `v==0`|
+| `JMP k`   | _Unconditional Branch_ ||| `pc += 2+k` |
+| `JZ k`   | _Conditional Branch_ | `v ⟹   ..` || `pc += 2` **if** `v!=0`|
+||||| `pc += 2+k` **if** `v==0`|
 {{</center>}}
 
 This provides a fairly typical description for a bytecode machine
@@ -187,7 +187,8 @@ more microcodes:
 ```whiley
 property push(SVM st, u16 k) -> SVM
 requires st.sp < |st.stack|:
-  return st{stack:=st.stack[st.sp:=k]}{sp:=st.sp+1}
+  SVM nst = st{stack:=st.stack[st.sp:=k]}
+  return nst{sp:=st.sp+1}
 
 property peek(SVM st, int n) -> u16
 requires 0 < n && n <= st.sp:
@@ -283,7 +284,7 @@ Here, `x` is an _arbitrary_ value and, essentially, we are computing
 produces an error:
 
 ```
-src/main.whiley:5:assertion may not hold
+main.whiley:5:assertion may not hold
   assert peek(m1,1) > x
          ^^^^^^^^^^^^^^
 ```
