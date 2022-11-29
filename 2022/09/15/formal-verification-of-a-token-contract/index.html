@@ -1,0 +1,94 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Formal Verification of a Token Contract"><meta name=twitter:title content="Formal Verification of a Token Contract"><meta property="og:description" content="Verifying a token contract in Whiley helps to find problems."><meta name=twitter:description content="Verifying a token contract in Whiley helps to find problems."><meta property="og:url" content="https://whileydave.com/2022/09/15/formal-verification-of-a-token-contract/"><title>David J. Pearce
+(Formal Verification of a Token Contract)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Formal Verification of a Token Contract</h1><div class=post-date>Thursday, September
+15th,
+2022</div><hr><p>Following on from my previous post on <a href=/2022/05/17/verifying-an-auction-contract-in-whiley/>verifying an auction
+contract</a> in
+Whiley, I thought it might be useful to look at a more challenging
+example. A <em>token contract</em> is a very common form of smart contract
+which allows someone to create and manage their own currency. On
+Ethereum, token contracts have been standardised in the under
+<a href=https://docs.openzeppelin.com/contracts/3.x/erc20>ERC20</a>.</p><h2 id=overview>Overview</h2><p>A very simple token contract maintains, for each account, a balance of
+tokens owned by that account. Account holders can <em>transfer</em> tokens
+to others, but only the contract owner can <em>mint</em> new tokens. The
+following defines the various components maintained by the contract:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// Account balances
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>map</span><span class=o>&lt;</span><span class=n>uint160</span><span class=p>,</span><span class=n>uint256</span><span class=o>&gt;</span> <span class=n>tokens</span>
+</span></span><span class=line><span class=cl><span class=c1>// Total tokens in circulation
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>uint256</span> <span class=n>total</span>
+</span></span><span class=line><span class=cl><span class=c1>// Contract owner
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>uint160</span> <span class=n>owner</span>
+</span></span></code></pre></div><p>Explicitly maintaining the total number of tokens in circulation may
+seem unnecessary (i.e. because it can be computed from the map).
+However, in the context of a smart contract it is useful to avoid
+such computation (as this can become prohibitively expensive).</p><h2 id=method-specifications>Method Specifications</h2><p>Consider the following implementation of <code>transfer()</code> which includes
+an incomplete specification of what is <em>required</em> for it to execute
+(otherwise it <em>reverts</em>) along with the properties that it <em>ensures</em>.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// Transfer some amount of tokens from one account to another.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>method</span> <span class=n>transfer</span><span class=p>(</span><span class=n>uint160</span> <span class=n>to</span><span class=p>,</span> <span class=n>uint256</span> <span class=n>value</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// (1) Ensure sufficient funds in source account
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>tokens</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>&gt;=</span> <span class=n>value</span>
+</span></span><span class=line><span class=cl><span class=c1>// (2) Ensure sender balance decreased
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>tokens</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>==</span> <span class=n>old</span><span class=p>(</span><span class=n>tokens</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>])</span> <span class=o>-</span> <span class=n>value</span>
+</span></span><span class=line><span class=cl><span class=c1>// (3) Ensure target balance increased
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>==</span> <span class=n>old</span><span class=p>(</span><span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>])</span> <span class=o>+</span> <span class=n>value</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>tokens</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>=</span> <span class=n>tokens</span><span class=p>[</span><span class=n>msg</span><span class=o>::</span><span class=n>sender</span><span class=p>]</span> <span class=o>-</span> <span class=n>value</span>
+</span></span><span class=line><span class=cl>   <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>=</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>+</span> <span class=n>value</span>
+</span></span></code></pre></div><p>As expected, the transfer cannot complete unless the account holder
+has sufficient funds (item <code>(1)</code> above). Likewise, upon completion,
+the account sender&rsquo;s balance must have <em>decreased</em> (item <code>(2)</code>) and,
+accordingly, the destination account balance must have <em>increased</em>
+(item <code>(3)</code>). The power of a formal verification tool like Whiley is
+that we can statically check whether or not our implementation meets
+this specification. In fact, attempting to verify the above in Whiley
+will immediately raise some errors:</p><ol><li><strong>(Integer Overflow)</strong>. Our implementation above suffers from
+an <em>integer overflow</em> whereby the value sent overflows target&rsquo;s
+balance. Such flaws are certainly exploitable (and have been in
+the past).</li><li><strong>(Logic Error)</strong>. Our specification also suffers from a more
+subtle form of <em>logic error</em>. The problem arises when
+<code>msg::sender == to</code> as, in such case, items <code>(2)</code> and <code>(3)</code>
+cannot simultaneously hold for the same account!</li></ol><p>To resolve these issues and allow the method to pass verification, we
+must extend the specification with two more requirements:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// (4) Prevent overflow in target account
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>+</span> <span class=n>value</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
+</span></span><span class=line><span class=cl><span class=c1>// (5) Cannot transfer to myself!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>!=</span> <span class=n>to</span>
+</span></span></code></pre></div><p>The first of these requirements simply prevents an overflow from
+occuring, whilst the latter represents one way of fixing the
+specification (though not the only way).</p><p>The following illustrates our implementation of <code>mint()</code> including its
+specification:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// Mint new coins into a given target uint160
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>method</span> <span class=n>mint</span><span class=p>(</span><span class=n>uint160</span> <span class=n>to</span><span class=p>,</span> <span class=n>uint256</span> <span class=n>value</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// Only the owner can mint new coins
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>msg</span><span class=o>::</span><span class=n>sender</span> <span class=o>==</span> <span class=n>owner</span>
+</span></span><span class=line><span class=cl><span class=c1>// Prevent overflow in target account
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>+</span> <span class=n>value</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
+</span></span><span class=line><span class=cl><span class=c1>// Prevent overflow of total
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>total</span> <span class=o>+</span> <span class=n>value</span> <span class=o>&lt;=</span> <span class=n>MAX_UINT256</span>
+</span></span><span class=line><span class=cl><span class=c1>// Ensure target balance increased
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>==</span> <span class=n>old</span><span class=p>(</span><span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>])</span> <span class=o>+</span> <span class=n>value</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>=</span> <span class=n>tokens</span><span class=p>[</span><span class=n>to</span><span class=p>]</span> <span class=o>+</span> <span class=n>value</span>
+</span></span><span class=line><span class=cl>   <span class=n>total</span> <span class=o>=</span> <span class=n>total</span> <span class=o>+</span> <span class=n>value</span>
+</span></span></code></pre></div><p>As before checks are required to protect against overflow, and also to
+ensure that only <code>owner</code> can mint new tokens.</p><h2 id=contract-invariant>Contract Invariant</h2><p>An interesting observation is that the contract maintains an <a href=https://en.wikipedia.org/wiki/Invariant>invariant</a> over its storage state.
+Specifically, that <code>total</code> matches the number of tokens distributed to
+all account holders. Using Whiley, we can <em>verify</em> this invariant
+actually holds.</p><p>Roughly speaking, to make this work we define <code>sum(map&lt;uin160,uint256> tokens)</code> as a property which sums the tokens from all accounts in the
+map. Using our property, we can then extend the specification for
+<code>transfer()</code> as follows (and similarly for <code>mint()</code>):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Whiley data-lang=Whiley><span class=line><span class=cl><span class=c1>// Transfer some amount of tokens from one account to another.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>method</span> <span class=n>transfer</span><span class=p>(</span><span class=n>uint160</span> <span class=n>to</span><span class=p>,</span> <span class=n>uint256</span> <span class=n>value</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=c1>// (2) Invariant holds on entry
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>requires</span> <span class=n>sum</span><span class=p>(</span><span class=n>tokens</span><span class=p>)</span> <span class=o>==</span> <span class=n>total</span>
+</span></span><span class=line><span class=cl><span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=c1>// (5) Invariant holds on exit
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>sum</span><span class=p>(</span><span class=n>tokens</span><span class=p>)</span> <span class=o>==</span> <span class=n>total</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>   <span class=p>...</span>
+</span></span></code></pre></div><p>What remains is to <em>verify</em> this property holds. In fact, this
+presents some challenges for the verifier used in Whiley, and requires
+some additional hints (in the form of lemmas).</p><h2 id=conclusion>Conclusion</h2><p>We have demonstrated how a verification tool like Whiley can be used
+to verify key properties of our contracts hold. Since Whiley does not
+yet compile to Ethereum bytecode, this remains a proof-of-concept.
+Still, the value from doing this should hopefully be apparent!</p><hr></div></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-5582165-7","auto"),ga("send","pageview"))</script></body></html>
