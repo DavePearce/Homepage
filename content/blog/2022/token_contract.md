@@ -1,7 +1,7 @@
 ---
 date: 2022-09-15
 title: "Formal Verification of a Token Contract"
-draft: true
+draft: false
 #metaimg: "images/2022/AuctionContract_Preview.png"
 metatxt: "Verifying a token contract in Whiley helps to find problems."
 #twitter: ""
@@ -37,6 +37,8 @@ seem unnecessary (i.e. because it can be computed from the map).
 However, in the context of a smart contract it is useful to avoid
 such computation (as this can become prohibitively expensive).
 
+## Method Specifications
+
 Consider the following implementation of `transfer()` which includes
 an incomplete specification of what is _required_ for it to execute
 (otherwise it _reverts_) along with the properties that it _ensures_.
@@ -50,8 +52,8 @@ requires tokens[msg::sender] >= value
 ensures tokens[msg::sender] == old(tokens[msg::sender]) - value
 // (3) Ensure target balance increased
 ensures tokens[to] == old(tokens[to]) + value:
-   tokens[msg::sender] = tokens[msg::sender] - val
-   tokens[to] = tokens[to] + val
+   tokens[msg::sender] = tokens[msg::sender] - value
+   tokens[to] = tokens[to] + value
 ```
 
 As expected, the transfer cannot complete unless the account holder
@@ -84,7 +86,10 @@ requires msg::sender != to
 
 The first of these requirements simply prevents an overflow from
 occuring, whilst the latter represents one way of fixing the
-specification (though is not the only way).
+specification (though not the only way).
+
+The following illustrates our implementation of `mint()` including its
+specification:
 
 ```Whiley
 // Mint new coins into a given target uint160
@@ -101,49 +106,41 @@ ensures tokens[to] == old(tokens[to]) + value:
    total = total + value
 ```
 
+As before checks are required to protect against overflow, and also to
+ensure that only `owner` can mint new tokens.
+
 ## Contract Invariant
 
-```Whiley
-public property sum(map<uint256> tokens, uint i) -> (int r)
-requires i >= 0 && i <= |tokens|:
-    if i == |tokens|:
-        return 0
-    else:
-        return tokens[i] + sum(tokens,i+1)
-```
+An interesting observation is that the contract maintains an {{<wikip
+page="Invariant">}}invariant{{</wikip>}} over its storage state.
+Specifically, that `total` matches the number of tokens distributed to
+all account holders.  Using Whiley, we can _verify_ this invariant
+actually holds.  
+
+Roughly speaking, to make this work we define `sum(map<uin160,uint256>
+tokens)` as a property which sums the tokens from all accounts in the
+map.  Using our property, we can then extend the specification for
+`transfer()` as follows (and similarly for `mint()`):
 
 ```Whiley
-function lemma_1(map<uint256> xs, map<uint256> ys, uint i)
-// Arrays must have same size
-requires |xs| == |ys|
-// Index must be within bounds
-requires i >= 0 && i <= |xs|
-// Everything beyond this is the same
-requires all { k in i..|xs| | xs[k] == ys[k] }
-// Conclusion
-ensures sum(xs,i) == sum(ys,i):
-   //
-   if i == |xs|:
-      // base case
-   else:
-      lemma_1(xs,ys,i+1)
-
-// Index i identifies position within the two arrays which differ.
-// Index j is current index through arrays (starting from zero).
-function lemma_2(map<uint256> xs, map<uint256> ys, uint160 i, uint j, int d)
-// Arrays must have same size
-requires |xs| == |ys|
-// Indices must be within bounds
-requires j >= 0 && j <= i && i < |xs|
-// Everything else must be same
-requires all { k in 0..|xs| | k == i || xs[k] == ys[k] }
-// Ith element must have increased
-requires xs[i] == ys[i] + d
-// Conclusion
-ensures sum(xs,j) == sum(ys,j) + d:
-    //
-    if j < i:
-        lemma_2(xs,ys,i,j+1,d)
-    else:
-        lemma_1(xs,ys,i+1)      
+// Transfer some amount of tokens from one account to another.
+method transfer(uint160 to, uint256 value)
+...
+// (2) Invariant holds on entry
+requires sum(tokens) == total
+...
+// (5) Invariant holds on exit
+ensures sum(tokens) == total:
+   ...
 ```
+
+What remains is to _verify_ this property holds.  In fact, this
+presents some challenges for the verifier used in Whiley, and requires
+some additional hints (in the form of lemmas).
+
+## Conclusion
+
+We have demonstrated how a verification tool like Whiley can be used
+to verify key properties of our contracts hold.  Since Whiley does not
+yet compile to Ethereum bytecode, this remains a proof-of-concept.
+Still, the value from doing this should hopefully be apparent!
