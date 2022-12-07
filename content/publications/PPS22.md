@@ -5,6 +5,7 @@ title: "On the Termination of Borrow Checking in Featherweight Rust"
 authors: "Étienne Payet, David J. Pearce and Fausto Spoto"
 booktitle: "Proceedings of the Nasa Formal Methods Symposium (NFM)"
 preprint: "PPS22_NFM_preprint.pdf"
+slides: "PPS22_NFM_slides.pdf"
 ---
 
 **Abstract:** A distinguished feature of the Rust programming language
