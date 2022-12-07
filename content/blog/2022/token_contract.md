@@ -44,16 +44,17 @@ an incomplete specification of what is _required_ for it to execute
 (otherwise it _reverts_) along with the properties that it _ensures_.
 
 ```Whiley
-// Transfer some amount of tokens from one account to another.
-method transfer(uint160 to, uint256 value)
-// (1) Ensure sufficient funds in source account
-requires tokens[msg::sender] >= value
+// Transfer some amount of tokens 
+// from one account to another.
+method transfer(uint160 to, uint256 val)
+// (1) Ensure sufficient funds
+requires tokens[msg::sender] >= val
 // (2) Ensure sender balance decreased
-ensures tokens[msg::sender] == old(tokens[msg::sender]) - value
+ensures tokens[msg::sender] == old(tokens[msg::sender]) - val
 // (3) Ensure target balance increased
-ensures tokens[to] == old(tokens[to]) + value:
-   tokens[msg::sender] = tokens[msg::sender] - value
-   tokens[to] = tokens[to] + value
+ensures tokens[to] == old(tokens[to]) + val:
+  tokens[msg::sender] = tokens[msg::sender] - val
+  tokens[to] = tokens[to] + val
 ```
 
 As expected, the transfer cannot complete unless the account holder
@@ -79,7 +80,7 @@ must extend the specification with two more requirements:
 
 ```Whiley
 // (4) Prevent overflow in target account
-requires tokens[to] + value <= MAX_UINT256
+requires tokens[to] + val <= MAX_UINT256
 // (5) Cannot transfer to myself!
 requires msg::sender != to
 ```
@@ -92,18 +93,18 @@ The following illustrates our implementation of `mint()` including its
 specification:
 
 ```Whiley
-// Mint new coins into a given target uint160
-method mint(uint160 to, uint256 value)
+// Mint new coins into target account
+method mint(uint160 to, uint256 val)
 // Only the owner can mint new coins
 requires msg::sender == owner
 // Prevent overflow in target account
-requires tokens[to] + value <= MAX_UINT256
+requires tokens[to] + val <= MAX_UINT256
 // Prevent overflow of total
-requires total + value <= MAX_UINT256
+requires (total + val) <= MAX_UINT256
 // Ensure target balance increased
-ensures tokens[to] == old(tokens[to]) + value:
-   tokens[to] = tokens[to] + value
-   total = total + value
+ensures tokens[to] == old(tokens[to]) + val:
+   tokens[to] = tokens[to] + val
+   total = total + val
 ```
 
 As before checks are required to protect against overflow, and also to
@@ -123,8 +124,9 @@ map.  Using our property, we can then extend the specification for
 `transfer()` as follows (and similarly for `mint()`):
 
 ```Whiley
-// Transfer some amount of tokens from one account to another.
-method transfer(uint160 to, uint256 value)
+// Transfer some amount of tokens
+// from one account to another.
+method transfer(uint160 to, uint256 val)
 ...
 // (2) Invariant holds on entry
 requires sum(tokens) == total
