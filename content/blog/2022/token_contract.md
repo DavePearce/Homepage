@@ -2,7 +2,7 @@
 date: 2022-09-15
 title: "Formal Verification of a Token Contract"
 draft: false
-#metaimg: "images/2022/AuctionContract_Preview.png"
+metaimg: "images/2022/TokenContract_Preview.png"
 metatxt: "Verifying a token contract in Whiley helps to find problems."
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
