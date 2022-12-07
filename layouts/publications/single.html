@@ -33,8 +33,8 @@
 {{ $first = false }}
 {{end}}
 {{ if .Params.slides }}
-{{ if (not $first) }} | {{ end }}  
-<a href="{{.Params.slides}}">Slides</a>
+{{ if (not $first) }} | {{ end }}
+<a href="{{.Site.BaseURL}}publications/{{.Params.slides}}">Slides</a>
 {{ $first = false }}
 {{end}}
 {{ if .Params.DOI }}
