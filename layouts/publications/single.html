@@ -32,19 +32,19 @@
 <a href="{{.Site.BaseURL}}publications/{{.Params.preprint}}">PDF</a>
 {{ $first = false }}
 {{end}}
-{{ if .Params.slides }}
-{{ if (not $first) }} | {{ end }}
-<a href="{{.Site.BaseURL}}publications/{{.Params.slides}}">Slides</a>
-{{ $first = false }}
-{{end}}
 {{ if .Params.DOI }}
 {{ if (not $first) }} | {{ end }}  
 <a href="https://doi.org/{{.Params.DOI}}">DOI</a>
 {{ $first = false }}
 {{end}}
+{{ if .Params.slides }}
+{{ if (not $first) }} | {{ end }}
+<a href="{{.Site.BaseURL}}publications/{{.Params.slides}}">Presentation</a>
+{{ $first = false }}
+{{end}}
 {{ if .Params.website }}
 {{ if (not $first) }} | {{ end }}  
-<a href="{{.Params.website}}">Conference Website</a>
+<a href="{{.Params.website}}">Conference</a>
 {{ $first = false }}
 {{end}}
 </div>
