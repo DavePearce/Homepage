@@ -7,7 +7,7 @@ banner_ratio: "2048_850"
 
 ## Bio
 
-I'm a research engineer in the _Trustworthy Smart Contracts Team_ at [ConsenSys](https://consensys.net/).  My current focus is on the application of formal methods to smart contracts.  Before that, I was an Associate Professor in the [School of Engineering and Computer Science](https://www.wgtn.ac.nz/ecs) at [Victoria University of Wellington](https://www.wgtn.ac.nz).  I graduated from the [Department of Computing](https://www.imperial.ac.uk/computing) at Imperial College London, and moved to New Zealand in 2004.  My research interests are in *programming languages*, *compilers*, *static analysis tools* and *formal verification*.  During my time as a PhD student I was an intern at Bell Labs, New Jersey, working on compilers for FPGAs and also at IBM Hursely, UK, working with the AspectJ development team on profiling systems. 
+I'm a research engineer in the _Trustworthy Smart Contracts Team_ at [ConsenSys](https://consensys.net/).  My current focus is on the application of formal methods to smart contracts.  Before that, I was an Associate Professor in the [School of Engineering and Computer Science](https://www.wgtn.ac.nz/ecs) at [Victoria University of Wellington](https://www.wgtn.ac.nz).  I graduated from the [Department of Computing](https://www.imperial.ac.uk/computing) at Imperial College London, and moved to New Zealand in 2004.  My research interests are in *programming languages*, *compilers*, *static analysis tools* and *formal verification*.  During my time as a PhD student I was an intern at Bell Labs, New Jersey, working on compilers for FPGAs and also at IBM Hursley, UK, working with the AspectJ development team on profiling systems. 
 
 ## Research
 
