@@ -2,8 +2,8 @@
 date: 2023-01-04
 title: "Disassembling EVM Bytecode (the Basics)"
 draft: false
-#metaimg: "images/2022/TokenContract_Preview.png"
-#metatxt: "Verifying a token contract in Whiley helps to find problems."
+metaimg: "images/2022/DecompilingEvm_Preview.png"
+metatxt: "Disassembling EVM bytecode using dataflow analysis is an interesting challenge."
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
