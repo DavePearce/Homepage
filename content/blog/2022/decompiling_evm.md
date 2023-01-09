@@ -163,7 +163,7 @@ This code branches to position `0x1a` from two locations and, in each
 case, a different abstract stack is passed along (`[0x8e,0x1f]` versus
 `[0x8e,0x2f]`).  It looks something like this:
 
-{{<img class="text-center" src="/images/2022/DecompilingEvm_1.png" width="100%" alt="Illustrating types being pulled up the AST of an expresion.">}}
+{{<img class="text-center" src="/images/2022/DecompilingEvm_1.png" width="635px" alt="Illustrating types being pulled up the AST of an expresion.">}}
 
 The question then _is what abstract stack should we
 use for location `0x1a`?_ There are different ways we can solve this
@@ -202,7 +202,7 @@ Again, this program branches to `0x1a` from two locations each of
 which passes along a different stack (`[0x8e,0x1f]` versus `[0x1f]`).
 This looks something like this:
 
-{{<img class="text-center" src="/images/2022/DecompilingEvm_2.png" width="100%" alt="Illustrating types being pulled up the AST of an expresion.">}}
+{{<img class="text-center" src="/images/2022/DecompilingEvm_2.png" width="635px" alt="Illustrating types being pulled up the AST of an expresion.">}}
 
 
 The question this time _is how do we merge stacks with different

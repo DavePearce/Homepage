@@ -45,7 +45,7 @@ completely wrong!** In fact, an array in Java would be considered
 **statically sized** in the terminology of Rust.  A diagram helps shed
 some light on this:
 
-{{<img class="text-center" src="/images/2021/SizingUpTypes_Java.png" width="100%" alt="Illustrating the layout of an array in Java.">}}
+{{<img class="text-center" src="/images/2021/SizingUpTypes_Java.png" width="600px" alt="Illustrating the layout of an array in Java.">}}
 
 Its pretty easy to see that the size of `x` is known at compile time,
 but what about `xs`?  Well, yes, it is known at compile time --- its

@@ -24,7 +24,8 @@ int f(any x):
 ```
 
 The question is: *are the above two examples equivalent or not?* (answer below)
-[{{<img class="text-center" src="http://whiley.org/wp-content/uploads/2013/01/Answer.png">}}](http://whiley.org/wp-content/uploads/2013/01/Answer.png)
+
+{{<img class="text-center" src="/images/2013/Answer.png" width="300px">}}
 
 Well, the answer is: *no, they're not equivalent*.  You probably guessed that, but the question is: *why not?* Well, consider these two definitions for the function `g()` used in the examples:
 

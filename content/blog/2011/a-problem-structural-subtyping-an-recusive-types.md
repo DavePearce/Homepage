@@ -18,7 +18,7 @@ This is a fairly straightforward definition of a [linked list](http://wikipedia.
 
 Here's a pictorial representation of the problem:
 
-{{<img class="text-center" width="50%" src="/images/2011/RecursiveTypes.png">}}
+{{<img class="text-center" width="600px" src="/images/2011/RecursiveTypes.png">}}
 
 Now, the following illustrates my current (abbreviated) subtyping implementation, with each rule annotated with its corresponding name from the [technical report](/publications/ECSTR10-23.pdf):
 

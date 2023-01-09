@@ -35,7 +35,7 @@ int abs(int x) ensures $ >= 0:
 
 This example is nice because it only consists of an `if` statement along with a postcondition.  To verify this function the verifier performs a *path-sensitive* traversal, accumulating the verification condition as it goes.  In this case, it will first traverse down the true branch and then, separately, traverse down the false branch.  When doing this, it will assume the branch condition holds (resp. does not hold) as appropriate.  The following illustrates the process:
 
-{{<img class="text-center" width="70%" src="/images/2012/Example-1b.png">}}
+{{<img class="text-center" width="600px" src="/images/2012/Example-1b.png">}}
 
 Here, we see the two execution paths that the verifier traverses along with the verification conditions generated for each.  Upon reaching a `return` statement, the verifier must check the postcondition holds.  This is done by first substituting `$` for the returned expression to generate the assertion and combining it with the *accumulated assumptions* to produce a verification condition.  The verifier then passes each of these to the automated theorem prover which attempts to prove they are unsatisfiable (and, hence, that the postcondition holds for all executions of that path).
 
@@ -52,7 +52,7 @@ int abs(int x, int y) ensures $ >= 0
 
 This takes the basic idea from before, but adds a second conditional.  Since the generation process is done using a path-sensitive traversal, we end up with four distinct verification conditions to be checked.  The following illustrates:
 
-{{<img class="text-center" width="70%" src="/images/2012/Example-2b.png">}}
+{{<img class="text-center" width="600px" src="/images/2012/Example-2b.png">}}
 
 Here, we can see how the verification condition generator has propagated the effects of assignments through subsequent expressions to produce a verification condition expressed in terms of the function parameters.
 ## Pre-/Post-Conditions
@@ -186,7 +186,7 @@ nat loop(nat start, nat end):
 
 In the above, there are two distinct paths that the VC generator will traverse: the first goes into the loop and stops at the end of the body; the second skips the loop body entirely.  The following illustrates these two paths:
 
-{{<img class="text-center" width="40%" src="/images/2012/Example-3.png">}}
+{{<img class="text-center" width="200px" src="/images/2012/Example-3.png">}}
 
 An important issue which is not clear above, is that the VC generator must *invalidate* variables which are modified in the loop body before each of the `assume` statements.  To understand this better, consider the following example:
 

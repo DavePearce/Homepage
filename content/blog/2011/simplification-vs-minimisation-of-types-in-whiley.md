@@ -27,13 +27,13 @@ define MyList as int | LinkedList
 
 The problem is how to minimise this.  One property I want of the simplified form is to eliminate unions of unions.  But, consider the type graph for `MyList`:
 
-{{<img class="text-center" width="50%" src="/images/2011/SimplifyingRecursiveTypes1.png">}}
+{{<img class="text-center" width="400px" src="/images/2011/SimplifyingRecursiveTypes1.png">}}
 
 (here, circles represent unions, squares represent records, etc)
 
 Now, it's difficult to see how we simplify the above to remove the union (node `0`) of a union (node `2`).  That's because of the recursive link directly into node `2`.  In fact, we can achieve this by judiciously expanding the type like so:
 
-{{<img class="text-center" width="50%" src="/images/2011/SimplifyingRecursiveTypes2.png">}}
+{{<img class="text-center" width="400px" src="/images/2011/SimplifyingRecursiveTypes2.png">}}
 
 This does the trick and (I believe) it's always possible to eliminate unions of unions in this way.
 ## Simplification Helps Minimisation!
@@ -42,7 +42,7 @@ You might be wondering: *why bother with simplification at all? * Well, it's bec
 
 In a non-simplified type graph, the above is clearly not true.  For example, in the type `(any|int)` the outer union and `any` are equivalent (but have different structure).  Here's another example:
 
-{{<img class="text-center" width="50%" src="/images/2011/SimplifyingRecursiveTypes3.png">}}
+{{<img class="text-center" width="400px" src="/images/2011/SimplifyingRecursiveTypes3.png">}}
 
 Here, nodes `0`, `1` and `2` are all equivalent.  But, whilst nodes `1` and `2` have identical reachable structure, this differs from node `0`.  In particular, the children of node `0` are in the same equivalence class as node `0`, whilst those for nodes `1` and `2` are not.  In practical terms, my minimisation algorithm would have to handle this edge case and its numerous variations.  With simplified form, however, these awkward cases disappear.
 ## Minimised is Simplified?
@@ -59,10 +59,10 @@ define MyList as LinkedList | OuterList
 
 These definitions give rise to the following type graph for `MyList`:
 
-{{<img class="text-center" width="70%" src="/images/2011/SimplifyingRecursiveTypes23.png">}}
+{{<img class="text-center" width="600px" src="/images/2011/SimplifyingRecursiveTypes23.png">}}
 
 This type graph is fully simplified (it's a bit of a monster though!).  This is because simplification does not attempt to eliminate *equivalent* nodes from a union, only *identical* ones.  After minimisation, the outermost union will be removed and we'll be left with just this:
 
-{{<img class="text-center" width="20%" src="/images/2011/SimplifyingRecursiveTypes24.png">}}
+{{<img class="text-center" width="200px" src="/images/2011/SimplifyingRecursiveTypes24.png">}}
 
 Now, back to the original issue.  In the general case, we can remove a union node from between any two nodes.  However, we cannot remove other kinds of nodes unless the entire subtree below that node is removed.  Therefore, we cannot introduce a union of union through this process.

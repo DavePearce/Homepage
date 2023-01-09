@@ -6,11 +6,10 @@ draft: false
 
 The `leftPad(string,int)` function simply pads a string up to a given size by inserted spaces at the beginning. For example, `leftPad("hello",8)` produces `"   hello"`. This little function [shot to fame in 2016](https://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) when a developer pulled all his modules from NPM, of which one provided the `leftPad()` functionality. There were two basic issues causing surprise here: firstly, a developer can suddenly and without warning pull all his libraries (including old versions), thereby breaking anything depending on them (which, in this case, was a lot). secondly, that someone was providing a module to offer this (pretty basic) functionality.
 
-Anyhow, that is all ancient history. A bunch of people have been writing verified implementations of `leftPad()` in various languages. And, `@Hillelolgram` asked if I would write one in Whiley:
+Anyhow, that is all ancient history. A bunch of people have been writing verified implementations of `leftPad()` in various languages. And, `@Hillelolgram` asked [if I would write one in Whiley](https://twitter.com/Hillelogram/status/988155666257862658):
 
-
-[{{<img class="text-center" src="http://whiley.org/wp-content/uploads/2018/04/hillelogram.png">}}](https://twitter.com/Hillelogram/status/988155666257862658)
-
+{{<img class="text-center" src="/images/2018/hillelogram.png" width="599px">}}
+    
 So, having little spare time, I thought I'd give it a crack.  Here's my first version:
 
 ```whiley

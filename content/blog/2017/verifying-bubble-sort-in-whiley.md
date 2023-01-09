@@ -6,7 +6,7 @@ draft: false
 
 Bubble sort is a classic sorting algorithm with lots of well-known issues. It's been a long time since I thought much about this algorithm. But, it turns out to be an interesting verification example for Whiley, as it has some interesting loop invariants. The algorithm is pretty simple: *it loops through an array swapping adjacent items which are incorrectly ordered, and repeats until nothing changes*. For example, in one iteration the following swaps would occur:
 
-{{<img class="text-center" src="/images/2017/BubbleSort.png" width="25%">}}
+{{<img class="text-center" src="/images/2017/BubbleSort.png" width="300px">}}
 
 We can see that, after this iteration, the resulting array is not yet in sorted order and, thus, we must repeat the process.
 ## Specification
@@ -54,7 +54,7 @@ This implementation is pretty straightforward using a do-while loop to ensure we
 ## Verification
 At this point, we've specified and implemented our `sort()` function. Now, we want to *verify* that the implementation meets its specification. That is, get a compile-time guarantee that the resulting array is sorted. You can think of this is as being similar to type checking our program, though it's a bit more involved. If we try and compile the program on whileylabs.com with verification enabled, we'll see the following:
 
-{{<img class="text-center" src="/images/2017/BubbleSort_1.png" width="50%">}}
+{{<img class="text-center" src="/images/2017/BubbleSort_1.png" width="600px">}}
 
 This is telling us that the verifier believes the expression `i-1` could be negative at this point, thus potentially leading to an index-out-of-bounds error at runtime. As programmers we can deduce that, in fact, since `i` starts at `1` and is always incremented this can never happen (you also need to know that integers in Whiley are unbounded and don't wrap around). But, the verifier needs help here and, to give it the necessary clue, we need to provide a *loop invariant*:
 
@@ -68,7 +68,7 @@ The loop invariant is necessary because the verifier *cannot reason about variab
 
 Having resolved the verification problem around `items[i-1]`, the verifier now reports the error "`type invariant not satisfied`":
 
-{{<img class="text-center" src="/images/2017/BubbleSort_2.png" width="50%">}}
+{{<img class="text-center" src="/images/2017/BubbleSort_2.png" width="600px">}}
 
 Again, this error is being reported because the verifier cannot reason precisely about loops.  We need to provide another loop invariant, *but what should it be?*  By the time control reaches the `return` statement, we need the array to be sorted.  But, clearly, at an arbitrary point during the loop nest this is not necessarily true.  What we can say is that, for a given index `i`, we know all elements below it are correctly sorted *when the `clean` flag holds*.  We can update the code as follows:
 

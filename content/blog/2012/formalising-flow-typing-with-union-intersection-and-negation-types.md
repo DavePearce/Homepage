@@ -47,7 +47,7 @@ In building a compiler, it's obviously important to develop algorithms for manip
 
 We now begin to formalise more precisely what types in Whiley mean (i.e. their *semantics*).  We use the following language of types, which is a cut-down version of those found in Whiley:
 
-[{{<img class="text-center" src="http://whiley.org/wp-content/uploads/2012/10/Types1.png">}}](http://whiley.org/wp-content/uploads/2012/10/Types1.png)
+{{<img class="text-center" src="/images/2012/Types1.png" width="600px">}}
 
 Here, `any` is the type containing all values, `int` is the type of integers, (`T1,...,Tn)` is a tuple type, `¬T` is a negation type, `T1 /\ T2` an intersection type (written `T1 & T2` in Whiley source syntax), and `T1 \/ T2` a union type (written `T1 | T2` in Whiley source syntax).
 

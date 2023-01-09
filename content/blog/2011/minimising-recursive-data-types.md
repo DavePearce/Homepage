@@ -25,13 +25,13 @@ define LinkedList as null | { int data, LinkedList next }
 
 We can draw some nice pictures to help illustrate this issue of equivalence:
 
-{{<img class="text-center" width="50%" src="/images/2011/MinimisingRecursiveTypes1.png">}}
+{{<img class="text-center" width="500px" src="/images/2011/MinimisingRecursiveTypes1.png">}}
 
 Here, circles represent the union of types (e.g. `X | Y`), whilst the squares represent the records (e.g. `{ int data, ... }`).  The type on the left corresponds with `LinkedList`, whilst that on the right corresponds with `OuterList` (**note**: I've left off the data field from the diagrams as it's not important here).
 
 One way to think about why these types are equivalent is to consider that they "accept" the same concrete list instances.  Here are some example lists with one, two and three nodes respectively:
 
-{{<img class="text-center" width="50%" src="/images/2011/MinimisingRecursiveTypes2.png">}}
+{{<img class="text-center" width="300px" src="/images/2011/MinimisingRecursiveTypes2.png">}}
 
 To determine whether one of our types `LinkedList` or `OuterList` will accept one of these concrete instances is easy enough:
    * Set `i` and `j` as the root of the recursive and concrete trees (respectively).
@@ -51,6 +51,6 @@ Clearly, `LinkedList` is a more compact representation than `OuterList`.  So, we
 
 The basic idea is that we want to identify nodes within our recursive types which are equivalent.  What we'll do is initially assume that all states are equivalent.  Then, we'll cross off those equivalences which are patently untrue (for example, a records are only equivalent to records, etc).  We then repeat this process until we reach a fixed point (i.e. no further things to cross off), at which point we have our solution.  For example, consider our `OuterList` type again:
 
-{{<img class="text-center" width="50%" src="/images/2011/MinimisingRecursiveTypes3.png">}}
+{{<img class="text-center" width="300px" src="/images/2011/MinimisingRecursiveTypes3.png">}}
 
 This time I've annotated each node with a unique number.  Then, we start off with a single equivalent set: `{1,2,3,4,5,6}`.  Immediately, we can split this out into equivalences `{2,5}`, `{1,4}` and `{3,6}` because, for example, node `2` cannot be equivalent to node `3` since they have different type.  At this point, we're actually finished already since the example was quite simple.

@@ -26,7 +26,7 @@ In the above example, the method `Child.setParent(Parent)` is used as a *late in
 
 We experimentally measured the number of stationary fields using a custom runtime profiling framework. The aim was to identity how many non-final stationary fields there were.  To do this, our profiler recorded all constructor exit/return events and field read/writes.  Using this, we determined which fields of each class were stationary.  The results we obtained for the [DaCapo benchmark suite](http://dacapobench.org) are:
 
-{{<img class="text-center" width="100%" src="/images/2012/RV-results.png">}}
+{{<img class="text-center" width="900px" src="/images/2012/RV-results.png">}}
 
 In the above chart, the height of each bar gives the percentage of fields which were observed to be stationary.  Each bar is then coloured to identify the sub-categories as follows: the black component indicates the number of stationary fields which were declared final; the light blue component indicates the number which could have been declared `final`; finally, the dark blue component indicates those stationary fields which couldn't be declared final (like e.g. `Child.parent` above).  
 

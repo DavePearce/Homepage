@@ -6,7 +6,7 @@ draft: false
 
 Yesterday, I was looking at the stats on [Ohloh for the Whiley project](http://www.ohloh.net/p/whiley/) and noticed that my total line count for the project had increased from around 65KLOCto 143KLOC over a very short amount of time:
 
-{{<img class="text-center" width="60%" src="/images/2012/LOC.png">}}
+{{<img class="text-center" width="600px" src="/images/2012/LOC.png">}}
 
 Confused, I was pondering this for a while.  Then it struck me: *I'd checked in a [single file with 72KLOC](https://github.com/DavePearce/Whiley/blob/89480643dc8525a543fd505d5188e2be3a1601e0/modules/wyil/src/wycs/Solver.java)!* How could I forget that? That explains the sudden jump and, I'm sure, will mess with any metrics for the project.  And, you guessed it, *that file has no commenting whatsoever*!
 

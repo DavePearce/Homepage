@@ -19,7 +19,7 @@ int getYear(date *ptr) {
 
 The C compiler will automatically determine a fixed layout for the `struct` named `date` (which may or may not including padding).  For simplicity, let's assume there's no padding and an `int` corresponds to a [two's-complement](http://wikipedia.org/wiki/Two's_complement) 32 bit integer.  Then, the layout will look something like this:
 
-{{<img class="text-center" width="50%" src="/images/2011/DataLayout.png">}}
+{{<img class="text-center" width="400px" src="/images/2011/DataLayout.png">}}
 
 Here, the offsets are measured in bytes and, thus, we know that the `year` field starts at an offset of 8 bytes.  This means that, in function `getYear()` above, the compiler can implement the field access directly by loading the `int` stored in memory at an offset of 8 bytes from `ptr`. 
 

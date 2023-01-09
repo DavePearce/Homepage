@@ -8,16 +8,16 @@ The [Whiley programming language](https://whiley.org) is about developing more r
 
 After some discussion with our workshop folks, I managed to acquire the following bits:
 
-{{<img class="text-center" width="50%" src="/images/2012/ArduinoRobot.jpg">}}
+{{<img class="text-center" width="400px" src="/images/2012/ArduinoRobot.jpg">}}
 
 Here, we have an Arduino Uno (top right), a [Motor Shield](http://www.hobbyist.co.nz/?q=motor-shield-tutorial) (bottom right) and a [Tamiya dual motor gearbox](https://www.sparkfun.com/products/319?).  The Motor shield sits on top of the Arduino Uno, and provides necessary power for driving the two DC motors on the Tamiya gearbox.  I also acquired an Infra-Red sensor from our workshop, which can be used for determining distance to objects ahead:
 
-{{<img class="text-center" width="50%" src="/images/2012/ArduinoRobot2.jpg">}}
+{{<img class="text-center" width="400px" src="/images/2012/ArduinoRobot2.jpg">}}
 
 This sensor plugs into the I/O pins of the Arduino and we can then read its current value from our Arduino program and make decisions based on this.  To complete the robot, we cut a base plate on to fix everything on to ... and a robot was born:
 
-{{<img class="text-center" width="50%" src="/images/2012/ArduinoRobot3.jpg">}}
-{{<img class="text-center" width="50%" src="/images/2012/ArduinoRobot4.jpg">}}
+{{<img class="text-center" width="400px" src="/images/2012/ArduinoRobot3.jpg">}}
+{{<img class="text-center" width="400px" src="/images/2012/ArduinoRobot4.jpg">}}
 
 The robot really needs a better front wheel, and probably some more interesting sensors!  But, for now, it's enough to get the hang of programming the Arduino.  Here's my first program for it:
 

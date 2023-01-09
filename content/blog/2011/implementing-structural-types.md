@@ -39,7 +39,7 @@ LinkedList f(OuterList ls):
 
 To type check this example, the compiler must show that `LinkedList` is structurally equivalent to `OuterList`.  The following diagram illustrates this nicely:
 
-{{<img class="text-center" width="50%" src="/images/2011/MinimisingRecursiveTypes1.png">}}
+{{<img class="text-center" width="600px" src="/images/2011/MinimisingRecursiveTypes1.png">}}
 
 Here, circles represent unions (e.g. `T1 | T2`), whilst squares represent records (e.g. `{ int data, ... }`).  The type on the left corresponds with `LinkedList`, whilst that on the right corresponds with `OuterList` (**note:** I’ve left off the data field from the diagrams as it’s not important here).
 
@@ -108,7 +108,7 @@ In this representation, a type is made up of one or more `Node`s.  Each node sto
 
 The following illustrates how this looks for our `LinkedList` example:
 
-{{<img class="text-center" width="50%" src="/images/2011/RepresentingRecursiveTypes.png">}}
+{{<img class="text-center" width="600px" src="/images/2011/RepresentingRecursiveTypes.png">}}
 
 The nice thing about this is that we no longer need explicit `Recursive` instances.  Thus, variable renaming and variable capture are impossible by construction.  Futhermore, the graph representation is explicit and, hence, the type minimisation algorithm (see below) is easy to implement.
 ## Nice Interfaces
@@ -132,7 +132,7 @@ Having covered the representation of types, it's interesting to see how the type
 
 The following example illustrates the subtype matrix:
 
-{{<img class="text-center" width="50%" src="/images/2011/MinimisingRecursiveTypes2.png">}}
+{{<img class="text-center" width="300px" src="/images/2011/MinimisingRecursiveTypes2.png">}}
 
 In the matrix, entries in dark gray are `true` and those in light gray are `false`.  We can determine whether node `X` is a subtype of node `Y` by checking column `Y` in row `X`.  For example, node `2` is a subtype of node `4`.  Once we have the subtype matrix, it is fairly easy to identify nodes which are *equivalent* --- namely, those which are mutual subtypes (e.g. `0`≡`4` and `2`≡`6`).
 
