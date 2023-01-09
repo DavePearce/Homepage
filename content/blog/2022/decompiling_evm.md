@@ -4,8 +4,8 @@ title: "Disassembling EVM Bytecode (the Basics)"
 draft: false
 metaimg: "images/2022/DecompilingEvm_Preview.png"
 metatxt: "Disassembling EVM bytecode using dataflow analysis is an interesting challenge."
-#twitter: ""
-# reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
+twitter: "https://twitter.com/whileydave/status/1612325134215544832"
+reddit: "https://www.reddit.com/r/ethereum/comments/107oq2c/disassembling_evm_bytecode_the_basics/"
 ---
 
 Recently, I've been looking at how to disassemble (and eventually
