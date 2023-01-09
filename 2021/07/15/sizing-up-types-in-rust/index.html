@@ -27,7 +27,7 @@ at compile time):</p><pre tabindex=0><code>int[] xs = new []{256,15};
 </code></pre><p>At some level, this all makes sense &mldr; but, unfortunately, <strong>it is
 completely wrong!</strong> In fact, an array in Java would be considered
 <strong>statically sized</strong> in the terminology of Rust. A diagram helps shed
-some light on this:</p><figure class=text-center><img width=100% alt="Illustrating the layout of an array in Java." src=/images/2021/SizingUpTypes_Java.png></figure><p>Its pretty easy to see that the size of <code>x</code> is known at compile time,
+some light on this:</p><figure class=text-center><img width=600px alt="Illustrating the layout of an array in Java." src=/images/2021/SizingUpTypes_Java.png></figure><p>Its pretty easy to see that the size of <code>x</code> is known at compile time,
 but what about <code>xs</code>? Well, yes, it is known at compile time &mdash; its
 the size of a pointer (which I&rsquo;ve just assumed is 32bits above for
 simplicity).</p><h3 id=confusion-dawns>Confusion Dawns</h3><p>Now, we fast forward to a moment early in my journey to learning Rust.

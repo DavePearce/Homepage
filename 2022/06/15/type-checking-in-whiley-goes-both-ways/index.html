@@ -17,7 +17,7 @@ has a reasonably unusual feature set).</p><h2 id=backwards-typing>Backwards Typi
 direction. That is, they start from leaves of the <a href=https://en.wikipedia.org/wiki/Abstract_syntax_tree>abstract syntax
 tree</a> and work
 upwards. Typing a statement like <code>xs[i] = ys[i] + 1</code> (when <code>xs</code> and
-<code>ys</code> have type <code>int[]</code>) might look something like this:</p><figure class=text-center><img width=60% alt="Illustrating types being pulled up the AST of an expresion." src=/images/2022/BidirectionalTypeChecking.png></figure><p>They key here is that types have to agree (modulo subtyping),
+<code>ys</code> have type <code>int[]</code>) might look something like this:</p><figure class=text-center><img width=485px alt="Illustrating types being pulled up the AST of an expresion." src=/images/2022/BidirectionalTypeChecking.png></figure><p>They key here is that types have to agree (modulo subtyping),
 otherwise we have a type error.</p><h3 id=limitations>Limitations</h3><p>As a general approach, backwards typing works well in most cases.
 But, there are some limitations when applying this to Whiley:</p><ul><li><p><em>(Sizing)</em>. Variables of type <code>int</code> in Whiley can hold arbitrary
 sized integers and, because of this, backwards typing can lead
@@ -73,7 +73,7 @@ declaration:</p><div class=highlight><pre tabindex=0 class=chroma><code class=la
 </span></span></code></pre></div><p>We can type this in a <em>forwards</em> (or <em>top down</em>) direction by &ldquo;pushing
 down&rdquo; from the declared type <code>u8[]</code> of <code>bytes</code>. This means we give
 <code>[1,2,x+1]</code> the type <code>u8[]</code> and then push <code>u8</code> into each of the
-subexpressions <code>1</code>, <code>2</code>, and <code>x+1</code>, as follows:</p><figure class=text-center><img width=50% alt="Illustrating types being pushed down the AST of an expresion." src=/images/2022/BidirectionalTypeChecking_2.png></figure><h2 id=bidirectional-typing>Bidirectional Typing</h2><p>Bidirectional typing, as the name suggests, is about mixing forwards
+subexpressions <code>1</code>, <code>2</code>, and <code>x+1</code>, as follows:</p><figure class=text-center><img width=300px alt="Illustrating types being pushed down the AST of an expresion." src=/images/2022/BidirectionalTypeChecking_2.png></figure><h2 id=bidirectional-typing>Bidirectional Typing</h2><p>Bidirectional typing, as the name suggests, is about mixing forwards
 and backwards typing. But, you might wonder why we don&rsquo;t just use
 forwards typing all the time? Well, the answer is pretty simple: <em>in
 some cases, you simply cannot use forward typing</em>. Therefore, in such
