@@ -95,11 +95,11 @@ requires st.IsExecuting() {
 ```
 
 This states that there must be at least two operands on the stack,
-otherwise execution stops with a stack underflow.  Furthermore, the
-`lhs` (i.e. left-hand side) is at offset `0` from the top of the
-stack, whilst the `rhs` is at offset `1`.  The two operands are then
-added together modulo `TWO_256` to ensure the result fits into a
-`u256`.  Thus, we can see from this that the EVM does not
+otherwise execution halts with a stack underflow exception.
+Furthermore, the `lhs` (i.e. left-hand side) is at offset `0` from the
+top of the stack, whilst the `rhs` is at offset `1`.  The two operands
+are then added together modulo `TWO_256` to ensure the result fits
+into a `u256`.  Thus, we can see from this that the EVM does not
 automatically catch arithmetic overflow for us.
 
 As a second example, consider the semantics given for the `MLOAD`
@@ -120,7 +120,126 @@ requires st.IsExecuting() {
 }
 ```
 
+In this case, only one operand on the stack is required (i.e. the
+address in memory to load from).  The purpose of the `Expand(loc,32)`
+is to ensure there is enough memory to store a `u256` word at address
+`loc` by expanding memory as necessary.  This also serves to
+illustrate some of the benefits of using a language like Dafny.  The
+`Read` function is defined like so:
+
+```Dafny
+function method Read(address:nat) : u256
+requires IsExecuting()
+requires address + 31 < Memory.Size(evm.memory) { 
+  ... 
+}
+```
+
+Thus, if the `Expand(loc,32)` call above were omitted or specified
+incorrectly (e.g. as `Expand(loc,31)`) then Dafny will flag a
+precondition violation for us at compile time.  Of course, we could
+have implemented `Read()` to automatically expand for us.  However,
+making explicit the places where memory expansion can occur helps to
+ensure expansion is done correctly.
+
 ## Verification Example
+
+Using the DafnyEVM we can prove properties of interest on bytecode
+sequences.  An example proof is the following:
+
+```Dafny
+method AddBytes(x: u8, y: u8) {
+  // Initialise an EVM.
+  var st := InitEmpty(gas:=1000);
+  // Execute three bytecodes
+  st := Push1(x);
+  st := Push1(y);
+  st := Add();
+  // Check top of stack is sum of x and y
+  assert st.Peek(0) == (x as u256) + (y as u256);
+}
+```
+
+This proof roughly states that: _for any two bytes `x` and `y` on the
+stack, `ADD` returns their sum_.  Observe that, since `x` and `y` are
+bytes, overflow is not possible and Dafny recognises this.
+
+As a second (and more interesting) example, let's consider a more
+complete contract:
+
+```Dafny
+// Load counter on stack
+PUSH1 0x0
+SLOAD
+// Increment by one
+PUSH 0x1
+ADD 
+// Check for overflow
+DUP1
+PUSH1 0xf
+JUMPI
+// Overflow, so revert
+PUSH1 0x0
+PUSH1 0x0
+REVERT,
+// No overflow (0xf) 
+JUMPDEST
+// Write back
+PUSH 0x0
+SSTORE
+// Done
+STOP
+```
+
+This contract maintains a counter at storage location `0` which is
+incremented by one on every contract call.  The contract should revert
+if an overflow occurs.  Thus, we should be able to prove that whenever
+the contract is called: (i) either the counter is incremented; or
+(ii), the contract reverts.  The proof of this using the DafnyEVM
+looks (roughly speaking) as follows:
+
+```Whiley
+method IncProof(st: State) returns (st': State)
+// Initial state has PC == 0 and an empty stack
+requires st.OK? && st.PC() == 0 && st.Operands() == 0
+// Assume there is enough gas
+requires st.Gas() >= 40000
+// Success guaranteed if can increment counter
+ensures st'.RETURNS? <==> (st.Load(0) as nat) < MAX_U256
+// If success, counter incremented
+ensures st'.RETURNS? ==> st'.Load(0) == (st.Load(0) + 1) {
+  var nst := st;
+  // Load counter
+  nst := Push1(nst,0x0);
+  nst := SLoad(nst);
+  // Increment it by one
+  nst := Push1(nst,0x1);
+  nst := Add(nst);
+  // Check for overflow
+  nst := Dup(nst,1);
+  nst := Push1(nst,0xf);
+  nst := JumpI(nst);
+  // Case analysis on outcome
+  if nst.Peek(0) == 0 {
+    // Overflow occurred
+    assert nst.PC() == 0xa;
+    nst := Push1(nst,0x0);
+    nst := Push1(nst,0x0);
+    nst := Revert(nst);
+    assert nst.REVERTS?;
+  } else {
+    // No overflow!
+    assert nst.PC() == 0xf;
+    nst := JumpDest(nst);
+    // Write back
+    nst := Push1(nst,0x0);
+    nst := SStore(nst);
+    nst := Stop(nst);
+    assert nst.RETURNS?;
+  }
+  return nst;
+}
+```
 
 ## Conclusion
 
