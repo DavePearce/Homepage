@@ -41,7 +41,7 @@ An executing EVM contains various key components of the executing
 state such as _gas_, _pc_, _stack_, _code_, _memory_, and
 _worldstate_.  Roughly speaking, we implement this in Dafny like so:
 
-```dafny
+```whiley
 datatype ExecutingEvm = EVM(
   gas: nat, 
   pc: nat, 
@@ -57,8 +57,9 @@ On top of this, we have a notion of the _machine state_ which maybe an
 executing EVM (as above), or a terminated EVM (e.g. having executed a
 `RETURN` or `REVERT` instruction, or failed with some kind of error):
 
-```dafny
-datatype State = OK(evm: ExecutingEvm) 
+```whiley
+datatype State = 
+     EXECUTING(evm: ExecutingEvm) 
    | REVERTS(gas:nat, data:seq<u8>)
    | RETURNS(gas:nat, data:seq<u8>, ...) 
    | INVALID(Error) 
@@ -71,12 +72,12 @@ caller.  To simplify our code, we can define a new type which captures
 the notion of an _executing EVM_ as follows:
 
 
-```Dafny
-type ExecutingState = st:State | st.OK?
+```whiley
+type ExecutingState = st:State | st.EXECUTING?
 ```
 
 Variables of type `ExecutingState` have type `State` with the
-additional constraint that they are instances of `State.OK`.
+additional constraint that they are instances of `State.EXECUTING`.
 
 ## Bytecode Semantics
 
@@ -89,8 +90,14 @@ reading/writing, storage reading/writing, contract calls, etc.  The
 As a first example, here is our formalisation of the `ADD` instruction
 (opcode `0x01`):
 
-```dafny
+```whiley
 function Add(st: ExecutingState): (st': State) 
+// Execution either continues or halts with stack underflow
+ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
+// Execution always continues if at least two stack operands
+ensures st'.EXECUTING? <==> st.Operands() >= 2
+// Execution reduces stack height by one
+ensures st'.EXECUTING? ==> st'.Operands() == st.Operands() - 1
 {
     if st.Operands() >= 2
     then
@@ -118,6 +125,12 @@ instruction (i.e. opcode `0x51`):
 
 ```whiley
 function MLoad(st: ExecutingState): (st': State)
+// Execution either continues or halts with stack underflow
+ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
+// Execution always continues if at least one stack operands
+ensures st'.EXECUTING? <==> st.Operands() >= 1
+// Execution does not affect stack height
+ensures st'.EXECUTING? ==> (st'.Operands() == st.Operands())
 {
    if st.Operands() >= 1
    then
@@ -177,28 +190,28 @@ arithmetic overflow for us at compile time.
 As a second (and more interesting) example, let's consider a more
 complete contract:
 
-```Dafny
-// Load counter on stack
-PUSH1 0x0
-SLOAD
-// Increment by one
-PUSH 0x1
-ADD 
-// Check for overflow
-DUP1
-PUSH1 0xf
-JUMPI
-// Overflow, so revert
-PUSH1 0x0
-PUSH1 0x0
-REVERT,
-// No overflow (0xf) 
-JUMPDEST
-// Write back
-PUSH 0x0
-SSTORE
-// Done
-STOP
+```
+      // Load counter on stack
+0x00: PUSH1 0x0
+0x02: SLOAD
+      // Increment by one
+0x03: PUSH 0x1
+0x05: ADD 
+      // Check for overflow
+0x06: DUP1
+0x07: PUSH1 0xf
+0x09: JUMPI
+      // Overflow, so revert
+0x0a: PUSH1 0x0
+0x0c: PUSH1 0x0
+0x0e: REVERT,
+      // No overflow
+0x0f: JUMPDEST
+      // Write back
+0x10: PUSH 0x0
+0x12: SSTORE
+      // Done
+0x13: STOP
 ```
 
 This contract maintains a counter at storage location `0` which is
