@@ -27,44 +27,51 @@ large number of the <a href=https://github.com/ethereum/tests>Ethereum common
 tests</a>. So, let&rsquo;s take a look
 inside!</p><h2 id=machine-state>Machine State</h2><p>An executing EVM contains various key components of the executing
 state such as <em>gas</em>, <em>pc</em>, <em>stack</em>, <em>code</em>, <em>memory</em>, and
-<em>worldstate</em>. Roughly speaking, we implement this in Dafny like so:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>datatype ExecutingEvm = EVM(
-  gas: nat, 
-  pc: nat, 
-  stack: Stack, 
-  code: Code,
-  mem: Memory, 
-  world: WorldState, 
-  ...
-)
-</code></pre><p>On top of this, we have a notion of the <em>machine state</em> which maybe an
+<em>worldstate</em>. Roughly speaking, we implement this in Dafny like so:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=n>datatype</span> <span class=n>ExecutingEvm</span> <span class=o>=</span> <span class=n>EVM</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>  <span class=n>gas</span><span class=o>:</span> <span class=n>nat</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=n>pc</span><span class=o>:</span> <span class=n>nat</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=n>stack</span><span class=o>:</span> <span class=n>Stack</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=n>code</span><span class=o>:</span> <span class=n>Code</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=n>mem</span><span class=o>:</span> <span class=n>Memory</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=n>world</span><span class=o>:</span> <span class=n>WorldState</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></div><p>On top of this, we have a notion of the <em>machine state</em> which maybe an
 executing EVM (as above), or a terminated EVM (e.g. having executed a
-<code>RETURN</code> or <code>REVERT</code> instruction, or failed with some kind of error):</p><pre tabindex=0><code class=language-dafny data-lang=dafny>datatype State = OK(evm: ExecutingEvm) 
-   | REVERTS(gas:nat, data:seq&lt;u8&gt;)
-   | RETURNS(gas:nat, data:seq&lt;u8&gt;, ...) 
-   | INVALID(Error) 
-   | ...
-</code></pre><p>Here, the <code>REVERTS</code> and <code>RETURNS</code> states include their <code>RETURNDATA</code> as
+<code>RETURN</code> or <code>REVERT</code> instruction, or failed with some kind of error):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=n>datatype</span> <span class=n>State</span> <span class=o>=</span> 
+</span></span><span class=line><span class=cl>     <span class=n>EXECUTING</span><span class=p>(</span><span class=n>evm</span><span class=o>:</span> <span class=n>ExecutingEvm</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>   <span class=o>|</span> <span class=n>REVERTS</span><span class=p>(</span><span class=n>gas</span><span class=o>:</span><span class=n>nat</span><span class=p>,</span> <span class=n>data</span><span class=o>:</span><span class=n>seq</span><span class=o>&lt;</span><span class=n>u8</span><span class=o>&gt;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>   <span class=o>|</span> <span class=n>RETURNS</span><span class=p>(</span><span class=n>gas</span><span class=o>:</span><span class=n>nat</span><span class=p>,</span> <span class=n>data</span><span class=o>:</span><span class=n>seq</span><span class=o>&lt;</span><span class=n>u8</span><span class=o>&gt;</span><span class=p>,</span> <span class=p>...)</span> 
+</span></span><span class=line><span class=cl>   <span class=o>|</span> <span class=n>INVALID</span><span class=p>(</span><span class=n>Error</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl>   <span class=o>|</span> <span class=p>...</span>
+</span></span></code></pre></div><p>Here, the <code>REVERTS</code> and <code>RETURNS</code> states include their <code>RETURNDATA</code> as
 a sequence of bytes (i.e. <code>u8</code>) along with any <code>gas</code> returned to the
 caller. To simplify our code, we can define a new type which captures
-the notion of an <em>executing EVM</em> as follows:</p><pre tabindex=0><code class=language-Dafny data-lang=Dafny>type ExecutingState = st:State | st.OK?
-</code></pre><p>Variables of type <code>ExecutingState</code> have type <code>State</code> with the
-additional constraint that they are instances of <code>State.OK</code>.</p><h2 id=bytecode-semantics>Bytecode Semantics</h2><p>There are over 140 bytecode instructions supported in the Ethereum
+the notion of an <em>executing EVM</em> as follows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>type</span> <span class=n>ExecutingState</span> <span class=o>=</span> <span class=n>st</span><span class=o>:</span><span class=n>State</span> <span class=o>|</span> <span class=n>st</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span>
+</span></span></code></pre></div><p>Variables of type <code>ExecutingState</code> have type <code>State</code> with the
+additional constraint that they are instances of <code>State.EXECUTING</code>.</p><h2 id=bytecode-semantics>Bytecode Semantics</h2><p>There are over 140 bytecode instructions supported in the Ethereum
 Virtual Machine. These include simple arithmetic operations, memory
 reading/writing, storage reading/writing, contract calls, etc. The
 <a href=https://en.wikipedia.org/wiki/Semantics_%28computer_science%29>semantics</a>
 (i.e. meaning) of every instruction is formalised in the DafnyEVM.</p><p>As a first example, here is our formalisation of the <code>ADD</code> instruction
-(opcode <code>0x01</code>):</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function Add(st: ExecutingState): (st&#39;: State) 
-{
-    if st.Operands() &gt;= 2
-    then
-        var lhs := st.Peek(0) as int;
-        var rhs := st.Peek(1) as int;
-        var res := (lhs + rhs) % TWO_256;
-        st.Pop().Pop().Push(res as u256).Next()
-    else
-        State.INVALID(STACK_UNDERFLOW)
-}
-</code></pre><p>This function takes an executing EVM state, and produces an updated
+(opcode <code>0x01</code>):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>function</span> <span class=n>Add</span><span class=p>(</span><span class=n>st</span><span class=o>:</span> <span class=n>ExecutingState</span><span class=p>)</span><span class=o>:</span> <span class=p>(</span><span class=n>st</span><span class=err>&#39;</span><span class=o>:</span> <span class=n>State</span><span class=p>)</span> 
+</span></span><span class=line><span class=cl><span class=c1>// Execution either continues or halts with stack underflow
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>||</span> <span class=n>st</span><span class=err>&#39;</span> <span class=o>==</span> <span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// Execution always continues if at least two stack operands
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>&lt;==&gt;</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>&gt;=</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl><span class=c1>// Execution reduces stack height by one
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>==&gt;</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>==</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>-</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>&gt;=</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl>    <span class=n>then</span>
+</span></span><span class=line><span class=cl>        <span class=n>var</span> <span class=n>lhs</span> <span class=o>:=</span> <span class=n>st</span><span class=p>.</span><span class=n>Peek</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span> <span class=n>as</span> <span class=kt>int</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>var</span> <span class=n>rhs</span> <span class=o>:=</span> <span class=n>st</span><span class=p>.</span><span class=n>Peek</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span> <span class=n>as</span> <span class=kt>int</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>var</span> <span class=n>res</span> <span class=o>:=</span> <span class=p>(</span><span class=n>lhs</span> <span class=o>+</span> <span class=n>rhs</span><span class=p>)</span> <span class=o>%</span> <span class=n>TWO_256</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>st</span><span class=p>.</span><span class=n>Pop</span><span class=p>().</span><span class=n>Pop</span><span class=p>().</span><span class=n>Push</span><span class=p>(</span><span class=n>res</span> <span class=n>as</span> <span class=n>u256</span><span class=p>).</span><span class=n>Next</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span>
+</span></span><span class=line><span class=cl>        <span class=n>State</span><span class=p>.</span><span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>This function takes an executing EVM state, and produces an updated
 state (which may or may not be still executing). The function
 requires at least two operands on the stack, otherwise execution halts
 with a stack underflow exception. Furthermore, the <code>lhs</code>
@@ -74,6 +81,12 @@ together modulo <code>TWO_256</code> to ensure the result fits into a <code>u256
 Thus, we can see from this that the EVM does not automatically catch
 arithmetic overflow for us.</p><p>As a second example, consider the semantics given for the <code>MLOAD</code>
 instruction (i.e. opcode <code>0x51</code>):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-whiley data-lang=whiley><span class=line><span class=cl><span class=kd>function</span> <span class=n>MLoad</span><span class=p>(</span><span class=n>st</span><span class=o>:</span> <span class=n>ExecutingState</span><span class=p>)</span><span class=o>:</span> <span class=p>(</span><span class=n>st</span><span class=err>&#39;</span><span class=o>:</span> <span class=n>State</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// Execution either continues or halts with stack underflow
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>||</span> <span class=n>st</span><span class=err>&#39;</span> <span class=o>==</span> <span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=c1>// Execution always continues if at least one stack operands
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>&lt;==&gt;</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>&gt;=</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=c1>// Execution does not affect stack height
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>ensures</span> <span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>EXECUTING</span><span class=o>?</span> <span class=o>==&gt;</span> <span class=p>(</span><span class=n>st</span><span class=err>&#39;</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>==</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>())</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>   <span class=k>if</span> <span class=n>st</span><span class=p>.</span><span class=n>Operands</span><span class=p>()</span> <span class=o>&gt;=</span> <span class=mi>1</span>
 </span></span><span class=line><span class=cl>   <span class=n>then</span>
@@ -113,27 +126,27 @@ on the stack, <code>ADD</code> returns their sum</em>. Observe that, since <code
 <code>y</code> are bytes, overflow is not possible and Dafny recognises this. If
 <code>x</code> and <code>y</code> had type <code>u256</code> then Dafny would flag the potential
 arithmetic overflow for us at compile time.</p><p>As a second (and more interesting) example, let&rsquo;s consider a more
-complete contract:</p><pre tabindex=0><code class=language-Dafny data-lang=Dafny>// Load counter on stack
-PUSH1 0x0
-SLOAD
-// Increment by one
-PUSH 0x1
-ADD 
-// Check for overflow
-DUP1
-PUSH1 0xf
-JUMPI
-// Overflow, so revert
-PUSH1 0x0
-PUSH1 0x0
-REVERT,
-// No overflow (0xf) 
-JUMPDEST
-// Write back
-PUSH 0x0
-SSTORE
-// Done
-STOP
+complete contract:</p><pre tabindex=0><code>      // Load counter on stack
+0x00: PUSH1 0x0
+0x02: SLOAD
+      // Increment by one
+0x03: PUSH 0x1
+0x05: ADD 
+      // Check for overflow
+0x06: DUP1
+0x07: PUSH1 0xf
+0x09: JUMPI
+      // Overflow, so revert
+0x0a: PUSH1 0x0
+0x0c: PUSH1 0x0
+0x0e: REVERT,
+      // No overflow
+0x0f: JUMPDEST
+      // Write back
+0x10: PUSH 0x0
+0x12: SSTORE
+      // Done
+0x13: STOP
 </code></pre><p>This contract maintains a counter at storage location <code>0</code> which is
 incremented by one on every contract call. The contract should revert
 if an overflow occurs. Thus, we should be able to prove that whenever
