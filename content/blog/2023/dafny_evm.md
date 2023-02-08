@@ -1,5 +1,5 @@
 ---
-date: 2023-02-7
+date: 2023-02-06
 title: "Formalising the Ethereum Virtual Machine in Dafny"
 draft: false
 # metaimg: "images/2022/TokenContract_Preview.png"
