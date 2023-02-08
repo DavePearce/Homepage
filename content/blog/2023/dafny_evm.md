@@ -241,6 +241,13 @@ ensures st'.RETURNS? ==> st'.Load(0) == (st.Load(0) + 1) {
 }
 ```
 
+The proof is quite long, but it essentially follows the control-flow
+of the original contract.  The nice thing here is that we can reuse
+Dafny language constructs (e.g. `if` and `assert`) to manage the
+proof.  Dafny will check at compile time that the various `assert`
+statements and `ensures` clauses are true _for all possible inputs
+which meet the `requires` conditions_.  
+
 ## Conclusion
 
 
