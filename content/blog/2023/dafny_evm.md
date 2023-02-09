@@ -91,13 +91,13 @@ As a first example, here is our formalisation of the `ADD` instruction
 (opcode `0x01`):
 
 ```whiley
-function Add(st: ExecutingState): (st': State) 
+function Add(st: ExecutingState): (rst: State) 
 // Execution either continues or halts with stack underflow
-ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
+ensures rst.EXECUTING? || rst == INVALID(STACK_UNDERFLOW)
 // Execution always continues if at least two stack operands
-ensures st'.EXECUTING? <==> st.Operands() >= 2
+ensures rst.EXECUTING? <==> st.Operands() >= 2
 // Execution reduces stack height by one
-ensures st'.EXECUTING? ==> st'.Operands() == st.Operands() - 1
+ensures rst.EXECUTING? ==> rst.Operands() == st.Operands() - 1
 {
     if st.Operands() >= 2
     then
@@ -120,17 +120,26 @@ together modulo `TWO_256` to ensure the result fits into a `u256`.
 Thus, we can see from this that the EVM does not automatically catch
 arithmetic overflow for us.
 
+Our semantics above for the `ADD` instruction illustrates another
+feature of Dafny.  That is, we can add _postconditions_ for our
+functions to capture salient properties which we want to check.  Often
+these properties correspond to parts of the Yellow Paper which can
+help make clear the connection between them.  Whilst these are not
+strictly required (technically speaking, because we're using
+`function`s here), they can add a form of useful (and checked)
+documentation of what we can expect.
+
 As a second example, consider the semantics given for the `MLOAD`
 instruction (i.e. opcode `0x51`):
 
 ```whiley
-function MLoad(st: ExecutingState): (st': State)
+function MLoad(st: ExecutingState): (rst: State)
 // Execution either continues or halts with stack underflow
-ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
+ensures rst.EXECUTING? || rst == INVALID(STACK_UNDERFLOW)
 // Execution always continues if at least one stack operands
-ensures st'.EXECUTING? <==> st.Operands() >= 1
+ensures rst.EXECUTING? <==> st.Operands() >= 1
 // Execution does not affect stack height
-ensures st'.EXECUTING? ==> (st'.Operands() == st.Operands())
+ensures rst.EXECUTING? ==> (rst.Operands() == st.Operands())
 {
    if st.Operands() >= 1
    then
@@ -152,7 +161,7 @@ Dafny.  The `Read` function is defined like so:
 
 ```whiley
 function method Read(address:nat) : u256
-requires address + 31 < Memory.Size(evm.memory) { 
+requires (address + 31) < Memory.Size(evm.memory) { 
   ... 
 }
 ```
@@ -222,15 +231,15 @@ the contract is called: (i) either the counter is incremented; or
 looks (roughly speaking) as follows:
 
 ```Whiley
-method IncProof(st: ExecutingState) returns (st': State)
+method IncProof(st: ExecutingState) returns (rst: State)
 // Initial state has PC == 0 and an empty stack
 requires st.PC() == 0 && st.Operands() == 0
 // Assume there is enough gas
 requires st.Gas() >= 40000
 // Success guaranteed if can increment counter
-ensures st'.RETURNS? <==> (st.Load(0) as nat) < MAX_U256
+ensures rst.RETURNS? <==> (st.Load(0) as nat) < MAX_U256
 // If success, counter incremented
-ensures st'.RETURNS? ==> st'.Load(0) == (st.Load(0) + 1) {
+ensures rst.RETURNS? ==> rst.Load(0) == (st.Load(0) + 1) {
   var nst := st;
   // Load counter
   nst := Push1(nst,0x0);
