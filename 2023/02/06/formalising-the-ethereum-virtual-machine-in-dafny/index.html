@@ -69,7 +69,7 @@ reading/writing, storage reading/writing, contract calls, etc. The
 </span></span><span class=line><span class=cl>        <span class=n>var</span> <span class=n>res</span> <span class=o>:=</span> <span class=p>(</span><span class=n>lhs</span> <span class=o>+</span> <span class=n>rhs</span><span class=p>)</span> <span class=o>%</span> <span class=n>TWO_256</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=n>st</span><span class=p>.</span><span class=n>Pop</span><span class=p>().</span><span class=n>Pop</span><span class=p>().</span><span class=n>Push</span><span class=p>(</span><span class=n>res</span> <span class=n>as</span> <span class=n>u256</span><span class=p>).</span><span class=n>Next</span><span class=p>()</span>
 </span></span><span class=line><span class=cl>    <span class=k>else</span>
-</span></span><span class=line><span class=cl>        <span class=n>State</span><span class=p>.</span><span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span></code></pre></div><p>This function takes an executing EVM state, and produces an updated
 state (which may or may not be still executing). The function
@@ -103,7 +103,7 @@ instruction (i.e. opcode <code>0x51</code>):</p><div class=highlight><pre tabind
 </span></span><span class=line><span class=cl>      <span class=c1>// Read from expanded state
 </span></span></span><span class=line><span class=cl><span class=c1></span>      <span class=n>nst</span><span class=p>.</span><span class=n>Pop</span><span class=p>().</span><span class=n>Push</span><span class=p>(</span><span class=n>nst</span><span class=p>.</span><span class=n>Read</span><span class=p>(</span><span class=n>loc</span><span class=p>)).</span><span class=n>Next</span><span class=p>()</span>
 </span></span><span class=line><span class=cl>   <span class=k>else</span>
-</span></span><span class=line><span class=cl>      <span class=n>State</span><span class=p>.</span><span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=n>INVALID</span><span class=p>(</span><span class=n>STACK_UNDERFLOW</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span></code></pre></div><p>In this case, only one operand on the stack is required (i.e. the
 address in memory to load from). The purpose of the <code>Expand(loc,32)</code>
