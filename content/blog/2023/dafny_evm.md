@@ -106,7 +106,7 @@ ensures rst.EXECUTING? ==> rst.Operands() == st.Operands() - 1
         var res := (lhs + rhs) % TWO_256;
         st.Pop().Pop().Push(res as u256).Next()
     else
-        State.INVALID(STACK_UNDERFLOW)
+        INVALID(STACK_UNDERFLOW)
 }
 ```
 
@@ -149,7 +149,7 @@ ensures rst.EXECUTING? ==> (rst.Operands() == st.Operands())
       // Read from expanded state
       nst.Pop().Push(nst.Read(loc)).Next()
    else
-      State.INVALID(STACK_UNDERFLOW)
+      INVALID(STACK_UNDERFLOW)
 }
 ```
 
