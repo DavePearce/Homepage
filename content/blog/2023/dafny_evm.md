@@ -91,13 +91,13 @@ As a first example, here is our formalisation of the `ADD` instruction
 (opcode `0x01`):
 
 ```whiley
-function Add(st: ExecutingState): (rst: State) 
+function Add(st: ExecutingState): (st': State) 
 // Execution either continues or halts with stack underflow
-ensures rst.EXECUTING? || rst == INVALID(STACK_UNDERFLOW)
+ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
 // Execution always continues if at least two stack operands
-ensures rst.EXECUTING? <==> st.Operands() >= 2
+ensures st'.EXECUTING? <==> st.Operands() >= 2
 // Execution reduces stack height by one
-ensures rst.EXECUTING? ==> rst.Operands() == st.Operands() - 1
+ensures st'.EXECUTING? ==> st'.Operands() == st.Operands() - 1
 {
     if st.Operands() >= 2
     then
@@ -133,13 +133,13 @@ As a second example, consider the semantics given for the `MLOAD`
 instruction (i.e. opcode `0x51`):
 
 ```whiley
-function MLoad(st: ExecutingState): (rst: State)
+function MLoad(st: ExecutingState): (st': State)
 // Execution either continues or halts with stack underflow
-ensures rst.EXECUTING? || rst == INVALID(STACK_UNDERFLOW)
+ensures st'.EXECUTING? || st' == INVALID(STACK_UNDERFLOW)
 // Execution always continues if at least one stack operands
-ensures rst.EXECUTING? <==> st.Operands() >= 1
+ensures st'.EXECUTING? <==> st.Operands() >= 1
 // Execution does not affect stack height
-ensures rst.EXECUTING? ==> (rst.Operands() == st.Operands())
+ensures st'.EXECUTING? ==> (st'.Operands() == st.Operands())
 {
    if st.Operands() >= 1
    then
@@ -231,15 +231,15 @@ the contract is called: (i) either the counter is incremented; or
 looks (roughly speaking) as follows:
 
 ```Whiley
-method IncProof(st: ExecutingState) returns (rst: State)
+method IncProof(st: ExecutingState) returns (st': State)
 // Initial state has PC == 0 and an empty stack
 requires st.PC() == 0 && st.Operands() == 0
 // Assume there is enough gas
 requires st.Gas() >= 40000
 // Success guaranteed if can increment counter
-ensures rst.RETURNS? <==> (st.Load(0) as nat) < MAX_U256
+ensures st'.RETURNS? <==> (st.Load(0) as nat) < MAX_U256
 // If success, counter incremented
-ensures rst.RETURNS? ==> rst.Load(0) == (st.Load(0) + 1) {
+ensures st'.RETURNS? ==> st'.Load(0) == (st.Load(0) + 1) {
   var nst := st;
   // Load counter
   nst := Push1(nst,0x0);
