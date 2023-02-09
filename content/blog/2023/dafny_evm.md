@@ -2,8 +2,8 @@
 date: 2023-02-06
 title: "Formalising the Ethereum Virtual Machine in Dafny"
 draft: false
-# metaimg: "images/2022/TokenContract_Preview.png"
-# metatxt: "Verifying a token contract in Whiley helps to find problems."
+metaimg: "images/2023/DafnyEVM_Preview.png"
+metatxt: "Formalising the EVM in Dafny allows us prove properties over bytecode sequences."
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
