@@ -1,5 +1,5 @@
 ---
-date: 2023-06-03
+date: 2023-03-06
 kind: "conference"
 title: "Formal and Executable Semantics of the Ethereum Virtual Machine in Dafny"
 authors: "Franck Cassez, Joanne Fuller,  Milad K. Ghale, David J. Pearce and Horacio M. A. Quiles"
