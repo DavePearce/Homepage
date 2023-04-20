@@ -1,9 +1,9 @@
 ---
 date: 2023-04-16
 title: "Pattern Matching in Rust's Neverland"
-draft: true7
-#metaimg: "images/2023/DafnyEVM_Preview.png"
-#metatxt: "Formalising the EVM in Dafny allows us prove properties over bytecode sequences."
+draft: false
+metaimg: "images/2023/Rust_Neverland_Preview.png"
+metatxt: "Pattern matching with the never type offers exciting possibilities!"
 #twitter: ""
 # reddit: "https://www.reddit.com/r/rust/comments/uigljf/puzzling_strong_updates_in_rust/"
 ---
@@ -142,7 +142,6 @@ so-called [never type](https://github.com/rust-lang/rust/issues/35121)
 version:
 
 ```Rust
-
 #![feature(never_type)]
 #![feature(exhaustive_patterns)]
 
@@ -164,3 +163,9 @@ of `disassemble_insn()` above which omits the case for
 (`unreachable pattern`) if a case for `Bytecode::LABEL` is included!
 
 ## Conclusion
+
+The never type `!` looks to be a very handy extension to Rust, and I'm
+looking forward to it landing in the stable branch.  When combined
+with the exhaustive pattern matching extension in
+[RFC1872](https://github.com/rust-lang/rust/issues/51085), it really
+is very powerful.
