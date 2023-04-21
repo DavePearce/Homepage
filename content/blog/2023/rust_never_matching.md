@@ -9,7 +9,7 @@ metatxt: "Pattern matching with the never type offers exciting possibilities!"
 ---
 
 Recently, I've been working on a tool for manipulating EVM bytecode
-and assembly language.  I wanted describe low level bytecode and
+and assembly language.  I wanted to describe low level bytecode and
 assembly language using the same datatype.  At the same time, I wanted
 some instructions to be allowed only in assembly language but not
 bytecode (e.g. labels only make sense at the assembly language level).
@@ -48,7 +48,7 @@ Thus, we can have a simple function which "assembles" assembly
 language instructions into concrete instructions:
 
 ```Rust
-fn assemble(&[Bytecode]) -> Vec<Assembly>
+fn assemble(&[Assembly]) -> Vec<Bytecode>
 ```
 
 (**Note**: To make this work properly, we'd want some error handling
