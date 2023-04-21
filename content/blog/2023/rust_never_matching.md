@@ -57,17 +57,17 @@ which "disassembles" concrete instructions back into assembly language
 instructions:
 
 ```Rust
-fn diassemble(&[Bytecode]) -> Vec<Assembly>
+fn disassemble(&[Bytecode]) -> Vec<Assembly>
 ```
 
 The interesting thing about these two functions is that some
 instructions don't make sense, depending on the context.  For example,
-labels are not concrete instructions as, in effect, they are
+labels are not bytecode instructions as, in effect, they are
 artificial instructions used only for assembly language.  So, we
 might write something like this:
 
 ```Rust
-fn diassemble_insn(insn: Bytecode) -> Assembly { 
+fn disassemble_insn(insn: Bytecode) -> Assembly { 
   match insn {
     Bytecode::PUSH(imm) => { 
       Assembly::PUSH(imm) 
@@ -86,7 +86,7 @@ This is fine as it goes, but it's a shame we have to use
 was wondering: _can we use Rust's type system to encode these
 constraints?_ More specifically, so that `Insn::Label(usize)`: (1) cannot
 be instantiated; and (2) cannot be matched against.  The short answer is:
-yes!
+_yes!_
 
 ## Stable Version
 
@@ -110,7 +110,7 @@ we cannot create an instance of type `Void`.  That's great!
 Unfortunately, I was disappointed the following still didn't compile:
 
 ```Rust
-fn diassemble_insn(insn: Bytecode) -> Assembly { 
+fn disassemble_insn(insn: Bytecode) -> Assembly { 
   match insn {
     Bytecode::PUSH(imm) => { 
        Assembly::PUSH(imm) 
