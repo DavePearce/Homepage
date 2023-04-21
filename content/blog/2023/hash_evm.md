@@ -56,6 +56,13 @@ about the current state of the machine at that position.
 
 ## Hashing States
 
+   * Intermediate states are the witness.  You cannot derive the
+     inputs from the witness.  But, likewise, you cannot derive the
+     witness without the inputs!  Furthermore, the witness dictates
+     exactly which instructions were executed.  Presumably, given an
+     input hash, we need then to be able to compute the output hash to
+     verify it?
+
  (which correspond to the intermediate variables a zkEVM
 generates as the "witness")
 
