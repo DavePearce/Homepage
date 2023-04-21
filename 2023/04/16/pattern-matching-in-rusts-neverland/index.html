@@ -1,0 +1,116 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Pattern Matching in Rust's Neverland"><meta name=twitter:title content="Pattern Matching in Rust's Neverland"><meta property="og:description" content="Pattern matching with the never type offers exciting possibilities!"><meta name=twitter:description content="Pattern matching with the never type offers exciting possibilities!"><meta property="og:image" content="https://whileydave.com/images/2023/Rust_Neverland_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2023/Rust_Neverland_Preview.png"><meta property="og:url" content="https://whileydave.com/2023/04/16/pattern-matching-in-rusts-neverland/"><title>David J. Pearce
+(Pattern Matching in Rust's Neverland)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Pattern Matching in Rust's Neverland</h1><div class=post-date>Sunday, April
+16th,
+2023</div><hr><p>Recently, I&rsquo;ve been working on a tool for manipulating EVM bytecode
+and assembly language. I wanted describe low level bytecode and
+assembly language using the same datatype. At the same time, I wanted
+some instructions to be allowed only in assembly language but not
+bytecode (e.g. labels only make sense at the assembly language level).
+I was hoping to encode this <em>precisely</em> in stable Rust, but couldn&rsquo;t
+make it work. However, turns out you can do this on nightly (where
+<a href=https://github.com/rust-lang/rust/issues/51085>RFC1872</a> is merged).
+That is actually pretty neat, and I want to explain why.</p><h2 id=background>Background</h2><p>A very simplified version of my bytecode system is:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>enum</span> <span class=nc>Insn</span><span class=o>&lt;</span><span class=n>T</span><span class=o>&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>PUSH</span><span class=p>(</span><span class=kt>usize</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>LABEL</span><span class=p>(</span><span class=n>T</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>JUMP</span><span class=p>(</span><span class=n>T</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>RET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Bytecode</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=kt>usize</span><span class=o>&gt;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Assembly</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=nb>String</span><span class=o>&gt;</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></div><p>This is a subset of the instructions I needed, but its enough to
+illustrate what I was trying to achieve. As indicated, we instantiate
+<code>Insn&lt;T></code> in one of two ways:</p><ol><li><code>Bytecode</code>. This describes concrete bytecode
+instructions where exact jump destinations (expressed as byte
+offsets) are known.</li><li><code>Assembly</code>. This describes assembly language instructions which
+use labels to describe control-flow.</li></ol><p>Thus, we can have a simple function which &ldquo;assembles&rdquo; assembly
+language instructions into concrete instructions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>assemble</span><span class=p>(</span><span class=o>&amp;</span><span class=p>[</span><span class=n>Bytecode</span><span class=p>])</span><span class=w> </span>-&gt; <span class=nb>Vec</span><span class=o>&lt;</span><span class=n>Assembly</span><span class=o>&gt;</span><span class=w>
+</span></span></span></code></pre></div><p>(<strong>Note</strong>: To make this work properly, we&rsquo;d want some error handling
+but I&rsquo;m ignoring that here). Similarly, we can have a simple function
+which &ldquo;disassembles&rdquo; concrete instructions back into assembly language
+instructions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>diassemble</span><span class=p>(</span><span class=o>&amp;</span><span class=p>[</span><span class=n>Bytecode</span><span class=p>])</span><span class=w> </span>-&gt; <span class=nb>Vec</span><span class=o>&lt;</span><span class=n>Assembly</span><span class=o>&gt;</span><span class=w>
+</span></span></span></code></pre></div><p>The interesting thing about these two functions is that some
+instructions don&rsquo;t make sense, depending on the context. For example,
+labels are not concrete instructions as, in effect, they are
+artificial instructions used only for assembly language. So, we
+might write something like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>diassemble_insn</span><span class=p>(</span><span class=n>insn</span>: <span class=nc>Bytecode</span><span class=p>)</span><span class=w> </span>-&gt; <span class=nc>Assembly</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>match</span><span class=w> </span><span class=n>insn</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>PUSH</span><span class=p>(</span><span class=n>imm</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>Assembly</span>::<span class=n>PUSH</span><span class=p>(</span><span class=n>imm</span><span class=p>)</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>          
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>JUMP</span><span class=p>(</span><span class=n>offset</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=fm>todo!</span><span class=p>()</span><span class=w> </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>RET</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=n>Assembly</span>::<span class=n>RET</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>     
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>LABEL</span><span class=p>(</span><span class=n>_</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=fm>unreachable!</span><span class=p>();</span><span class=w> </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></div><p>This is fine as it goes, but it&rsquo;s a shame we have to use
+<code>unreachable!()</code> to signal the <code>LABEL</code> case should not occur. So, I
+was wondering: <em>can we use Rust&rsquo;s type system to encode these
+constraints?</em> More specifically, so that <code>Insn::Label(usize)</code>: (1) cannot
+be instantiated; and (2) cannot be matched against. The short answer is:
+yes!</p><h2 id=stable-version>Stable Version</h2><p>My first approach was to exploit types which cannot be instantiated (so-called <a href=https://doc.rust-lang.org/nomicon/exotic-sizes.html#empty-types>empty types</a>). It looks something like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>enum</span> <span class=nc>Insn</span><span class=o>&lt;</span><span class=n>T</span><span class=p>,</span><span class=n>L</span><span class=o>&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>PUSH</span><span class=p>(</span><span class=kt>usize</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>LABEL</span><span class=p>(</span><span class=n>L</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>JUMP</span><span class=p>(</span><span class=n>T</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>RET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>enum</span> <span class=nc>Void</span><span class=w> </span><span class=p>{}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Bytecode</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=kt>usize</span><span class=p>,</span><span class=n>Void</span><span class=o>&gt;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Assembly</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=nb>String</span><span class=p>,</span><span class=nb>String</span><span class=o>&gt;</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></div><p>This prevents instances of <code>Bytecode::LABEL</code> from being created, since
+we cannot create an instance of type <code>Void</code>. That&rsquo;s great!
+Unfortunately, I was disappointed the following still didn&rsquo;t compile:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>diassemble_insn</span><span class=p>(</span><span class=n>insn</span>: <span class=nc>Bytecode</span><span class=p>)</span><span class=w> </span>-&gt; <span class=nc>Assembly</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=k>match</span><span class=w> </span><span class=n>insn</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>PUSH</span><span class=p>(</span><span class=n>imm</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>Assembly</span>::<span class=n>PUSH</span><span class=p>(</span><span class=n>imm</span><span class=p>)</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>          
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>JUMP</span><span class=p>(</span><span class=n>offset</span><span class=p>)</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> </span><span class=fm>todo!</span><span class=p>()</span><span class=w> </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>Bytecode</span>::<span class=n>RET</span><span class=w> </span><span class=o>=&gt;</span><span class=w> </span><span class=p>{</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>       </span><span class=n>Assembly</span>::<span class=n>RET</span><span class=w> 
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span></code></pre></div><p>Here, I&rsquo;ve dropped the case for <code>Bytecode::LABEL</code> since we know this
+cannot arise any more. Unfortunately, the Rust compiler still
+requires you to cover the case for <code>Bytecode::LABEL</code>. So, I
+<a href=https://twitter.com/whileydave/status/1645976021630595073>tweeted</a>
+out my disappointment.</p><h2 id=nightly-version>Nightly Version</h2><p>Thanks to <a href=https://twitter.com/typesanitizer>Varun</a> who
+<a href=https://twitter.com/typesanitizer/status/1645986739193012226>responded</a>
+by pointing me to
+<a href=https://github.com/rust-lang/rust/issues/51085>RFC1872</a>. This is
+exactly what we needed to fix the above, though it is not yet in
+stable. In essence instead our own <code>Void</code> type, we use Rust&rsquo;s new
+so-called <a href=https://github.com/rust-lang/rust/issues/35121>never type</a>
+(<code>!</code>) which the compiler knows is uninhabited. Here&rsquo;s the final
+version:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=cp>#![feature(never_type)]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=cp>#![feature(exhaustive_patterns)]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>enum</span> <span class=nc>Insn</span><span class=o>&lt;</span><span class=n>T</span><span class=p>,</span><span class=n>L</span><span class=o>&gt;</span><span class=w> </span><span class=p>{</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>PUSH</span><span class=p>(</span><span class=kt>usize</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>LABEL</span><span class=p>(</span><span class=n>L</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>JUMP</span><span class=p>(</span><span class=n>T</span><span class=p>),</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=n>RET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=p>}</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Bytecode</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=kt>usize</span><span class=p>,</span><span class=o>!&gt;</span><span class=p>;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=k>type</span> <span class=nc>Assembly</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=n>Insn</span><span class=o>&lt;</span><span class=nb>String</span><span class=p>,</span><span class=nb>String</span><span class=o>&gt;</span><span class=p>;</span><span class=w>
+</span></span></span></code></pre></div><p>Here, instead of using a custom <code>Void</code> type in defining <code>Bytecode</code>, we
+can now use <code>!</code> directly as a type. With this definition our version
+of <code>disassemble_insn()</code> above which omits the case for
+<code>Bytecode::LABEL</code> now compiles. Furthermore, Rust emits a warning
+(<code>unreachable pattern</code>) if a case for <code>Bytecode::LABEL</code> is included!</p><h2 id=conclusion>Conclusion</h2><p>The never type <code>!</code> looks to be a very handy extension to Rust, and I&rsquo;m
+looking forward to it landing in the stable branch. When combined
+with the exhaustive pattern matching extension in
+<a href=https://github.com/rust-lang/rust/issues/51085>RFC1872</a>, it really
+is very powerful.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
