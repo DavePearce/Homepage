@@ -9,7 +9,7 @@
 <a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Pattern Matching in Rust's Neverland</h1><div class=post-date>Sunday, April
 16th,
 2023</div><hr><p>Recently, I&rsquo;ve been working on a tool for manipulating EVM bytecode
-and assembly language. I wanted describe low level bytecode and
+and assembly language. I wanted to describe low level bytecode and
 assembly language using the same datatype. At the same time, I wanted
 some instructions to be allowed only in assembly language but not
 bytecode (e.g. labels only make sense at the assembly language level).
@@ -31,7 +31,7 @@ illustrate what I was trying to achieve. As indicated, we instantiate
 instructions where exact jump destinations (expressed as byte
 offsets) are known.</li><li><code>Assembly</code>. This describes assembly language instructions which
 use labels to describe control-flow.</li></ol><p>Thus, we can have a simple function which &ldquo;assembles&rdquo; assembly
-language instructions into concrete instructions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>assemble</span><span class=p>(</span><span class=o>&amp;</span><span class=p>[</span><span class=n>Bytecode</span><span class=p>])</span><span class=w> </span>-&gt; <span class=nb>Vec</span><span class=o>&lt;</span><span class=n>Assembly</span><span class=o>&gt;</span><span class=w>
+language instructions into concrete instructions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Rust data-lang=Rust><span class=line><span class=cl><span class=k>fn</span> <span class=nf>assemble</span><span class=p>(</span><span class=o>&amp;</span><span class=p>[</span><span class=n>Assembly</span><span class=p>])</span><span class=w> </span>-&gt; <span class=nb>Vec</span><span class=o>&lt;</span><span class=n>Bytecode</span><span class=o>&gt;</span><span class=w>
 </span></span></span></code></pre></div><p>(<strong>Note</strong>: To make this work properly, we&rsquo;d want some error handling
 but I&rsquo;m ignoring that here). Similarly, we can have a simple function
 which &ldquo;disassembles&rdquo; concrete instructions back into assembly language
