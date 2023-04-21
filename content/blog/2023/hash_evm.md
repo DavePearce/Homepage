@@ -62,6 +62,13 @@ about the current state of the machine at that position.
      exactly which instructions were executed.  Presumably, given an
      input hash, we need then to be able to compute the output hash to
      verify it?
+   * There are _public inputs_ and _private inputs_.  Its fine to have
+     the public inputs.  For example, we know the EVM starts
+     computation with an empty stack and memory.  However, we need
+     presumably to verify that a particular _individual_ sent the
+     transaction.  Otherwise, anyone could make up a transaction and
+     send it!  The private key (which must remain hidden) is the key
+     piece of information we are missing.
 
  (which correspond to the intermediate variables a zkEVM
 generates as the "witness")
