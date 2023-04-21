@@ -1,5 +1,5 @@
 ---
-date: 2023-04-16
+date: 2023-04-20
 title: "Introducing the HashEVM!"
 draft: true
 #metaimg: "images/2023/Rust_Neverland_Preview.png"
@@ -46,8 +46,13 @@ Let's imagine we wanted to execute the contract bytecode
 `0x600160020100` (i.e. `PUSH 1; PUSH 2; ADD; STOP`) for a given
 blockchain state.  Roughly speaking, it looks something like this:
 
-{{<img class="text-center" src="/images/2023/HashEVM_eg1.png" width="485px" alt="???">}}
+{{<img class="text-center" src="/images/2023/HashEVM_eg1.png" width="454px" alt="Illustrating the four bytecodes being executing with intermediate hashes being generated.">}}
 
+Here, the first hash is determined from the storage root along with
+other identifying information (e.g. contract address being executed,
+message sender, calldata, value transferred, etc).  Then, after each
+instruction is executed, the hash is updated to include information
+about the current state of the machine at that position.
 
 ## Hashing States
 
@@ -56,4 +61,6 @@ generates as the "witness")
 
 ## Wiggle Room
 
-Can two instruction executions give the same update of the hash?
+Can two instruction executions give the same update of the hash?  If
+we don't include the stack length, then it could overflow with memory.
+What about storage?  Do we need to encode memory as well?
