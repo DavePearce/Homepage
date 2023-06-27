@@ -44,9 +44,9 @@ particular postcondition corresponds to <a href=https://en.wikipedia.org/wiki/B%
 identity</a>.
 hat is, <em>a theorem about numbers proved by Étienne Bézout in the 18th
 century</em>. The amazing thing is that, in order to check my program is
-correct, Dafny has reproved this theorem for me.</p><h2 id=bits-and-bytes>Bits and Bytes</h2><p>The above example is actually taken from <a href=https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L185>our DafnyEVM
+correct, Dafny has reproved this theorem for me.</p><h2 id=bits-and-bytes>Bits and Bytes</h2><p>The above example is actually taken from <a href=https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L185>our DafnyEVM
 codebase</a>.
-Here&rsquo;s <a href=https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L254>another
+Here&rsquo;s <a href=https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L254>another
 example</a>
 which is, perhaps, more concrete:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function ToBytes(v:nat) : (r:seq&lt;u8&gt;)
 ensures |r| &gt; 0 {
@@ -82,6 +82,6 @@ for any possible <code>nat</code> value <code>v</code>, it always holds that
 <code>FromBytes(ToBytes(v)) == v</code>. <em>Again, Dafny checks this at compile
 time &mdash; no testing required!</em></p><p>Finally, an interesting puzzle remains. Does <code>ToBytes(FromBytes(bs)) == bs</code> always hold for an arbitrary sequence <code>bs</code> of bytes? Again,
 Dafny will tell us the answer to this almost immediately. If you&rsquo;re
-interested to know the answer, take a look at the <a href=https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L310>lemma we came up
+interested to know the answer, take a look at the <a href=https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L310>lemma we came up
 with</a>.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
 <script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
