@@ -17,7 +17,7 @@ buffer overflows and integer overflows.  The compiler still cannot
 tell when our loops will terminate (yes, this is possible).  Aliasing
 is still a complete unbridled mess.  Even Rust, my favourite language
 du jour, only offers a minor improvement on the status quo.  These are
-not stop-the-world everything has changed kind of improvements.
+not stop-the-world everything has changed kinds of improvements.
 
 Still, big improvements are possible.  I now use, on a daily basis, a
 language ([Dafny](https://github.com/dafny-lang/dafny/)) which often
