@@ -56,9 +56,9 @@ correct, Dafny has reproved this theorem for me.
 ## Bits and Bytes
 
 The above example is actually taken from [our DafnyEVM
-codebase](https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L185).
+codebase](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L185).
 Here's [another
-example](https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L254)
+example](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L254)
 which is, perhaps, more concrete:
 
 ```dafny
@@ -114,4 +114,4 @@ Finally, an interesting puzzle remains.  Does `ToBytes(FromBytes(bs))
 == bs` always hold for an arbitrary sequence `bs` of bytes?  Again,
 Dafny will tell us the answer to this almost immediately.  If you're
 interested to know the answer, take a look at the [lemma we came up
-with](https://github.com/Consensys/evm-dafny/blob/3a10c6502ce2e3897584a2af6834e9b0a5807fca/src/dafny/util/int.dfy#L310).
+with](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L310).
