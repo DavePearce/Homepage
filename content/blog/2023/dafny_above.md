@@ -28,13 +28,13 @@ properties of your program goes well beyond what mainstream languages
 can do (that includes you, Rust).  Here's a simple example:
 
 ```dafny
-function GcdExtended(a: nat, b: nat) : (g:nat,x:int,y:int))
+function Gcd(a:nat, b:nat) : (g:nat,x:int,y:int))
 // Bezout's identity
 ensures (a*x)+(b*y) == g
 {
     if a == 0 then (b,0,1)
     else
-        var (g,x,y) := GcdExtended(b%a,a);
+        var (g,x,y) := Gcd(b%a,a);
         (g,y-((b/a)*x),x)
 }
 ```
@@ -46,16 +46,16 @@ algorithm](https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm)
 [ECC](https://en.wikipedia.org/wiki/Elliptic-curve_cryptography)).
 Using the `ensures` clause I've specified a
 [postcondition](https://en.wikipedia.org/wiki/Postcondition) --- that
-is, a property that should always hold for the return values.  This
+is, a property that should always hold of the return value.  This
 particular postcondition corresponds to [Bézout's
 identity](https://en.wikipedia.org/wiki/B%C3%A9zout%27s_identity).
-hat is, _a theorem about numbers proved by Étienne Bézout in the 18th
+That is, _a theorem about numbers proved by Étienne Bézout in the 18th
 century_.  The amazing thing is that, in order to check my program is
 correct, Dafny has reproved this theorem for me.  
 
 ## Bits and Bytes
 
-The above example is actually taken from [our DafnyEVM
+The above example was taken from our [DafnyEVM
 codebase](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L185).
 Here's [another
 example](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L254)
@@ -76,9 +76,9 @@ ensures |r| > 0 {
 
 The above is a straightforward (recursive) function for converting an
 arbitrary sized unsigned integer (`nat`) into a sequence of one or
-more bytes.  Notice that `ToBytes()` has an `ensures` clause which
-clarifies that it always returns a non-empty sequence.  _Dafny checks
-at compile time that this is always true_.
+more bytes (following a big endian representation).  Here, `ToBytes()`
+has an `ensures` clause clarifying it always returns a non-empty
+sequence.  _Dafny checks at compile time that this is always true_.
 
 Now, here is a function taking us in the opposite direction:
 
@@ -94,8 +94,8 @@ function FromBytes(bytes:seq<u8>) : (r:nat) {
 ```
 
 There isn't anything too special going on here (yet).  But, now the
-magic begins!  What we want to know is that these two functions are in
-"opposites" of each other.  We can do this with Dafny like so:
+magic begins!  What we want to know is that these two functions are
+"opposites" of each other.  We can do this like so:
 
 ```
 lemma LemmaFromToBytes(v: nat)
@@ -110,8 +110,9 @@ for any possible `nat` value `v`, it always holds that
 `FromBytes(ToBytes(v)) == v`.  _Again, Dafny checks this at compile
 time --- no testing required!_
 
-Finally, an interesting puzzle remains.  Does `ToBytes(FromBytes(bs))
-== bs` always hold for an arbitrary sequence `bs` of bytes?  Again,
-Dafny will tell us the answer to this almost immediately.  If you're
-interested to know the answer, take a look at the [lemma we came up
+Finally, an interesting puzzle remains.  For an arbitrary sequence
+`bs` of bytes, does `ToBytes(FromBytes(bs)) == bs` always hold?
+Again, Dafny can answer this for us almost immediately.  If
+you're interested to know the answer, take a look at the [lemma we
+came up
 with](https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L310).
