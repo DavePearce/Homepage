@@ -59,7 +59,7 @@ ensures |r| &gt; 0 {
     ToBytes(w) + [byte]
 }
 </code></pre><p>The above is a straightforward (recursive) function for converting an
-arbitrary sized unsigned integer (<code>nat</code>) into a sequence of one or
+arbitrary-sized unsigned integer (<code>nat</code>) into a sequence of one or
 more bytes (following a big endian representation). Here, <code>ToBytes()</code>
 has an <code>ensures</code> clause clarifying it always returns a non-empty
 sequence. <em>Dafny checks at compile time that this is always true</em>.</p><p>Now, here is a function taking us in the opposite direction:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function FromBytes(bytes:seq&lt;u8&gt;) : (r:nat) {
