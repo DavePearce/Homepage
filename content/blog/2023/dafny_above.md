@@ -75,7 +75,7 @@ ensures |r| > 0 {
 ```
 
 The above is a straightforward (recursive) function for converting an
-arbitrary sized unsigned integer (`nat`) into a sequence of one or
+arbitrary-sized unsigned integer (`nat`) into a sequence of one or
 more bytes (following a big endian representation).  Here, `ToBytes()`
 has an `ensures` clause clarifying it always returns a non-empty
 sequence.  _Dafny checks at compile time that this is always true_.
