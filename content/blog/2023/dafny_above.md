@@ -28,7 +28,7 @@ properties of your program goes well beyond what mainstream languages
 can do (that includes you, Rust).  Here's a simple example:
 
 ```dafny
-function Gcd(a:nat, b:nat) : (g:nat,x:int,y:int))
+function Gcd(a:nat, b:nat) : (g:nat,x:int,y:int)
 // Bezout's identity
 ensures (a*x)+(b*y) == g
 {
