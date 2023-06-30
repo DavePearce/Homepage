@@ -4,7 +4,7 @@ title: "Programming Languages Going Above and Beyond"
 draft: false
 metaimg: "images/2023/DafnyAbove_Preview.png"
 metatxt: "Dafny is a programming language which often genuinely amazes me."
-#twitter: ""
+twitter: "https://twitter.com/whileydave/status/1673926723568832513"
 #reddit: ""
 ---
 
