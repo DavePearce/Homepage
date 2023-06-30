@@ -23,7 +23,7 @@ genuinely amazes me. I&rsquo;ll admit, its not super easy to use and
 perhaps not ready yet for mainstream &mdash; but, it gives a glimpse of
 what is possible. Dafny&rsquo;s ability to statically check critical
 properties of your program goes well beyond what mainstream languages
-can do (that includes you, Rust). Here&rsquo;s a simple example:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function Gcd(a:nat, b:nat) : (g:nat,x:int,y:int))
+can do (that includes you, Rust). Here&rsquo;s a simple example:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function Gcd(a:nat, b:nat) : (g:nat,x:int,y:int)
 // Bezout&#39;s identity
 ensures (a*x)+(b*y) == g
 {
@@ -85,5 +85,6 @@ time &mdash; no testing required!</em></p><p>Finally, an interesting puzzle rema
 Again, Dafny can answer this for us almost immediately. If
 you&rsquo;re interested to know the answer, take a look at the <a href=https://github.com/Consensys/evm-dafny/blob/63a9da2335634572bfb1dcf616c7eda081bf7d8f/src/dafny/util/int.dfy#L310>lemma we
 came up
-with</a>.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
+with</a>.</p><hr><i>Follow the discussion on
+<a href=https://twitter.com/whileydave/status/1673926723568832513>Twitter</a></i></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
 <script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
