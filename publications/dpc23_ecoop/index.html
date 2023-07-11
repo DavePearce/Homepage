@@ -1,0 +1,36 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="On Leveraging Tests to Infer Nullable Annotations"><meta name=twitter:title content="On Leveraging Tests to Infer Nullable Annotations"><meta property="og:url" content="https://whileydave.com/publications/dpc23_ecoop/"><title>David J. Pearce
+(On Leveraging Tests to Infer Nullable Annotations)</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1>On Leveraging Tests to Infer Nullable Annotations</h1><p><b>Author(s).</b> Jens Dietrich, David J. Pearce and Mahin Chandramohan.</p><p><b>Venue.</b>
+In <i>European Conference on Object Oriented Programming (ECOOP),</i>
+2023.
+©Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik</p><p><strong>Abstract:</strong></p><p>Issues related to the dereferencing of null pointers are a pervasive
+and widely studied problem, and numerous static analyses have been
+proposed for this purpose. These are typically based on dataflow
+analysis, and take advantage of annotations indicating whether a type
+is nullable or not. The presence of such annotations can
+significantly improve the accuracy of null checkers. However, most
+code found in the wild is not annotated, and tools must fall back on
+default assumptions, leading to both false positives and false
+negatives. Manually annotating code is a laborious task and requires
+deep knowledge of how a program interacts with clients and components.</p><p>We propose to infer nullable annotations from an analysis of existing
+test cases. For this purpose, we execute instrumented tests and
+capture nullable API interactions. Those recorded interactions are
+then refined (santitised and propagated) in order to improve their
+precision and recall. We evaluate our approach on seven projects from
+the spring ecosystems and two google projects which have been
+extensively manually annotated with thousands of <code>@Nullable</code>
+annotations. We find that our approach has a high precision, and can
+find around half of the existing <code>@Nullable</code> annotations. This
+suggests that the method proposed is useful to mechanise a significant
+part of the very labour-intensive annotation task.</p><div class=publication-links><a href=https://whileydave.com/publications/DPC23_ECOOP_preprint.pdf>PDF</a>
+|
+<a href=https://doi.org/10.4230/LIPIcs.ECOOP.2023.10>DOI</a>
+|
+<a href=https://2023.ecoop.org/>Conference</a></div></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
