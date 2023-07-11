@@ -1,10 +1,11 @@
 ---
-date: 2023-07-17
+date: 2023-07-11
 kind: "conference"
 title: "On Leveraging Tests to Infer Nullable Annotations"
 authors: "Jens Dietrich, David J. Pearce and Mahin Chandramohan"
 booktitle: "European Conference on Object Oriented Programming (ECOOP)"
 copyright: "Schloss Dagstuhl--Leibniz-Zentrum fuer Informatik"
+DOI: "10.4230/LIPIcs.ECOOP.2023.10"
 preprint: "DPC23_ECOOP_preprint.pdf"
 website: "https://2023.ecoop.org/"
 ---
