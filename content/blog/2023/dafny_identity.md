@@ -77,18 +77,79 @@ ensures Sum(n) * Sum(n) == Sum3(n)
 {
   if n != 1 {
     var m := n-1;
+    assert Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n;	
     assert Sum3(n) == Sum(m)*Sum(m) + n*n*n;
-    assert Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n;
 } }
 ```
 
 This proof probably seems quite strange (certainly, it does to me) so
-let us unpack it now.  It is worth noting that I did not just write
+let's unpack it.  First, it's worth noting that I did not just write
 this out first time and get it.  In fact, I spent several hours
 playing around with various intermediate forms before finally arriving
 at what we have above.  Specifically, it took me a while to realise
-`Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n`, and this was key (I actually
+`Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n` which was key (I actually
 didn't look at the existing proofs beforehand, so I was starting out
 from scratch).
 
-First, its quite easy to see that 
+Anyway, hopefully it is reasonably clear that, if both assertions
+above hold, then the final identity holds.  So the proof really breaks
+down into two parts, one for each assertion.
+
+### First Assertion
+
+The first assertion claims this is true (where `m==n-1`):
+
+```
+Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n
+```
+
+We can actually see this is true reasonably easily as follows.  First,
+we start out with the obvious equivalence:
+
+```
+Sum(n)*Sum(n) == Sum(n)*Sum(n) 
+```
+
+Then, we unroll `Sum()` once on the right hand side to get:
+
+```
+Sum(n)*Sum(n) == (Sum(m)+n)*(Sum(m)+n)
+```
+
+Next, we multiply out the right-hand side to give:
+
+```
+Sum(n)*Sum(n) == Sum(m)*Sum(m) + 2*n*Sum(m) + n*n
+```
+
+Now, we're going to apply a [well-known
+equivalence](https://en.wikipedia.org/wiki/1_%2B_2_%2B_3_%2B_4_%2B_%E2%8B%AF)
+about `Sum(m)`.  Namely, that `Sum(m) = m*(m+1)/2`.  Also, since
+`m==n-1` we actually have `Sum(m) == (n-1)*n / 2`.  Then, we
+substitute this into the middle term from our equation above to give:
+
+```
+Sum(n)*Sum(n) == Sum(m)*Sum(m) + 2*n*(n-1)*n/2 + n*n
+```
+
+And, at this point, we're done as this then simplifies down to our
+target term:
+
+```
+Sum(n)*Sum(n) == Sum(m)*Sum(m) + n*n*n
+```
+
+That's half the proof done!  What's impressive is that Dafny does all
+of this for us.
+
+### Second Assertion
+
+The second assertion claims that the following is true:
+
+```
+Sum3(n) == Sum(m)*Sum(m) + n*n*n
+```
+
+This is not obvious at all and I was, at first, a bit unsure how Dafny
+figured this out.  The reason, in fact, is that Dafny is automatically
+applying induction for us.
