@@ -221,7 +221,7 @@ ensures (n*m) % 2 == 0 {
 
 This is curious because I'm unclear how Dafny proved the original
 version of the proof without these Lemma's.  Its possible there is an
-easier proof via manual induction which I didn't find 🤷‍♂.
+easier proof via manual induction which I didn't find.
 
 ## Conclusion
 
