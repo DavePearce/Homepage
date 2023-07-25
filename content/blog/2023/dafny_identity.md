@@ -2,7 +2,7 @@
 date: 2023-07-17
 title: "Proving a Beautiful Identity in Dafny"
 draft: false
-#metaimg: "images/2023/DafnyAbove_Preview.png"
+metaimg: "images/2023/DafnyIdentity_Preview.png"
 metatxt: "Using Dafny we can prove a beautiful mathematical identity with releative ease."
 #twitter: "https://twitter.com/whileydave/status/1673926723568832513"
 #reddit: ""
