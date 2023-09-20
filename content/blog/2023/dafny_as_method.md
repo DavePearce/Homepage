@@ -88,12 +88,18 @@ BigInteger FromBytes(bytes: List<Byte>) {
     int last = bytes.length() - 1;
     byte byte = bytes.get(last);
     BigInteger msw = FromBytes(bytes.subList(0,last));
-    msw.mul(_256).add(BigInteger.valueOf(byte & 0xff));
+    msw = msw.mul(_256).add(BigInteger.valueOf(byte & 0xff));
     return msw;
   }
 }
 ```
 
+Unfortunately, on the official Ethereum test suite this implementation
+raises a `StackOverflowException` on certain tests (specifically, in
+certain [precompiled contracts](https://www.evm.codes/precompiled),
+very large integers are generated from long byte sequences).
+
 ## Function `by method`
+
 
 
