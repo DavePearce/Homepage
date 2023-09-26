@@ -2,7 +2,7 @@
 date: 2023-09-16
 title: "Efficient Functions in Dafny"
 draft: false
-#metaimg: "images/2023/DafnyAbove_Preview.png"
+metaimg: "images/2023/DafnyByMethod_Preview.png"
 metatxt: "An unusual feature of Dafny is that functions can be implemented _by_ methods."
 #twitter: "https://twitter.com/whileydave/status/1673926723568832513"
 #reddit: ""
