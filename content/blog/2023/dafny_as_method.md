@@ -67,7 +67,7 @@ operation which converts a sequence of bytes back into an
 arbitrary-sized unsigned integer:
 
 ```dafny
-function FromBytes(bytes:seq<u8>) : (r:nat) {
+function FromBytes(bytes:seq<u8>) : nat {
   if |bytes| == 0 then 0
   else
     var last := |bytes| - 1;
@@ -87,8 +87,10 @@ BigInteger FromBytes(bytes: List<Byte>) {
   } else {
     int last = bytes.length() - 1;
     byte byte = bytes.get(last);
-    BigInteger msw = FromBytes(bytes.subList(0,last));
-    msw = msw.mul(_256).add(BigInteger.valueOf(byte & 0xff));
+    bytes = bytes.subList(0,last);
+    BigInteger msw = FromBytes(bytes);
+    msw = msw.mul(_256);
+    msw = msw.add(BigInteger.valueOf(byte & 0xff));
     return msw;
   }
 }
