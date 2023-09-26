@@ -57,8 +57,7 @@ List<Byte> ToBytes(v:BigInteger) {
       return r;
     }
     r.add(b);
-  }
-}
+} }
 ```
 
 Dafny optimises the recursive call into a `while` loop --- thereby
@@ -92,8 +91,7 @@ BigInteger FromBytes(bytes: List<Byte>) {
     msw = msw.mul(_256);
     msw = msw.add(BigInteger.valueOf(byte & 0xff));
     return msw;
-  }
-}
+} }
 ```
 
 Unfortunately, on the official Ethereum test suite this implementation
@@ -134,8 +132,7 @@ function sum(items: seq<nat>) : (r:nat) {
   invariant r == sum(items[i..]) {
     i := i - 1;
     r := r + items[i];
-  }
-}
+} }
 ```
 
 This uses a `while` loop to implement the functional specification.
