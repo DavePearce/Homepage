@@ -45,8 +45,7 @@ speaking) the following code:</p><div class=highlight><pre tabindex=0 class=chro
 </span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=n>r</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
 </span></span><span class=line><span class=cl>    <span class=n>r</span><span class=o>.</span><span class=na>add</span><span class=o>(</span><span class=n>b</span><span class=o>);</span>
-</span></span><span class=line><span class=cl>  <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=o>}</span>
 </span></span></code></pre></div><p>Dafny optimises the recursive call into a <code>while</code> loop &mdash; thereby
 making it (relatively) efficient. Consider now the analoguous
 operation which converts a sequence of bytes back into an
@@ -70,8 +69,7 @@ arbitrary-sized unsigned integer:</p><pre tabindex=0><code class=language-dafny 
 </span></span><span class=line><span class=cl>    <span class=n>msw</span> <span class=o>=</span> <span class=n>msw</span><span class=o>.</span><span class=na>mul</span><span class=o>(</span><span class=n>_256</span><span class=o>);</span>
 </span></span><span class=line><span class=cl>    <span class=n>msw</span> <span class=o>=</span> <span class=n>msw</span><span class=o>.</span><span class=na>add</span><span class=o>(</span><span class=n>BigInteger</span><span class=o>.</span><span class=na>valueOf</span><span class=o>(</span><span class=kt>byte</span> <span class=o>&amp;</span> <span class=n>0xff</span><span class=o>));</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>msw</span><span class=o>;</span>
-</span></span><span class=line><span class=cl>  <span class=o>}</span>
-</span></span><span class=line><span class=cl><span class=o>}</span>
+</span></span><span class=line><span class=cl><span class=o>}</span> <span class=o>}</span>
 </span></span></code></pre></div><p>Unfortunately, on the official Ethereum test suite this implementation
 raises a <code>StackOverflowException</code> on some tests. Specifically, on
 tests for certain <a href=https://www.evm.codes/precompiled>precompiled
@@ -96,8 +94,7 @@ like so:</p><pre tabindex=0><code>function sum(items: seq&lt;nat&gt;) : (r:nat) 
   invariant r == sum(items[i..]) {
     i := i - 1;
     r := r + items[i];
-  }
-}
+} }
 </code></pre><p>This uses a <code>while</code> loop to implement the functional specification.
 The key point is that <em>Dafny automatically proves the imperative
 version correctly implements the functional specification</em>. Whilst
