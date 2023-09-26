@@ -10,20 +10,20 @@
 16th,
 2023</div><hr><p>In developing an <a href=https://github.com/ConsenSys/evm-dafny>EVM in
 Dafny</a>, a key requirement is
-that it can be tested against the <a href=https://github.com/ethereum/tests>official EVM test
-suite</a>. This means the code needs
-to be at least reasonably efficient, otherwise completing a test run
-becomes impractical. At the same time, our EVM is intended to serve
-as a specification which can be used to verify bytecode contracts (see
+to test it against the <a href=https://github.com/ethereum/tests>official EVM test
+suite</a>. This means it needs to be
+at least reasonably efficient, otherwise completing a test run becomes
+impractical. At the same time, our DafnyEVM is intended to serve as a
+specification for which can be used to verify bytecode contracts (see
 e.g. <a href=https://github.com/Consensys/WrappedEther.dfy>here</a>). This
 means we use Dafny <code>function</code>s to implement our EVM, rather than
 <code>method</code>s. For various reasons, a <code>function</code> in Dafny is fairly
-restricted and cannot, for example, use imperative loops but instead
-must use recursion. Dafny will attempt to exploit <a href=https://en.wikipedia.org/wiki/Tail_call>tail
+restricted and, for example, must use recursion instead of
+imperative-style loops. Dafny will exploit <a href=https://en.wikipedia.org/wiki/Tail_call>tail
 recursion</a> to improve
 performance, but this is not always possible. Thus, we have a
 problem: we need to use <code>function</code>s for verification, but these are
-inherently less efficient than <code>method</code>s.</p><h2 id=example>Example</h2><p>To illustrate, consider the following method taken from our DafnyEVM:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function ToBytes(v:nat) : (r:seq&lt;u8&gt;)
+(sometimes) less efficient than <code>method</code>s.</p><h2 id=example>Example</h2><p>To illustrate, consider the following method taken from our DafnyEVM:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function ToBytes(v:nat) : (r:seq&lt;u8&gt;)
 ensures |r| &gt; 0 {
   // Extract the byte
   var b : u8 := (v % 256) as u8;
@@ -44,12 +44,12 @@ speaking) the following code:</p><div class=highlight><pre tabindex=0 class=chro
 </span></span><span class=line><span class=cl>    <span class=k>if</span><span class=o>(</span><span class=n>w</span><span class=o>.</span><span class=na>signum</span><span class=o>()</span> <span class=o>==</span> <span class=n>0</span><span class=o>)</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=n>r</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>    <span class=o>}</span>
-</span></span><span class=line><span class=cl>    <span class=n>r</span><span class=o>.</span><span class=na>add</span><span class=o>(</span><span class=n>r</span><span class=o>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>r</span><span class=o>.</span><span class=na>add</span><span class=o>(</span><span class=n>b</span><span class=o>);</span>
 </span></span><span class=line><span class=cl>  <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
-</span></span></code></pre></div><p>Here, Dafny optimises away the recursive call using a <code>while</code> loop &mdash;
-thereby making it (relatively) efficient. Now, let us consider the
-analoguous operation which converts a sequence of bytes back into an
+</span></span></code></pre></div><p>Dafny optimises the recursive call into a <code>while</code> loop &mdash; thereby
+making it (relatively) efficient. Consider now the analoguous
+operation which converts a sequence of bytes back into an
 arbitrary-sized unsigned integer:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function FromBytes(bytes:seq&lt;u8&gt;) : (r:nat) {
   if |bytes| == 0 then 0
   else
@@ -58,8 +58,8 @@ arbitrary-sized unsigned integer:</p><pre tabindex=0><code class=language-dafny 
     var msw := FromBytes(bytes[..last]);
     (msw * 256) + byte
 }
-</code></pre><p>In this case, Dafny does not recognise this as tail recursive and,
-hence, generates (very roughly speaking) the following Java:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>BigInteger</span> <span class=nf>FromBytes</span><span class=o>(</span><span class=n>bytes</span><span class=o>:</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>Byte</span><span class=o>&gt;)</span> <span class=o>{</span>
+</code></pre><p>Dafny does not recognise this as tail recursive and, hence, generates
+(very roughly speaking) the following Java:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-java data-lang=java><span class=line><span class=cl><span class=n>BigInteger</span> <span class=nf>FromBytes</span><span class=o>(</span><span class=n>bytes</span><span class=o>:</span> <span class=n>List</span><span class=o>&lt;</span><span class=n>Byte</span><span class=o>&gt;)</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=n>bytes</span><span class=o>.</span><span class=na>length</span><span class=o>()</span> <span class=o>==</span> <span class=n>0</span> <span class=o>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>BigInteger</span><span class=o>.</span><span class=na>ZERO</span><span class=o>;</span>
 </span></span><span class=line><span class=cl>  <span class=o>}</span> <span class=k>else</span> <span class=o>{</span>
@@ -71,39 +71,40 @@ hence, generates (very roughly speaking) the following Java:</p><div class=highl
 </span></span><span class=line><span class=cl>  <span class=o>}</span>
 </span></span><span class=line><span class=cl><span class=o>}</span>
 </span></span></code></pre></div><p>Unfortunately, on the official Ethereum test suite this implementation
-raises a <code>StackOverflowException</code> on certain tests. Specifically,
+raises a <code>StackOverflowException</code> on some tests. Specifically, on
 tests for certain <a href=https://www.evm.codes/precompiled>precompiled
-contracts</a> generaste very large
-integers are from long byte sequences.</p><h2 id=function-by-method>Function <code>by method</code></h2><p>Dafny supports a little-known feature which allows us to implement a
-<code>function</code> using a <code>method</code>. What this means is that the
-specification is given in the functional (i.e. recursive style) whilst
-the implementation is given in an imperative style (i.e. with loops
-instead of recursion).</p><p>To illustrate let&rsquo;s consider the following simple example:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function sum(items: seq&lt;nat&gt;) : (r:nat) {
-    if |items| == 0 then 0
-    else items[0] + sum(items[1..])
+contracts</a> which generate <em>very</em>
+large integers from long byte sequences.</p><h2 id=function-by-method>Function <code>by method</code></h2><p>Dafny supports a little-known feature (<code>by method</code>) which allows a
+<code>function</code> to be implemented using a <code>method</code>. This means the
+specification can still be given in the functional (i.e. recursive)
+style whilst the implementation is given in an imperative style
+(i.e. with loops).</p><p>To better understand this, consider the following example:</p><pre tabindex=0><code class=language-dafny data-lang=dafny>function sum(items: seq&lt;nat&gt;) : (r:nat) {
+  if |items| == 0 then 0
+  else items[0] + sum(items[1..])
 }
 </code></pre><p>This recursively computes the sum of a sequence of unsigned integers
-(<code>nat</code>s). We can add an imperative implementation like do:</p><pre tabindex=0><code>function sum(items: seq&lt;nat&gt;) : (r:nat) {
-    if |items| == 0 then 0
-    else items[0] + sum(items[1..])
+(<code>nat</code>s). Using <code>by method</code>, we can add an imperative implementation
+like so:</p><pre tabindex=0><code>function sum(items: seq&lt;nat&gt;) : (r:nat) {
+  if |items| == 0 then 0
+  else items[0] + sum(items[1..])
 } by method {
-    r := 0;
-    var i : nat := |items|;
-    while i &gt; 0
-    invariant r == sum(items[i..]) {
-        i := i - 1;
-        r := r + items[i];
-    }
+  r := 0;
+  var i : nat := |items|;
+  while i &gt; 0
+  invariant r == sum(items[i..]) {
+    i := i - 1;
+    r := r + items[i];
+  }
 }
-</code></pre><p>This uses a simple <code>while</code> loop to implement the functional
-specification. The key point here is that <em>Dafny automatically proves
-the imperative implementation correctly implements the functional
-specification</em>. Whilst that is pretty amazing, Dafny does need help
-to do this: firstly, an <code>invariant</code> has been added to help Dafny match
-the loop and the recursive specification at each step; secondly, to
-make this work, the loop must traverse <em>backwards</em> through the
-sequence. Having done this, we know <code>sum()</code> will not exhaust the call
-stack at runtime on large inputs!</p><p>We can now see the final version of our <code>FromBytes()</code> function from before:</p><pre tabindex=0><code>function FromBytes(bytes:seq&lt;u8&gt;) : (r:nat) {
+</code></pre><p>This uses a <code>while</code> loop to implement the functional specification.
+The key point is that <em>Dafny automatically proves the imperative
+version correctly implements the functional specification</em>. Whilst
+that is pretty amazing, Dafny does need help to do this: firstly, an
+<code>invariant</code> was needed to help Dafny match the loop and the recursive
+specification at each step; secondly, to make this work, the loop must
+traverse <em>backwards</em> through the sequence (which is perhaps not that
+intuitive). However, having done this, we now know <code>sum()</code> will not
+exhaust the call stack at runtime on large inputs!</p><p>We can now see the final version of our <code>FromBytes()</code> function from before:</p><pre tabindex=0><code>function FromBytes(bytes:seq&lt;u8&gt;) : (r:nat) {
   if |bytes| == 0 then 0
   else
     var last := |bytes| - 1;
@@ -127,13 +128,13 @@ stack at runtime on large inputs!</p><p>We can now see the final version of our 
 <code>sum()</code> example, though Dafny requires slightly more hand-holding to
 show the <code>while</code> loop is equivalent to the recursive specification.
 In particular, a lemma <code>LemmaFromBytes()</code> is needed to help
-reestablish the loop invariant. Regardless, the net effect is the
-same &mdash; <code>FromBytes()</code> no longer exhausts the call stack on the
-official EVM test suite. That is a great result!</p><h2 id=conclusion>Conclusion</h2><p>In languages like Dafny, a dichotomy exists between <em>functional
+reestablish the loop invariant (not shown). Regardless, the net
+effect is the same &mdash; <code>FromBytes()</code> no longer exhausts the call stack
+on the official EVM test suite. That is a great result!</p><h2 id=conclusion>Conclusion</h2><p>In languages like Dafny, a dichotomy exists between <em>functional
 specifications</em> and <em>imperative implementations</em>: Specifications must
 be functional so the underlying theorem prover can safely reason about
 them; on the other hand, algorithms are often more efficient when
 implemented using loops. The ability to seamlessly cross the divide
-between these two extremes is a unique feature of Dafny and (when the
-need arises) a compelling feature.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
+between these two extremes is a unique feature of Dafny which (when
+the need arises) is compelling.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
 <script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
