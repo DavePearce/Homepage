@@ -1,5 +1,5 @@
 ---
-date: 2021-02-01
+date: 2023-10-01
 title: "On the Two Schools of Verification"
 draft: true
 #metaimg: "images/2021/DeadlockDetection_Preview.png"
