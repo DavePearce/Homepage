@@ -47,4 +47,16 @@ approaches a little.
 
 ## Dependent Types
 
+Issues with Lean:
+
+   * **Pattern Matching** This fails (as in the `<=` case).
+   * **Library** When automation fails, its very hard figuring out
+     what lemma to use.  Documentation is pretty terrible.  A lot of
+     stuff refers to Lean 3!
+   * **Tools** The tooling is rubbish.  E.g. IDE often doesn't realise
+     changes made in another file, etc.  Also, if sorry in another
+     file then won't recompile (what??)
+   
+   
+
 ## Conclusion
