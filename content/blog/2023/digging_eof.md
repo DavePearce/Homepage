@@ -132,11 +132,45 @@ proposal, and covers several of the proposed EIPs:
 ### Example: Gas Costs
 
 On several occasions the gas cost of an existing operation has been
-tweaked for some reason.  Some examples include:
+tweaked for some reason.  Sometimes costs are increased, whilst other
+times they are decreased. Generally speaking, reducing costs is not
+considered to introduce a breaking change (even though it technically
+could for contracts which relied on specific fixed costs).  However,
+changes which increase costs can certainly impact backwards
+compatibility.
 
-  * [EIP-2929](https://eips.ethereum.org/EIPS/eip-2929).
-  * [EIP-1108](https://eips.ethereum.org/EIPS/eip-1108).
-  * [EIP-2565](https://eips.ethereum.org/EIPS/eip-2565).
+Some examples include:
+
+  * [EIP-1108 ("Reduce alt_bn128 precompile gas
+    costs")](https://eips.ethereum.org/EIPS/eip-1108).  This reduced
+    the cost of the Eliptic Curve precompile contracts after some
+    significant performance optimisations were implemented in Geth.
+  * [EIP-1884 ("Repricing for trie-size-dependent
+    opcodes")](https://eips.ethereum.org/EIPS/eip-1884).  This was an
+    attempt to rebalance instructions which became more resource
+    intensive as the size of the Ethereum state grew.  It was
+    acknowledged as a breaking change which could, for example, push
+    default functions over the `2300` gas limit (in some cases).
+  * [EIP-2200 ("Structured Definitions for Net Gas
+    Metering")](https://eips.ethereum.org/EIPS/eip-2200).  Since it
+    was not anticipated to result in any significant gas cost
+    increases, this was not considered a breaking change.
+  * [EIP-2565 ("ModExp Gas
+    Cost")](https://eips.ethereum.org/EIPS/eip-2565).  This introduced
+    a new algorithm for calculating gas costs for the `ModExp`
+    precompile contract.  Again, this change generally reduced gas
+    costs for the precompile and, hence, issues of backwards
+    compatibility were not considered.
+  * [EIP-2929 ("Gas cost increases for state access
+    opcodes")](https://eips.ethereum.org/EIPS/eip-2929).  This
+    increased the cost of various instructions (e.g. `SLOAD`) on their
+    first use within a transaction.  The goal was to address the
+    historical underpricing of storage accessing bytecodes and ward of
+    potential DoS attacks.  Since gas costs were increasing, there
+    were clear implications for backwards compatibility.  Arguments
+    were made that developers had several years of warning already
+    that this was likely, and furthermore the certain mitigations
+    (e.g. access lists) reduced the impact.
 
   * Want to be able to change gas schedule whilst minimising impact on
     existing contracts.
