@@ -70,9 +70,14 @@ evolving the EVM is currently difficult_.  I'm not specifically
 advocating for any of them (that's for others to decide), but I am
 arguing that they indicate a problem with the status quo.  There are
 many other examples as well.  The challenges faced with deprecating
-`SELFDESTRUCT` provide another
-[example](https://ethereum-magicians.org/t/eip-4758-deactivate-selfdestruct/8710)
-[here](https://ethereum-magicians.org/t/almost-self-destructing-selfdestruct-deactivate/11886).
+`SELFDESTRUCT` provide
+[another](https://ethereum-magicians.org/t/eip-4758-deactivate-selfdestruct/8710)
+[example](https://ethereum-magicians.org/t/almost-self-destructing-selfdestruct-deactivate/11886),
+as do
+[attempts](https://ethereum-magicians.org/t/thoughts-on-address-space-extension-ase/6779)
+to
+[manage](https://notes.ethereum.org/@ipsilon/address-space-extension-exploration)
+Address Space Expansion.
 
 ### Example: Immediate Operands
 
@@ -129,7 +134,7 @@ proposal, and covers several of the proposed EIPs:
 [EIP-5450](https://eips.ethereum.org/EIPS/eip-5450), and
 [EIP-6206](https://eips.ethereum.org/EIPS/eip-6206).
 
-### Example: Gas Costs
+### Example: Gas Observability
 
 On several occasions the gas cost of an existing operation has been
 tweaked for some reason.  Sometimes costs are increased, whilst other
@@ -139,52 +144,103 @@ could for contracts which relied on specific fixed costs).  However,
 changes which increase costs can certainly impact backwards
 compatibility.
 
-Some examples include:
+Examples where costs decreased include:
 
   * [EIP-1108 ("Reduce alt_bn128 precompile gas
     costs")](https://eips.ethereum.org/EIPS/eip-1108).  This reduced
     the cost of the Eliptic Curve precompile contracts after some
     significant performance optimisations were implemented in Geth.
-  * [EIP-1884 ("Repricing for trie-size-dependent
-    opcodes")](https://eips.ethereum.org/EIPS/eip-1884).  This was an
-    attempt to rebalance instructions which became more resource
-    intensive as the size of the Ethereum state grew.  It was
-    acknowledged as a breaking change which could, for example, push
-    default functions over the `2300` gas limit (in some cases).
+    
   * [EIP-2200 ("Structured Definitions for Net Gas
-    Metering")](https://eips.ethereum.org/EIPS/eip-2200).  Since it
-    was not anticipated to result in any significant gas cost
-    increases, this was not considered a breaking change.
+    Metering")](https://eips.ethereum.org/EIPS/eip-2200).  This
+    introduce a more refined gas metering for `SSTORE`, such that
+    e.g. subsequent writes to the same location were cheaper.
+    
   * [EIP-2565 ("ModExp Gas
     Cost")](https://eips.ethereum.org/EIPS/eip-2565).  This introduced
     a new algorithm for calculating gas costs for the `ModExp`
-    precompile contract.  Again, this change generally reduced gas
-    costs for the precompile and, hence, issues of backwards
-    compatibility were not considered.
+    precompile contract. 
+    
+Examples where costs increased include:
+
+  * [EIP-1884 ("Repricing for trie-size-dependent
+    opcodes")](https://eips.ethereum.org/EIPS/eip-1884).  This
+    attempted to rebalance instructions which had become resource
+    intensive with Ethereum state growth.  It was acknowledged as a
+    breaking change which could, for example, push
+    default functions over the `2300` gas limit (in some cases).
+    
   * [EIP-2929 ("Gas cost increases for state access
     opcodes")](https://eips.ethereum.org/EIPS/eip-2929).  This
     increased the cost of various instructions (e.g. `SLOAD`) on their
-    first use within a transaction.  The goal was to address the
-    historical underpricing of storage accessing bytecodes and ward of
-    potential DoS attacks.  Since gas costs were increasing, there
-    were clear implications for backwards compatibility.  Arguments
-    were made that developers had several years of warning already
-    that this was likely, and furthermore the certain mitigations
-    (e.g. access lists) reduced the impact.
+    first use within a transaction.  This was to address historical
+    underpricing of storage accessing instructions and ward of
+    potential DoS attacks.  Again, this was acknowledged as a breaking
+    change.  Arguments were made that developers had several years of
+    warning already that this was likely, and furthermore the certain
+    mitigations (e.g. access lists) reduced the impact.
 
-  * Want to be able to change gas schedule whilst minimising impact on
-    existing contracts.
-  * Hence, instructions which explicitly refer to gas (e.g. `GAS`,
-    `CALL`) need to be removed.
+Its unclear whether any of these breaking changes caused any
+significant problems for existing on-chain contracts.  What is clear,
+however, is that changes to the gas schedule will be needed on an
+ongoing basis (e.g. as CPU/GPU characteristics change or algorithmic
+performance increases, etc).
 
-### Example: Code Inspection
+To address these concerns, the EOF proposal includes a goal of
+removing gas observability.  _What does this mean?_  Well, consider a
+hypothetical contract containing something like this:
 
-  * Ambitious
+```
+    ...
+    GAS
+    PUSH 0xffffffff5795
+    EQ
+    ...
+```
+
+Since the equality check (`EQ`) depends upon the exact gas available
+at a specific point, changes to the gas schedule could impact its
+execution (e.g. reducing or increasing the gas costs of `SSTORE`).  A
+complete contract illustrating this is
+[here](https://www.evm.codes/playground?fork=shanghai&unit=Wei&codeType=Bytecode&code='6000546001016000555a65ffffffff57951461001757fe5b00')
+which, on Shanghai, executes to `STOP`.  In contrast, on Istanbul it
+[executes to
+`INVALID`](https://www.evm.codes/playground?fork=istanbul&unit=Wei&codeType=Bytecode&code='6000546001016000555a65ffffffff57951461001757fe5b00').
+Yes, this is a very artificial example!  Yes, people should never
+write code like this!  But, there are some situations where things
+like this arise.  For example, Solidity uses a default stipend of
+`2300` gas for `transfer()` calls.  Furthermore, sometimes stipends
+are manually deducted with
+[code](https://ethereum.stackexchange.com/questions/92608/staticcall-what-does-this-code-do)
+[like](https://medium.com/@rbkhmrcr/precompiles-solidity-e5d29bd428c4)
+`staticcall(gas()-2000,...)`  ([despite the `63/64`
+rule](https://eips.ethereum.org/EIPS/eip-150)).
+
+Removing gas observability would allow the gas schedule to change more
+easily with minimal impact.  The challenges faced with `SSTORE` are a
+key motivator here.  However, to actually remove gas observability
+means dropping instructions that expose gas costs.  Specifically:
+`GAS`, `CALL`, `CALLCODE`, `DELEGATECALL`, `STATICCALL`, `CREATE`, and
+`CREATE2`.  This would be a significant breaking change and,
+realistically, could not be done without EOF (or something very much
+like it).
+
+### Example: Code Observability
+
+This is arguably the least developed --- and most ambitious --- part
+of the EOF proposal.  At the same time, it is something that [Vitalik
+has made a strong case
+for](https://ethereum-magicians.org/t/eof-proposal-ban-code-introspection-of-eof-accounts/12113).
+
   * Want to be able to programmatically upgrade existing contracts
     (e.g. to replace all occurences of `PUSH1 0x0` with `PUSH0`).
   * Need to remove instructions which can "see" code.  
   * Most instructions which can "see" code do so because they see it
     as data (e.g. initcode to be deployed using `CREATE`).
+
+  * Reduces versioning required for EOF validation
+  * Address Space Expansion (is that the killer feature?)
+  * Changes that are backwards compatible don't require new EOF versions
 
 ## Evolution
 
@@ -198,6 +254,9 @@ format) along with (for various reasons) a bunch of examples baked
 
 * `0xEF` and scan.  Separate data from code.
 * Incentivisation
+* microversions. 
+* Deprecating legacy deployemtn.
+* Managing legacy contracts
 
 ## Conclusion
 
@@ -220,7 +279,14 @@ In my opinion, the real benefit of EOF comes from versioning: we can
    * EOF v0.
 
    * What about existing legacy?
-   
+
+## Appendix --- FAQ
+
+* **Q)** _Can't we just retrofit immediate operands to the legacy
+  EVM?_ Unsuccessful attempts have been made to get this through.  The
+  key problem is the potential for valid jump destinations to be
+  become invalid.
+
 ## Appendix --- Immediate Operands
 
 As discussed above, we cannot easily add instructions with immediate
@@ -256,17 +322,17 @@ bytecode: `0x600456e05b00`.  This corresponds to the following
 assembly:
 
 ```
-   push1 lab
-   jump
-   db 0xe0
+   PUSH1 lab
+   JUMP
+   DB 0xe0
 lab:
-   jumpdest
-   stop
+   JUMPDEST
+   STOP
 ```
 
-Observe that the data byte `0xe0` is mixed in with other instructions,
-which is permitted under the current EVM specification.  The EVM
-simply [views this as an `INVALID`
+Observe that the raw data byte `0xe0` is mixed in with other
+instructions, which is permitted under the current EVM specification.
+The EVM simply [views this as an `INVALID`
 instruction](https://www.evm.codes/playground?fork=shanghai&unit=Wei&codeType=Bytecode&code='600456e05b00'_)
 _which has no operands_.  Specifically, this is defined in Section
 9.4.3 ("Jump Destination Validity") of the [Yellow
@@ -280,9 +346,9 @@ of `RJUMP` is `0xe0`.  _So, what's the problem?_ Well, our bytecode
 sequence now looks like this:
 
 ```
-   push 0x4
-   jump
-   rjump 0x5b00
+   PUSH 0x4
+   JUMP
+   RJUMP 0x5b00
 ```
 
 Observe how the `JUMPDEST` and `STOP` bytecodes are now bytes within
