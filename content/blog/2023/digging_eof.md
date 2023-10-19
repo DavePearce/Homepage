@@ -79,7 +79,7 @@ to
 [manage](https://notes.ethereum.org/@ipsilon/address-space-extension-exploration)
 Address Space Expansion.
 
-### Example: Immediate Operands
+### Immediate Operands
 
 Currently, _instructions with immediate operands cannot easily be
 added to the EVM_.  Whilst the exact reasons for this are somewhat
@@ -134,7 +134,7 @@ proposal, and covers several of the proposed EIPs:
 [EIP-5450](https://eips.ethereum.org/EIPS/eip-5450), and
 [EIP-6206](https://eips.ethereum.org/EIPS/eip-6206).
 
-### Example: Gas Observability
+### Gas Observability
 
 On several occasions the gas cost of an existing operation has been
 tweaked for some reason.  Sometimes costs are increased, whilst other
@@ -223,24 +223,55 @@ means dropping instructions that expose gas costs.  Specifically:
 `GAS`, `CALL`, `CALLCODE`, `DELEGATECALL`, `STATICCALL`, `CREATE`, and
 `CREATE2`.  This would be a significant breaking change and,
 realistically, could not be done without EOF (or something very much
-like it).
+like it).  The EOF handles this by: firstly, replacing the first five
+instructions above with: `CALL2`, `STATICCALL2`, `DELEGATECALL2`
+([EIP-7069](https://eips.ethereum.org/EIPS/eip-7069)); secondly, by
+replacing `CREATE` / `CREATE2` with `CREATE3` / `CREATE4` (EIP-TBC).
 
-### Example: Code Observability
+### Code Observability
 
-This is arguably the least developed --- and most ambitious --- part
-of the EOF proposal.  At the same time, it is something that [Vitalik
-has made a strong case
+This is an ambitious part of the EOF proposal but is also something
+[Vitalik makes a strong case
 for](https://ethereum-magicians.org/t/eof-proposal-ban-code-introspection-of-eof-accounts/12113).
+The goal is to allow on-chain contracts to be safely and automatically
+upgraded to e.g. exploit new instructions.  For example, contracts
+using `PUSH1 0x0` could now be upgraded to use `PUSH0`.  _That would
+be very neat!_
 
-  * Want to be able to programmatically upgrade existing contracts
-    (e.g. to replace all occurences of `PUSH1 0x0` with `PUSH0`).
-  * Need to remove instructions which can "see" code.  
-  * Most instructions which can "see" code do so because they see it
-    as data (e.g. initcode to be deployed using `CREATE`).
+As with gas observability, the key challenge here lies with
+instructions that can _observe_ the bytecode of a contract.  That is,
+if the logic of a contract depends on the exact bytes of another (or
+itself), then changing those bytes (i.e. through automated upgrading)
+could potentially alter its execution.  Instructions which can observe
+the a contract's bytecode include:
 
-  * Reduces versioning required for EOF validation
-  * Address Space Expansion (is that the killer feature?)
-  * Changes that are backwards compatible don't require new EOF versions
+  * `CODESIZE`, `CODECOPY`, `EXTCODESIZE`, `EXTCODECOPY`,
+    `EXTCODEHASH`.  These allow a contract to observe the bytecode of
+    another contract (either the enclosing contract or an external
+    contract).
+  * `CREATE` / `CREATE2`.  These create a new contract using initcode
+    typically sourced from the (data) bytes of a contract.  In such
+    cases, they specify an exact region of the contract's bytecode to
+    be used as initcode.  As such, their behaviour can be affected by
+    changes to the enclosing contract's bytecode, if that means this
+    region changes its size or position.
+
+Additionally, `CREATE2` poses another potential hazard since the new
+contract address is (partly) determined by the bytecode of the
+contract being created.  Thus, if our automatic upgrading system also
+upgrades as-yet-undeployed initcode, then this would in turn alter the
+final contract address.  Any existing contract which relied on an
+exact address (for whatever reason) would then break.
+
+Eliminating code observability requires, at a minimum, that the above
+instructions are replaced with alternatives.  Again, this would be a
+fairly significant breaking change.  The EOF addresses this in several
+ways: firstly, a specific data section is introduced
+([EIP-3540](https://eips.ethereum.org/EIPS/eip-3540)); secondly,
+operations (`DATALOAD`, `DATASIZE`, etc) for accessing it are
+introduced ([EIP-7480](https://eips.ethereum.org/EIPS/eip-7480));
+finally, `CREATE` / `CREATE2` are replaced with `CREATE3` / `CREATE4`
+/ `RETURNCONTRACT` (EIP-TBC).
 
 ## Evolution
 
@@ -257,6 +288,8 @@ format) along with (for various reasons) a bunch of examples baked
 * microversions. 
 * Deprecating legacy deployemtn.
 * Managing legacy contracts
+* Reduces versioning required for EOF validation
+* Changes that are backwards compatible don't require new EOF versions
 
 ## Conclusion
 
@@ -271,8 +304,6 @@ In my opinion, the real benefit of EOF comes from versioning: we can
  way (as is done now); or, in a more structured and identifiable
  fashion (as with EOF).
 
-
-
    * Perhaps the proposal could be broken down into smaller
      independent pieces (though this was tried already).
 
@@ -280,7 +311,14 @@ In my opinion, the real benefit of EOF comes from versioning: we can
 
    * What about existing legacy?
 
+   * Vitalik talks [about v1, v2, v3](https://www.youtube.com/watch?v=SmcMwdHZqg8).  `26:00`
+   
+   * 
+
 ## Appendix --- FAQ
+
+* **Q)** _Since we have to keep supporting legacy contracts anyway,
+  why bother with this?_
 
 * **Q)** _Can't we just retrofit immediate operands to the legacy
   EVM?_ Unsuccessful attempts have been made to get this through.  The
