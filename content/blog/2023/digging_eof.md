@@ -208,8 +208,7 @@ like this arise.  For example, Solidity uses a default stipend of
 are deducted manually with
 [code](https://ethereum.stackexchange.com/questions/92608/staticcall-what-does-this-code-do)
 [like](https://medium.com/@rbkhmrcr/precompiles-solidity-e5d29bd428c4)
-`staticcall(gas()-2000,...)`  ([despite the `63/64`
-rule](https://eips.ethereum.org/EIPS/eip-150)).
+`staticcall(gas()-2000,...)`.
 
 Removing gas observability would allow the gas schedule to change more
 easily with minimal impact.  The challenges faced with `SSTORE` are a
