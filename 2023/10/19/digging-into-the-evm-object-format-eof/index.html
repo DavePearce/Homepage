@@ -159,8 +159,7 @@ like this arise. For example, Solidity uses a default stipend of
 are deducted manually with
 <a href=https://ethereum.stackexchange.com/questions/92608/staticcall-what-does-this-code-do>code</a>
 <a href=https://medium.com/@rbkhmrcr/precompiles-solidity-e5d29bd428c4>like</a>
-<code>staticcall(gas()-2000,...)</code> (<a href=https://eips.ethereum.org/EIPS/eip-150>despite the <code>63/64</code>
-rule</a>).</p><p>Removing gas observability would allow the gas schedule to change more
+<code>staticcall(gas()-2000,...)</code>.</p><p>Removing gas observability would allow the gas schedule to change more
 easily with minimal impact. The challenges faced with <code>SSTORE</code> are a
 key motivator here. However, to actually do this means dropping
 instructions that expose gas costs. Specifically: <code>GAS</code>, <code>CALL</code>,
