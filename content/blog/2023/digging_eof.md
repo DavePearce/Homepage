@@ -3,7 +3,7 @@ date: 2023-10-19
 title: "Digging into the EVM Object Format (EOF)"
 draft: false
 #metaimg: "images/2023/DafnyByMethod_Preview.png"
-metatxt: "The EVM Object Format offers an opportunity manage evolution of the EVM going forward."
+metatxt: "The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."
 #twitter: "https://twitter.com/whileydave/status/1673926723568832513"
 #reddit: ""
 ---
