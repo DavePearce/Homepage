@@ -381,9 +381,9 @@ enough, the opcode of `RJUMP` is `0xe0`.  _So, what's the problem?_
 Well, our bytecode sequence now looks like this:
 
 ```
-   PUSH 0x4
-   JUMP
-   RJUMP 0x5b00
+   push1 0x4
+   jump
+   rjump 0x5b00
 ```
 
 Observe how the `JUMPDEST` and `STOP` bytecodes are now bytes within
