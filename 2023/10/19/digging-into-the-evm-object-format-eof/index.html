@@ -273,9 +273,9 @@ Paper</a>:</p><figure class=text-center><img width=454px alt="Illustrating Secti
 <a href=https://eips.ethereum.org/EIPS/eip-4200>EIP-4200</a> which adds a new
 instruction <code>RJUMP</code> taking a two-byte immediate operand. Funnily
 enough, the opcode of <code>RJUMP</code> is <code>0xe0</code>. <em>So, what&rsquo;s the problem?</em>
-Well, our bytecode sequence now looks like this:</p><pre tabindex=0><code>   PUSH 0x4
-   JUMP
-   RJUMP 0x5b00
+Well, our bytecode sequence now looks like this:</p><pre tabindex=0><code>   push1 0x4
+   jump
+   rjump 0x5b00
 </code></pre><p>Observe how the <code>JUMPDEST</code> and <code>STOP</code> bytecodes are now bytes within
 the immediate operand of the <code>RJUMP</code> instruction! This has completely
 changed the meaning of our original program, and its not clear how to
