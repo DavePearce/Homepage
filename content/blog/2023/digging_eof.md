@@ -12,9 +12,8 @@ The EVM Object Format (EOF) introduces a structured container format
 for EVM bytecode.  The EOF proposal is spread over several EIPs (see
 the ["Mega EOF
 Endgame"](https://notes.ethereum.org/@ipsilon/mega-eof-specification)
-for an overview of them all).  My goal here is to provide a high level
-overview and, in particular, to clarify what problems it is trying to
-solve.
+for an overview).  My goal here is to provide a high level overview
+and, in particular, to clarify what problems it is trying to solve.
 
 The EOF proposal was recently presented at the [All Core Devs
 Execution Layer meeting](https://www.youtube.com/watch?v=t25IIQWfCnY)
