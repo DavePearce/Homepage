@@ -1,0 +1,300 @@
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Digging into the EVM Object Format (EOF)"><meta name=twitter:title content="Digging into the EVM Object Format (EOF)"><meta property="og:description" content="The EVM Object Format offers an opportunity manage evolution of the EVM going forward."><meta name=twitter:description content="The EVM Object Format offers an opportunity manage evolution of the EVM going forward."><meta property="og:url" content="https://whileydave.com/2023/10/19/digging-into-the-evm-object-format-eof/"><title>David J. Pearce
+(Digging into the EVM Object Format (EOF))</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
+<a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
+<a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
+<a href=https://www.linkedin.com/in/david-pearce-8592647/><i class="fa fa-linkedin-square" aria-hidden=true></i></a></div><div class=topbar-menu><div id=menu onclick=toggleMenu()><div id=menu-icon><img src=https://whileydave.com/images/menu.png alt=Menu></div><div id=menu-content><a href=https://whileydave.com/blog/>Blog</a>
+<a href=https://whileydave.com/projects/>Projects</a>
+<a href=https://whileydave.com/publications/>Publications</a>
+<a href=https://whileydave.com/talks/>Talks</a>
+<a href=https://whileydave.com/>Home</a></div></div></div></header><div class=container onclick=clearMenu()><div class=content><h1 class=post-title>Digging into the EVM Object Format (EOF)</h1><div class=post-date>Thursday, October
+19th,
+2023</div><hr><p>The EVM Object Format (EOF) introduces a structured container format
+for EVM bytecode. The EOF proposal is spread over several EIPs (see
+the <a href=https://notes.ethereum.org/@ipsilon/mega-eof-specification>&ldquo;Mega EOF
+Endgame&rdquo;</a>
+for an overview of them all). My goal here is to provide a high level
+overview and, in particular, to clarify what problems it is trying to
+solve.</p><p>The EOF proposal was recently presented at the <a href="https://www.youtube.com/watch?v=t25IIQWfCnY">All Core Devs
+Execution Layer meeting</a>
+where concerns were raised around its complexity and whether or not it
+could be ready for Prague (see the slides
+<a href="https://docs.google.com/presentation/d/10mxZK5hzLeaTLGAVo83qrPybk0Y8fUN5prAffGhKV6o/edit#slide=id.p">here</a>).
+The following comments made during the meeting captures the sentiment:</p><blockquote><p><strong>(1:18:55)</strong> “I know the Ipsilon team and Danno have spent a lot of
+time working on this and it’s quite harsh to say that after all this
+time we might not be shipping it but I think it’s even worse to say,
+‘Let’s see,’ and then in like we push it another two years and then
+we say, ‘Oh, we are not going to ship it after all.’ and so I think
+we should make a decision at Devconnect whether this is something
+that we want”</p></blockquote><p>So, <em>what is the EOF and why is it important?</em> That&rsquo;s what I want to
+dig into here. Roughly speaking, the EOF introduces a versioned
+container format for EVM bytecode which offers a mechanism for
+managing <em>breaking changes</em> to the EVM.</p><h2 id=overview>Overview</h2><p>The Ethereum Virtual Machine (EVM) was specified as part of the
+<a href=https://ethereum.github.io/yellowpaper/paper.pdf>Yellow Paper</a> and,
+more recently, through the <a href=https://github.com/ethereum/execution-specs>Execution Layer
+Specification</a>. The EVM
+has evolved in many directions. For example, new instructions have
+been added (e.g. <a href=https://eips.ethereum.org/EIPS/eip-145><code>SHL</code></a>,
+<a href=https://eips.ethereum.org/EIPS/eip-1014><code>CREATE2</code></a>,<a href=https://eips.ethereum.org/EIPS/eip-3855><code>PUSH0</code></a>,
+etc), gas costs <a href=https://eips.ethereum.org/EIPS/eip-2929>have</a>
+<a href=https://eips.ethereum.org/EIPS/eip-1108>been</a>
+<a href=https://eips.ethereum.org/EIPS/eip-2565>tweaked</a>, a code size limit
+has been <a href=https://eips.ethereum.org/EIPS/eip-170>imposed</a>,
+instructions have been
+<a href=https://eips.ethereum.org/EIPS/eip-4399>supplanted</a> and even
+(hopefully) <a href=https://eips.ethereum.org/EIPS/eip-4758>deprecated</a>.
+Allowing the EVM to evolve seems important for the future of Ethereum!
+And yet, the nature of EVM bytecode makes this unnecessarily
+difficult.</p><p>I&rsquo;m going to give some examples to backup this claim that the current
+nature of the EVM hinders its evolution. These examples are not mine:
+<em>they are actually part of the EOF proposal</em>. I&rsquo;m calling them
+examples because that&rsquo;s what I think they are: <em>good examples where
+evolving the EVM is currently difficult</em>. There are many other
+examples as well. The challenges faced with deprecating
+<code>SELFDESTRUCT</code> provide
+<a href=https://ethereum-magicians.org/t/eip-4758-deactivate-selfdestruct/8710>another</a>
+<a href=https://ethereum-magicians.org/t/almost-self-destructing-selfdestruct-deactivate/11886>example</a>,
+as do
+<a href=https://ethereum-magicians.org/t/thoughts-on-address-space-extension-ase/6779>attempts</a>
+to
+<a href=https://notes.ethereum.org/@ipsilon/address-space-extension-exploration>manage</a>
+Address Space Expansion.</p><h3 id=immediate-operands>Immediate Operands</h3><p>Instructions with immediate operands cannot easily be added to the
+EVM. Whilst the exact reasons for this are somewhat involved (see
+Appendix below), the more important question is: <em>why do we want
+instructions with immediate operands?</em> Whilst this is hard to pin
+down, two cases are illustrative:</p><ul><li><p><strong>(Static Control Flow)</strong>. EVM bytecode currently only supports
+<em>dynamic</em> control flow. Specifically, the <code>JUMP</code> and <code>JUMPI</code>
+instructions accept their branch targets as stack operands.
+Whilst determining a branch target is often easy (e.g. because it
+is pushed on the stack immediately beforehand) it can also be
+impossibly hard (e.g. because it was loaded from storage). As
+such, decompiling EVM bytecode is a
+<a href=https://dl.acm.org/doi/10.1145/3527321>hard</a>
+<a href=https://doi.org/10.1109/SANER56733.2023.00011>problem</a>. This
+complicates, for example, tools for operating on bytecode
+(e.g. for static verification) and clients attempting to compile
+bytecode into efficient machine code (where static branching is
+used). The idea of introducing static control-flow to the EVM
+has been raised many times over the years (see
+e.g. <a href=https://eips.ethereum.org/EIPS/eip-615>EIP-615</a>,
+<a href=https://eips.ethereum.org/EIPS/eip-2315>EIP-2315</a>,
+<a href=https://eips.ethereum.org/EIPS/eip-3779>EIP-3779</a>,
+<a href=https://eips.ethereum.org/EIPS/eip-4200>EIP-4200</a>, etc). <em>But,
+none of these proposals can work unless immediate operands are
+permitted</em>.</p></li><li><p><strong>(Stack Manipulation)</strong>. A similar issue lies with the stack,
+as instructions for manipulating the stack (e.g. <code>SWAP1</code>,
+<code>SWAP13</code>, <code>DUP16</code>, etc) can only reach sixteen items deep. To
+support arbitrary numbers of parameters and local variables,
+compilers use complex maneuvers to shift items around, sometimes
+spilling them to memory. This results in a discrepancy between
+the true cost of an operation, and its actual cost in gas
+(i.e. because some artificial maneuver was required which, on a
+physical CPU, could have been performed directly). In 2017,
+<a href=https://eips.ethereum.org/EIPS/eip-663>EIP-663</a> was created to
+address this issue by introducing the <code>DUPN</code> and <code>SWAPN</code>
+instructions. The problem is that, without immediate operands,
+the <code>N</code> must be supplied as a stack operand. And that means
+losing the ability to statically analyse the stack (in some sense
+introducing a similar problem as currently faced for
+control-flow). <em>As such, EIP-663 has languished until finally
+being folded into the EOF proposal</em>.</p></li></ul><p>The EOF addresses this in several ways: firstly, it enables
+instructions with immediate operands
+(<a href=https://eips.ethereum.org/EIPS/eip-3670>EIP3670</a>); secondly, it
+replaces dynamic branching instructions (e.g. <code>JUMP</code>) with static
+branching instructions (e.g. <code>RJUMP</code>)
+(<a href=https://eips.ethereum.org/EIPS/eip-4200>EIP-4200</a>); thirdly, it
+introduces instructions for calling subroutines (<code>CALLF</code>, <code>JUMPF</code>,
+<code>RETF</code>)
+(<a href=https://eips.ethereum.org/EIPS/eip-4750>EIP-4750</a>,<a href=https://eips.ethereum.org/EIPS/eip-5450>-5450</a>,<a href=https://eips.ethereum.org/EIPS/eip-6206>-6206</a>);
+finally, it introduces <code>DUPN</code> and <code>SWAPN</code>
+(<a href=https://eips.ethereum.org/EIPS/eip-663>EIP-663</a>).</p><h3 id=gas-observability>Gas Observability</h3><p>On several occasions the gas cost of an existing operation has been
+tweaked for some reason. Sometimes costs are increased, whilst other
+times they are decreased. Generally speaking, reducing costs is not
+considered a breaking change (even though it technically could for
+contracts which relied on specific fixed costs). However, changes
+which increase costs are normally considered to be breaking changes.</p><p>Examples where costs decreased include:</p><ul><li><p><a href=https://eips.ethereum.org/EIPS/eip-1108>EIP-1108 (&ldquo;Reduce alt_bn128 precompile gas
+costs&rdquo;)</a>. This reduced
+the cost of the Eliptic Curve precompile contracts after some
+significant performance optimisations were implemented in Geth.</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2200>EIP-2200 (&ldquo;Structured Definitions for Net Gas
+Metering&rdquo;)</a>. This
+introduced a more refined gas metering for <code>SSTORE</code>
+(e.g. subsequent writes to the same location are cheaper).</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2565>EIP-2565 (&ldquo;ModExp Gas
+Cost&rdquo;)</a>. This introduced
+a new algorithm for calculating gas costs for the <code>ModExp</code>
+precompile.</p></li></ul><p>Examples where costs increased include:</p><ul><li><p><a href=https://eips.ethereum.org/EIPS/eip-1884>EIP-1884 (&ldquo;Repricing for trie-size-dependent
+opcodes&rdquo;)</a>. This
+attempted to rebalance instructions which had become more resource
+intensive over time. It was acknowledged as a breaking change
+which could, for example, push default functions over the <code>2300</code>
+gas limit (in some cases).</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2929>EIP-2929 (&ldquo;Gas cost increases for state access
+opcodes&rdquo;)</a>. This
+increased the cost of various instructions (e.g. <code>SLOAD</code>) on their
+first use within a transaction. This was to address historical
+underpricing of storage accessing instructions and ward of
+potential DoS attacks. Again, this was acknowledged as a breaking
+change. Arguments were made that developers had several years of
+warning already that this was likely, and furthermore the certain
+mitigations (e.g. access lists) reduced the impact.</p></li></ul><p>Its unclear whether any of these breaking changes caused any
+significant problems for existing on-chain contracts. What is clear,
+however, is that changes to the gas schedule will be ongoing (e.g. as
+CPU/GPU characteristics change or algorithmic performance increases,
+etc).</p><p>To address these concerns, the EOF proposal includes a goal of
+removing gas observability. <em>What does this mean?</em> Well, consider a
+hypothetical contract containing something like this:</p><pre tabindex=0><code>    ...
+    GAS
+    PUSH 0xffffffff5795
+    EQ
+    ...
+</code></pre><p>Since the equality check (<code>EQ</code>) depends upon the exact gas available
+at a specific point, changes to the gas schedule (e.g. increasing the
+costs of <code>SSTORE</code>) could impact the outcome. A complete contract
+illustrating this is
+<a href="https://www.evm.codes/playground?fork=shanghai&unit=Wei&codeType=Bytecode&code='6000546001016000555a65ffffffff57951461001757fe5b00'">here</a>
+which, on Shanghai, executes to <code>STOP</code>. In contrast, on Istanbul it
+<a href="https://www.evm.codes/playground?fork=istanbul&unit=Wei&codeType=Bytecode&code='6000546001016000555a65ffffffff57951461001757fe5b00'">executes to
+<code>INVALID</code></a>.
+Yes, this is a very artificial example! Yes, people should never
+write code like this! But, there are some situations where things
+like this arise. For example, Solidity uses a default stipend of
+<code>2300</code> gas for <code>transfer()</code> calls. Furthermore, stipends sometimes
+are deducted manually with
+<a href=https://ethereum.stackexchange.com/questions/92608/staticcall-what-does-this-code-do>code</a>
+<a href=https://medium.com/@rbkhmrcr/precompiles-solidity-e5d29bd428c4>like</a>
+<code>staticcall(gas()-2000,...)</code> (<a href=https://eips.ethereum.org/EIPS/eip-150>despite the <code>63/64</code>
+rule</a>).</p><p>Removing gas observability would allow the gas schedule to change more
+easily with minimal impact. The challenges faced with <code>SSTORE</code> are a
+key motivator here. However, to actually do this means dropping
+instructions that expose gas costs. Specifically: <code>GAS</code>, <code>CALL</code>,
+<code>CALLCODE</code>, <code>DELEGATECALL</code>, <code>STATICCALL</code>, <code>CREATE</code>, and <code>CREATE2</code>.
+This would be a significant breaking change and, realistically, could
+not be done without EOF (or something very much like it). The EOF
+handles this by: firstly, replacing the first five instructions above
+with: <code>CALL2</code>, <code>STATICCALL2</code>, <code>DELEGATECALL2</code>
+(<a href=https://eips.ethereum.org/EIPS/eip-7069>EIP-7069</a>); secondly, by
+replacing <code>CREATE</code> / <code>CREATE2</code> with <code>CREATE3</code> / <code>CREATE4</code> (EIP-TBC).</p><h3 id=code-observability>Code Observability</h3><p>This is an ambitious part of the EOF proposal but is also something
+<a href=https://ethereum-magicians.org/t/eof-proposal-ban-code-introspection-of-eof-accounts/12113>Vitalik makes a strong case
+for</a>.
+The goal is to allow on-chain contracts to be safely and automatically
+upgraded (e.g. to exploit new instructions). For example, contracts
+using <code>PUSH1 0x0</code> could now be upgraded to use <code>PUSH0</code>. <em>That would
+be very neat!</em></p><p>As with gas observability, the key challenge here lies with
+instructions that can <em>observe</em> the bytecode of a contract. That is,
+if the logic of a contract depends on the exact bytecode of another
+(or itself), then changing that bytecode (i.e. through automated
+upgrading) could potentially alter its execution. Instructions which
+can observe a contract&rsquo;s bytecode include:</p><ul><li><code>CODESIZE</code>, <code>CODECOPY</code>, <code>EXTCODESIZE</code>, <code>EXTCODECOPY</code>,
+<code>EXTCODEHASH</code>. These allow a contract to observe the bytecode of
+another contract (either the enclosing contract or an external
+contract).</li><li><code>CREATE</code> / <code>CREATE2</code>. These create a new contract using initcode
+typically sourced from the (data) bytes of a contract. In such
+cases, they specify an exact region of the contract&rsquo;s bytecode to
+use. As such, their behaviour can be affected by changes to the
+enclosing contract&rsquo;s bytecode (i.e. if this region changes size or
+position).</li></ul><p>Additionally, <code>CREATE2</code> poses another potential hazard since the new
+contract address is (partly) determined by the bytecode of the
+contract created. Thus, if our automatic upgrading system also
+upgrades as-yet-undeployed initcode, then this would in turn alter the
+final contract address. Any existing contract which relied on an
+exact address (for whatever reason) would then break.</p><p>Eliminating code observability requires, at a minimum, that the above
+instructions are replaced with alternatives. Again, this would be a
+fairly significant breaking change. The EOF addresses this in several
+ways: firstly, a specific data section is introduced
+(<a href=https://eips.ethereum.org/EIPS/eip-3540>EIP-3540</a>); secondly,
+operations (<code>DATALOAD</code>, <code>DATASIZE</code>, etc) for accessing it are
+introduced (<a href=https://eips.ethereum.org/EIPS/eip-7480>EIP-7480</a>);
+finally, <code>CREATE</code> / <code>CREATE2</code> are replaced with <code>CREATE3</code> / <code>CREATE4</code>
+/ <code>RETURNCONTRACT</code> (EIP-TBC).</p><h2 id=evolution>Evolution</h2><p>We should also consider how evolution under EOF might look. We can
+assume the legacy EVM will be needed to execute existing on-chain
+contracts. Thus, new EOF contracts and legacy EVM contracts will
+co-exist. To further evolve the EVM, new EOF versions (e.g. <code>EOFv2</code>)
+will be released and, thus, older EOF contracts (e.g. <code>EOFv1</code>) will
+coexist with newer ones. The rate of new EOF versions, however,
+should be fairly low (e.g. a new version every 5-10 years). Remember
+that a new EOF version is only necessary for <em>breaking changes</em>.
+Thus, non-breaking changes can be automatically added to the current
+EOF version.</p><p>Naturally, all this raises questions around the burden of maintaining
+multiple EVM variants (<a href="https://www.youtube.com/live/SmcMwdHZqg8?si=ei76Ugir8XLdW2N1&t=1585">Vitalik talks specifically about
+this</a>).
+The cost of maintaining a particular EOF version presumably depends on
+its nature. For example, a version which only changes gas costs
+should be fairly easy to maintain (i.e. assuming the gas schedule is a
+configuration parameter). Likewise, a version which adds or removes
+new instructions may be relatively low cost (i.e. by configuring which
+instructions are enabled / disabled in a particular version).
+Finally, when code observability is abolished, it might even be
+possible to deprecate EOF versions (i.e. by automatically upgrading
+contracts for a given version to a more recent version).</p><h2 id=conclusion>Conclusion</h2><p>Evolving the legacy EVM is proving to be increasingly difficult as
+time goes on. There is talk of the EVM ossifying to the point where
+its evolution in certain directions stalls. Of course, non-breaking
+changes will always continue (e.g. adding new instructions, new
+precompiles, reducing gas costs, etc). Its the breaking changes that
+become harder and harder (e.g. removing an instruction, increasing gas
+costs, etc). The real benefit of EOF comes from versioning: <em>we can
+have multiple bytecode versions &ldquo;in flight&rdquo; at the same time</em>. There
+are concerns this could lead to a glut of different versions on chain.
+But, the fact is, we are already living in this world. Whenever a
+change is made which could break existing code (e.g. changing gas
+costs, deprecating instructions, imposing new limits, etc), we
+effectively create a new version of bytecode. The only difference is
+how we manage it: either in an ad-hoc fashion (as is done now); or,
+with a more structured mechanism (as with EOF).</p><h2 id=appendix-----immediate-operands>Appendix &mdash; Immediate Operands</h2><p>As discussed above, we cannot easily add instructions with immediate
+operands to the EVM. The purpose here is just to clarify what the
+problem is. The relevant points for our discussion are:</p><ol><li><p><strong>Bytecode is Unstructured</strong>. An EVM bytecode program is just a
+collection of bytes with (almost) no other structured imposed.
+Execution begins with the first instruction at offset <code>0</code>. Some
+bytes represent instructions, some bytes can represent data and
+some bytes can simply be &ldquo;dead code&rdquo;. Determining whether or not
+a given byte is part of an instruction, is unused or represents
+data is not at all straightforward. The solidity compiler, for
+example, <a href=https://docs.soliditylang.org/en/latest/metadata.html>appends metadata to the end of a contract&rsquo;s
+bytecode</a>.</p></li><li><p><strong>Mostly No Immediates</strong>. Unlike many other bytecode formats
+(e.g. <a href=https://docs.oracle.com/javase/specs/jvms/se7/html/>JVM
+Bytecode</a>),
+EVM instructions generally do not take immediate operands and,
+instead, operands are supplied on the stack. The only exception
+here are the <code>PUSHXX</code> instructions which allow constants to be
+loaded on the stack.</p></li><li><p><strong>Jump Destinations</strong>. Every branch in an EVM bytecode program
+must land at a <code>JUMPDEST</code> instruction (opcode <code>0x5b</code>), otherwise
+a runtime exception is raised. Furthermore, branches must land
+on instruction boundaries (i.e. <em>not on bytes within the
+immediate operand of another instruction</em>).</p></li></ol><p>Let&rsquo;s consider a simple (but currently valid) sequence of EVM
+bytecode: <code>0x600456e05b00</code>. This corresponds to the following
+assembly:</p><pre tabindex=0><code>   push1 lab
+   jump
+   db 0xe0
+lab:
+   jumpdest
+   stop
+</code></pre><p>Observe that the raw data byte <code>0xe0</code> is mixed in with other
+instructions (which is permitted under the current EVM specification).
+The EVM simply <a href="https://www.evm.codes/playground?fork=shanghai&unit=Wei&codeType=Bytecode&code='600456e05b00'_">views this as an <code>INVALID</code>
+instruction</a>
+<em>which has no operands</em>. Specifically, as defined in Section 9.4.3
+(&ldquo;Jump Destination Validity&rdquo;) of the <a href=https://ethereum.github.io/yellowpaper/paper.pdf>Yellow
+Paper</a>:</p><figure class=text-center><img width=454px alt="Illustrating Section 9.4.3 of the Yellow Paper which clarifies jump destination validity." src=/images/2023/DiggingEof_yp943.png></figure><p>Now, let us consider
+<a href=https://eips.ethereum.org/EIPS/eip-4200>EIP-4200</a> which adds a new
+instruction <code>RJUMP</code> taking a two-byte immediate operand. Funnily
+enough, the opcode of <code>RJUMP</code> is <code>0xe0</code>. <em>So, what&rsquo;s the problem?</em>
+Well, our bytecode sequence now looks like this:</p><pre tabindex=0><code>   PUSH 0x4
+   JUMP
+   RJUMP 0x5b00
+</code></pre><p>Observe how the <code>JUMPDEST</code> and <code>STOP</code> bytecodes are now bytes within
+the immediate operand of the <code>RJUMP</code> instruction! This has completely
+changed the meaning of our original program, and its not clear how to
+fix this. We could try to make an exception for <code>RJUMP</code> and allow
+legacy branches into its immediate opcode bytes (i.e. so the above
+retains its original meaning). But, this makes disassembling bytecode
+contracts much harder! Furthermore, we can now write bytecode
+programs which do this on purpose. At that point, a given byte can be
+interpreted as a different instruction depending on the <code>PC</code> of the
+executing EVM. <em>That is not ideal!</em></p><p>A final point worth noting is that we can still introduce instructions
+such as <code>RJUMP</code> <em>when we know they don&rsquo;t actually break anything</em>.
+Essentially, we can analyse mainnet to check whether any bad
+situations (such as above) actually exist. If not, then we&rsquo;re good to
+go! Or, if they do exist, we can repeat the analysis for a different
+opcode value (e.g. <code>0xe1</code> in this case). This approach works and was,
+for example, <a href=https://eips.ethereum.org/EIPS/eip-3541>used in determining the <code>0xEF</code> marker
+opcode</a> used for EOF
+contracts. However, as more contracts are deployed and as more
+instructions are added to the EVM, it will get harder and harder to
+successfully apply this technique.</p><hr></div></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-9MRLB1FVZX"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-9MRLB1FVZX",{anonymize_ip:!1})}</script></body></html>
