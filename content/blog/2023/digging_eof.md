@@ -398,12 +398,13 @@ executing EVM.  _That is not ideal!_
 
 A final point worth noting is that we can still introduce instructions
 such as `RJUMP` _when we know they don't actually break anything_.
-Essentially, we can analyse mainnet to check whether any bad
+Essentially, we could analyse mainnet to check whether any bad
 situations (such as above) actually exist.  If not, then we're good to
-go!  Or, if they do exist, we can repeat the analysis for a different
-opcode value (e.g. `0xe1` in this case).  This approach works and was,
-for example, [used in determining the `0xEF` marker
-opcode](https://eips.ethereum.org/EIPS/eip-3541) used for EOF
-contracts.  However, as more contracts are deployed and as more
-instructions are added to the EVM, it will get harder and harder to
-successfully apply this technique.
+go!  Or, if they do exist, we could repeat the analysis for a
+different opcode value (e.g. `0xe1` in this case).  This kind of
+approach has been used before (e.g. [for the `0xEF` marker
+opcode](https://eips.ethereum.org/EIPS/eip-3541)), however its unclear
+how well it would work in this case.  Furthermore, as more contracts
+are deployed and as more instructions are added to the EVM, it gets
+harder and harder to successfully apply this technique.  Thus, even if
+this could be used for adding `RJUMP`, its not a long term solution.
