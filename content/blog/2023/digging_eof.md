@@ -2,7 +2,7 @@
 date: 2023-10-19
 title: "Digging into the EVM Object Format (EOF)"
 draft: false
-#metaimg: "images/2023/DafnyByMethod_Preview.png"
+metaimg: "images/2023/DiggingEOF_Preview.png"
 metatxt: "The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."
 #twitter: "https://twitter.com/whileydave/status/1673926723568832513"
 #reddit: ""
@@ -144,12 +144,24 @@ Examples where costs decreased include:
     costs")](https://eips.ethereum.org/EIPS/eip-1108).  This reduced
     the cost of the Eliptic Curve precompile contracts after some
     significant performance optimisations were implemented in Geth.
-    
+
+   * [EIP-1283 ("Net gas metering for
+     `SSTORE`")](https://eips.ethereum.org/EIPS/eip-1283).  Originally
+     scheduled for Constantinople, it was discovered to [introduce a
+     new kind of reentrancy
+     attack](https://medium.com/chainsecurity/constantinople-enables-new-reentrancy-attack-ace4088297d9).
+     Specifically, with this EIP, it was possible to write storage
+     using less than `2300` gas (and, hence, Solidity's
+     `msg.send.transfer()` could now do more than just transfer ETH).
+     As a result Constantinople was delayed and EIP-1283 removed (with
+     [EIP-2200](https://eips.ethereum.org/EIPS/eip-2200) eventually
+     replacing it in Instanbul).
+
   * [EIP-2200 ("Structured Definitions for Net Gas
     Metering")](https://eips.ethereum.org/EIPS/eip-2200).  This
     introduced a more refined gas metering for `SSTORE`
     (e.g. subsequent writes to the same location are cheaper).
-    
+
   * [EIP-2565 ("ModExp Gas
     Cost")](https://eips.ethereum.org/EIPS/eip-2565).  This introduced
     a new algorithm for calculating gas costs for the `ModExp`
@@ -168,17 +180,20 @@ Examples where costs increased include:
     opcodes")](https://eips.ethereum.org/EIPS/eip-2929).  This
     increased the cost of various instructions (e.g. `SLOAD`) on their
     first use within a transaction.  This was to address historical
-    underpricing of storage accessing instructions and ward of
-    potential DoS attacks.  Again, this was acknowledged as a breaking
-    change.  Arguments were made that developers had several years of
-    warning already that this was likely, and furthermore the certain
-    mitigations (e.g. access lists) reduced the impact.
+    underpricing of storage accessing instructions and [ward of
+    potential DoS
+    attacks](https://vitalik.ca/files/EIP_2929_presentation.pdf).
+    Again, this was acknowledged as a breaking change.  To mitigate
+    the risk of breaking existing contracts, [EIP-2930 ("Optional
+    access lists")](https://eips.ethereum.org/EIPS/eip-2930) added an
+    entirely new transaction type allowing one to "pre-specify and
+    pre-pay for the accounts and storage slots that the transaction
+    plans to access".
 
-Its unclear whether any of these breaking changes caused any
-significant problems for existing on-chain contracts.  What is clear,
-however, is that changes to the gas schedule will be ongoing (e.g. as
-CPU/GPU characteristics change or algorithmic performance increases,
-etc).
+What seems clear from this is that: (1) changes to the gas schedule
+will be ongoing (e.g. as CPU/GPU characteristics change or algorithmic
+performance increases, etc); (2) such changes will continue to cause
+problems unless some new mechanism for managing them is introduced.
 
 To address these concerns, the EOF proposal includes a goal of
 removing gas observability.  _What does this mean?_  Well, consider a
@@ -319,6 +334,9 @@ with a more structured mechanism (as with EOF).
 <!--   EVM?_ Unsuccessful attempts have been made to get this through.  The -->
 <!--   key problem is the potential for valid jump destinations to be -->
 <!--   become invalid. -->
+
+**Acknowledgements**. Thanks to Danno Ferrin for pointing out some
+missing bits of the history in an earlier draft of this article!
 
 ## Appendix --- Immediate Operands
 
