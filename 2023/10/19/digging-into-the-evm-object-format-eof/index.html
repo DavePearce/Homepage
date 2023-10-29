@@ -1,4 +1,4 @@
-<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Digging into the EVM Object Format (EOF)"><meta name=twitter:title content="Digging into the EVM Object Format (EOF)"><meta property="og:description" content="The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."><meta name=twitter:description content="The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."><meta property="og:url" content="https://whileydave.com/2023/10/19/digging-into-the-evm-object-format-eof/"><title>David J. Pearce
+<!doctype html><html lang=en><head><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta property="og:title" content="Digging into the EVM Object Format (EOF)"><meta name=twitter:title content="Digging into the EVM Object Format (EOF)"><meta property="og:description" content="The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."><meta name=twitter:description content="The EVM Object Format offers an opportunity for managing evolution of the EVM going forward."><meta property="og:image" content="https://whileydave.com/images/2023/DiggingEOF_Preview.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://whileydave.com/images/2023/DiggingEOF_Preview.png"><meta property="og:url" content="https://whileydave.com/2023/10/19/digging-into-the-evm-object-format-eof/"><title>David J. Pearce
 (Digging into the EVM Object Format (EOF))</title><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css><link rel=stylesheet href=https://whileydave.com/css/page.css><link rel=stylesheet href=https://whileydave.com/css/menu.css><link rel=stylesheet href=https://whileydave.com/css/style.css><link rel=stylesheet href=https://whileydave.com/css/syntax.css></head><body><script>"use strict";function clearMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display="none",t.style.filter="")}function toggleMenu(){var e,t,n=window.matchMedia("(max-width: 992px)");n.matches&&(e=document.getElementById("menu-content"),t=document.getElementById("menu"),e.style.display==="block"?(e.style.display="none",t.style.filter=""):(e.style.display="block",t.style.filter="brightness(0.8)"))}function toggleList(e){e.style.display="none";for(var t,o=e.parentNode,s=o.childNodes,n=0;n<s.length;++n)t=s[n],t.classList&&t.classList.contains("hidden")&&(t.style.display==="block"?t.style.display="none":t.style.display="block")}</script><header class=topbar><div class=topbar-header onclick=clearMenu()><div class=topbar-title>Dr. David J. Pearce</div><div class=topbar-subtitle></div></div><div class=topbar-social onclick=clearMenu()><a href=https://github.com/DavePearce><i class="fa fa-github" aria-hidden=true></i></a>
 <a href=https://twitter.com/WhileyDave><i class="fa fa-twitter" aria-hidden=true></i></a>
 <a href=https://www.youtube.com/user/redjamjar/><i class="fa fa-youtube-play" aria-hidden=true></i></a>
@@ -113,7 +113,17 @@ contracts which relied on specific fixed costs). However, changes
 which increase costs are normally considered to be breaking changes.</p><p>Examples where costs decreased include:</p><ul><li><p><a href=https://eips.ethereum.org/EIPS/eip-1108>EIP-1108 (&ldquo;Reduce alt_bn128 precompile gas
 costs&rdquo;)</a>. This reduced
 the cost of the Eliptic Curve precompile contracts after some
-significant performance optimisations were implemented in Geth.</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2200>EIP-2200 (&ldquo;Structured Definitions for Net Gas
+significant performance optimisations were implemented in Geth.</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-1283>EIP-1283 (&ldquo;Net gas metering for
+<code>SSTORE</code>&rdquo;)</a>. Originally
+scheduled for Constantinople, it was discovered to <a href=https://medium.com/chainsecurity/constantinople-enables-new-reentrancy-attack-ace4088297d9>introduce a
+new kind of reentrancy
+attack</a>.
+Specifically, with this EIP, it was possible to write storage
+using less than <code>2300</code> gas (and, hence, Solidity&rsquo;s
+<code>msg.send.transfer()</code> could now do more than just transfer ETH).
+As a result Constantinople was delayed and EIP-1283 removed (with
+<a href=https://eips.ethereum.org/EIPS/eip-2200>EIP-2200</a> eventually
+replacing it in Instanbul).</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2200>EIP-2200 (&ldquo;Structured Definitions for Net Gas
 Metering&rdquo;)</a>. This
 introduced a more refined gas metering for <code>SSTORE</code>
 (e.g. subsequent writes to the same location are cheaper).</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-2565>EIP-2565 (&ldquo;ModExp Gas
@@ -128,15 +138,18 @@ gas limit (in some cases).</p></li><li><p><a href=https://eips.ethereum.org/EIPS
 opcodes&rdquo;)</a>. This
 increased the cost of various instructions (e.g. <code>SLOAD</code>) on their
 first use within a transaction. This was to address historical
-underpricing of storage accessing instructions and ward of
-potential DoS attacks. Again, this was acknowledged as a breaking
-change. Arguments were made that developers had several years of
-warning already that this was likely, and furthermore the certain
-mitigations (e.g. access lists) reduced the impact.</p></li></ul><p>Its unclear whether any of these breaking changes caused any
-significant problems for existing on-chain contracts. What is clear,
-however, is that changes to the gas schedule will be ongoing (e.g. as
-CPU/GPU characteristics change or algorithmic performance increases,
-etc).</p><p>To address these concerns, the EOF proposal includes a goal of
+underpricing of storage accessing instructions and <a href=https://vitalik.ca/files/EIP_2929_presentation.pdf>ward of
+potential DoS
+attacks</a>.
+Again, this was acknowledged as a breaking change. To mitigate
+the risk of breaking existing contracts, <a href=https://eips.ethereum.org/EIPS/eip-2930>EIP-2930 (&ldquo;Optional
+access lists&rdquo;)</a> added an
+entirely new transaction type allowing one to &ldquo;pre-specify and
+pre-pay for the accounts and storage slots that the transaction
+plans to access&rdquo;.</p></li></ul><p>What seems clear from this is that: (1) changes to the gas schedule
+will be ongoing (e.g. as CPU/GPU characteristics change or algorithmic
+performance increases, etc); (2) such changes will continue to cause
+problems unless some new mechanism for managing them is introduced.</p><p>To address these concerns, the EOF proposal includes a goal of
 removing gas observability. <em>What does this mean?</em> Well, consider a
 hypothetical contract containing something like this:</p><pre tabindex=0><code>    ...
     GAS
@@ -234,7 +247,8 @@ change is made which could break existing code (e.g. changing gas
 costs, deprecating instructions, imposing new limits, etc), we
 effectively create a new version of bytecode. The only difference is
 how we manage it: either in an ad-hoc fashion (as is done now); or,
-with a more structured mechanism (as with EOF).</p><h2 id=appendix-----immediate-operands>Appendix &mdash; Immediate Operands</h2><p>As discussed above, we cannot easily add instructions with immediate
+with a more structured mechanism (as with EOF).</p><p><strong>Acknowledgements</strong>. Thanks to Danno Ferrin for pointing out some
+missing bits of the history in an earlier draft of this article!</p><h2 id=appendix-----immediate-operands>Appendix &mdash; Immediate Operands</h2><p>As discussed above, we cannot easily add instructions with immediate
 operands to the EVM. The purpose here is just to clarify what the
 problem is. The relevant points for our discussion are:</p><ol><li><p><strong>Bytecode is Unstructured</strong>. An EVM bytecode program is just a
 collection of bytes with (almost) no other structured imposed.
