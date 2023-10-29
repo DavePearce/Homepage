@@ -176,10 +176,10 @@ easily with minimal impact. The challenges faced with <code>SSTORE</code> are a
 key motivator here. However, to actually do this means dropping
 instructions that expose gas costs. Specifically: <code>GAS</code>, <code>CALL</code>,
 <code>CALLCODE</code>, <code>DELEGATECALL</code>, <code>STATICCALL</code>, <code>CREATE</code>, and <code>CREATE2</code>.
-This would be a significant breaking change and, realistically, could
-not be done without EOF (or something very much like it). The EOF
-handles this by: firstly, replacing the first five instructions above
-with: <code>CALL2</code>, <code>STATICCALL2</code>, <code>DELEGATECALL2</code>
+This would be a significant breaking change which would be hard to do
+without EOF (or something like it). The EOF handles this by: firstly,
+replacing the first five instructions above with: <code>CALL2</code>,
+<code>STATICCALL2</code>, <code>DELEGATECALL2</code>
 (<a href=https://eips.ethereum.org/EIPS/eip-7069>EIP-7069</a>); secondly, by
 replacing <code>CREATE</code> / <code>CREATE2</code> with <code>CREATE3</code> / <code>CREATE4</code> (EIP-TBC).</p><h3 id=code-observability>Code Observability</h3><p>This is an ambitious part of the EOF proposal but is also something
 <a href=https://ethereum-magicians.org/t/eof-proposal-ban-code-introspection-of-eof-accounts/12113>Vitalik makes a strong case
