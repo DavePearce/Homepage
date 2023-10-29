@@ -134,9 +134,9 @@ finally, it introduces `DUPN` and `SWAPN`
 On several occasions the gas cost of an existing operation has been
 tweaked for some reason.  Sometimes costs are increased, whilst other
 times they are decreased. Generally speaking, reducing costs is not
-considered a breaking change (even though it technically could for
-contracts which relied on specific fixed costs).  However, changes
-which increase costs are normally considered to be breaking changes.
+considered a breaking change (even though it clearly can be in some
+cases).  However, changes which increase costs are normally considered
+to be breaking changes.
 
 Examples where costs decreased include:
 
@@ -313,17 +313,17 @@ Evolving the legacy EVM is proving to be increasingly difficult as
 time goes on.  There is talk of the EVM ossifying to the point where
 its evolution in certain directions stalls.  Of course, non-breaking
 changes will always continue (e.g. adding new instructions, new
-precompiles, reducing gas costs, etc).  Its the breaking changes that
-become harder and harder (e.g. removing an instruction, increasing gas
-costs, etc).  The real benefit of EOF comes from versioning: _we can
-have multiple bytecode versions "in flight" at the same time_.  There
-are concerns this could lead to a glut of different versions on chain.
-But, the fact is, we are already living in this world.  Whenever a
-change is made which could break existing code (e.g. changing gas
-costs, deprecating instructions, imposing new limits, etc), we
-effectively create a new version of bytecode.  The only difference is
-how we manage it: either in an ad-hoc fashion (as is done now); or,
-with a more structured mechanism (as with EOF).
+precompiles, etc).  Its the breaking changes that become harder and
+harder (e.g. removing an instruction, increasing gas costs, etc).  The
+real benefit of EOF comes from versioning: _we can have multiple
+bytecode versions "in flight" at the same time_.  There are concerns
+this could lead to a glut of different versions on chain.  But, the
+fact is, we are already living in this world.  Whenever a change is
+made which could break existing code (e.g. changing gas costs,
+deprecating instructions, imposing new limits, etc), we effectively
+create a new version of bytecode.  The only difference is how we
+manage it: either in an ad-hoc fashion (as is done now); or, with a
+more structured mechanism (as with EOF).
 
 <!-- ## Appendix --- FAQ -->
 
