@@ -108,9 +108,9 @@ finally, it introduces <code>DUPN</code> and <code>SWAPN</code>
 (<a href=https://eips.ethereum.org/EIPS/eip-663>EIP-663</a>).</p><h3 id=gas-observability>Gas Observability</h3><p>On several occasions the gas cost of an existing operation has been
 tweaked for some reason. Sometimes costs are increased, whilst other
 times they are decreased. Generally speaking, reducing costs is not
-considered a breaking change (even though it technically could for
-contracts which relied on specific fixed costs). However, changes
-which increase costs are normally considered to be breaking changes.</p><p>Examples where costs decreased include:</p><ul><li><p><a href=https://eips.ethereum.org/EIPS/eip-1108>EIP-1108 (&ldquo;Reduce alt_bn128 precompile gas
+considered a breaking change (even though it clearly can be in some
+cases). However, changes which increase costs are normally considered
+to be breaking changes.</p><p>Examples where costs decreased include:</p><ul><li><p><a href=https://eips.ethereum.org/EIPS/eip-1108>EIP-1108 (&ldquo;Reduce alt_bn128 precompile gas
 costs&rdquo;)</a>. This reduced
 the cost of the Eliptic Curve precompile contracts after some
 significant performance optimisations were implemented in Geth.</p></li><li><p><a href=https://eips.ethereum.org/EIPS/eip-1283>EIP-1283 (&ldquo;Net gas metering for
@@ -237,17 +237,17 @@ contracts for a given version to a more recent version).</p><h2 id=conclusion>Co
 time goes on. There is talk of the EVM ossifying to the point where
 its evolution in certain directions stalls. Of course, non-breaking
 changes will always continue (e.g. adding new instructions, new
-precompiles, reducing gas costs, etc). Its the breaking changes that
-become harder and harder (e.g. removing an instruction, increasing gas
-costs, etc). The real benefit of EOF comes from versioning: <em>we can
-have multiple bytecode versions &ldquo;in flight&rdquo; at the same time</em>. There
-are concerns this could lead to a glut of different versions on chain.
-But, the fact is, we are already living in this world. Whenever a
-change is made which could break existing code (e.g. changing gas
-costs, deprecating instructions, imposing new limits, etc), we
-effectively create a new version of bytecode. The only difference is
-how we manage it: either in an ad-hoc fashion (as is done now); or,
-with a more structured mechanism (as with EOF).</p><p><strong>Acknowledgements</strong>. Thanks to Danno Ferrin for pointing out some
+precompiles, etc). Its the breaking changes that become harder and
+harder (e.g. removing an instruction, increasing gas costs, etc). The
+real benefit of EOF comes from versioning: <em>we can have multiple
+bytecode versions &ldquo;in flight&rdquo; at the same time</em>. There are concerns
+this could lead to a glut of different versions on chain. But, the
+fact is, we are already living in this world. Whenever a change is
+made which could break existing code (e.g. changing gas costs,
+deprecating instructions, imposing new limits, etc), we effectively
+create a new version of bytecode. The only difference is how we
+manage it: either in an ad-hoc fashion (as is done now); or, with a
+more structured mechanism (as with EOF).</p><p><strong>Acknowledgements</strong>. Thanks to Danno Ferrin for pointing out some
 missing bits of the history in an earlier draft of this article!</p><h2 id=appendix-----immediate-operands>Appendix &mdash; Immediate Operands</h2><p>As discussed above, we cannot easily add instructions with immediate
 operands to the EVM. The purpose here is just to clarify what the
 problem is. The relevant points for our discussion are:</p><ol><li><p><strong>Bytecode is Unstructured</strong>. An EVM bytecode program is just a
