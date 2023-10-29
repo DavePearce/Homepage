@@ -229,10 +229,10 @@ easily with minimal impact.  The challenges faced with `SSTORE` are a
 key motivator here.  However, to actually do this means dropping
 instructions that expose gas costs.  Specifically: `GAS`, `CALL`,
 `CALLCODE`, `DELEGATECALL`, `STATICCALL`, `CREATE`, and `CREATE2`.
-This would be a significant breaking change and, realistically, could
-not be done without EOF (or something very much like it).  The EOF
-handles this by: firstly, replacing the first five instructions above
-with: `CALL2`, `STATICCALL2`, `DELEGATECALL2`
+This would be a significant breaking change which would be hard to do
+without EOF (or something like it).  The EOF handles this by: firstly,
+replacing the first five instructions above with: `CALL2`,
+`STATICCALL2`, `DELEGATECALL2`
 ([EIP-7069](https://eips.ethereum.org/EIPS/eip-7069)); secondly, by
 replacing `CREATE` / `CREATE2` with `CREATE3` / `CREATE4` (EIP-TBC).
 
