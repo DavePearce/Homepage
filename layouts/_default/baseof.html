@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    {{ template "_internal/google_analytics.html" . }}    
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1"/>
     {{ if .Page.Params.metatitle }}
     <meta property="og:title" content="{{.Page.Params.metatitle}}"/>
@@ -127,6 +128,5 @@
 	{{ end }}
       </div>
     </div>
-    {{ template "_internal/google_analytics.html" . }}    
   </body>
 </html>
